@@ -1,8 +1,8 @@
 /*
  * fnv32 - 32 bit Fowler/Noll/Vo hash of a string or rile
  *
- * @(#) $Revision: 1.1 $
- * @(#) $Id: fnv32.c,v 1.1 1999/10/23 09:07:15 chongo Exp chongo $
+ * @(#) $Revision: 2.1 $
+ * @(#) $Id: fnv32.c,v 2.1 1999/10/23 09:43:59 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/lib/libfnv/RCS/fnv32.c,v $
  *
  * usage:
@@ -87,7 +87,7 @@ main(int argc, char *argv[])
      * string hashing
      */
     if (s_flag) {
-	
+
 	/* hash the 1st string */
 	hval = fnv32_str(argv[optind], NULL);
 

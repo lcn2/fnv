@@ -5,30 +5,49 @@ See:
 
 for the most up to date copy of this code and the FNV hash home page.
 
-=-=
 
-This soource implements both a 32 bit and a 64 bit FNV hash on collections
-of bytes or a NUL terminated strings.
+#==================#
+# FNV hash utility #
+#==================#
+
+Two hash utilities (32 bit and 64 bit) are provided:
+
+	fnv32 [-s arg] [arg ...]
+	fnv64 [-s arg] [arg ...]
+
+	-s	hash arg as a string (ignoring terminating NUL bytes)
+	arg	string (if -s was given) or filename (default stdin)
+
+as examples of how to use the FNV hash library.
+
+
+#==================#
+# FNV hash library #
+#==================#
+
+The libfnv.a library implements both a 32 bit and a 64 bit FNV hash
+on collections of bytes, a NUL terminated strings or on an open file
+descriptor.
 
 Here is the 32 bit FNV hash:
 
-	fnv32 fnv32_buf(char *buf, int len, fnv32 *hval);
-	fnv32 fnv32_str(char *string, fnv32 *hval);
-	fnv32 fnv32_fd(int fd, fnv32 *hval);
+	fnv32 fnv32_buf(char *buf, int len, fnv32 *hval);	/* byte buf */
+	fnv32 fnv32_str(char *string, fnv32 *hval);		/* string */
+	fnv32 fnv32_fd(int fd, fnv32 *hval);			/* open file */
 or:
-	fnv32 fnv32_buf(char *buf, int len, NULL);
-	fnv32 fnv32_str(char *string, NULL);
-	fnv32 fnv32_fd(int fd, NULL);
+	fnv32 fnv32_buf(char *buf, int len, NULL);		/* byte buf */
+	fnv32 fnv32_str(char *string, NULL);			/* string */
+	fnv32 fnv32_fd(int fd, NULL);				/* open file */
 
 Here is the 64 bit FNV hash:
 
-	fnv64 fnv64_buf(char *buf, int len, fnv64 *hval);
-	fnv64 fnv64_str(char *string, fnv64 *hval);
-	fnv64 fnv64_fd(int fd, fnv64 *hval);
+	fnv64 fnv64_buf(char *buf, int len, fnv64 *hval);	/* byte buf */
+	fnv64 fnv64_str(char *string, fnv64 *hval);		/* string */
+	fnv64 fnv64_fd(int fd, fnv64 *hval);			/* open file */
 or:
-	fnv64 fnv64_buf(char *buf, int len, NULL);
-	fnv64 fnv64_str(char *string, NULL);
-	fnv64 fnv64_fd(int fd, NULL);
+	fnv64 fnv64_buf(char *buf, int len, NULL);		/* byte buf */
+	fnv64 fnv64_str(char *string, NULL);			/* string */
+	fnv64 fnv64_fd(int fd, NULL);				/* open file */
 
 If hval is NULL, then only the FNV hash of the first arg (buffer or string)
 will be returned.  If hval is non-NULL, then its value will be used as

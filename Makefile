@@ -2,8 +2,8 @@
 #
 # hash - makefile for hash tools
 #
-# @(#) $Revision: 2.7 $
-# @(#) $Id: Makefile,v 2.7 1999/10/23 08:14:29 chongo Exp $
+# @(#) $Revision: 2.8 $
+# @(#) $Id: Makefile,v 2.8 1999/10/23 09:45:28 chongo Exp chongo $
 # @(#) $Source: /usr/local/src/lib/libfnv/RCS/Makefile,v $
 #
 # See:
@@ -156,7 +156,8 @@ install: libfnv.a
 	fi					# WWW
 
 clean:
-	-rm -f h32.o h64.o have_ulong64 have_ulong64.o ll_tmp longlong.h
+	-rm -f have_ulong64 have_ulong64.o ll_tmp longlong.h
+	-rm -f h32.o h64.o fnv32.o fnv64.o
 	-rm -f fnv_hash.tar.gz Makefile.ship	# WWW
 
 clobber: clean

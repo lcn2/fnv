@@ -1,8 +1,8 @@
 /*
  * h32 - 32 bit Fowler/Noll/Vo hash code
  *
- * @(#) $Revision: 2.11 $
- * @(#) $Id: h32.c,v 2.11 1999/10/23 08:14:29 chongo Exp chongo $
+ * @(#) $Revision: 2.12 $
+ * @(#) $Id: h32.c,v 2.12 1999/10/23 09:44:31 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/lib/libfnv/RCS/h32.c,v $
  *
  * See:
@@ -49,13 +49,13 @@
  *	len	- length of buffer in octets
  *	hval	- hash value to modify or NULL => just return hash value
  *
- * retuns:
+ * returns:
  *	32 bit hash as a static hash type
  *	*hval is also set to the returned hash value if it was non-NULL
  *
  * NOTE: If hval is NULL, this routine starts with a 0 hash value and
  * 	 returns the hash value.  If hval is non-NULL, that what it points
- *	 to as used as the previous hash value and on completeion becomes
+ *	 to as used as the previous hash value and on completion becomes
  *	 the new hash value as well as returning the new hash value.
  *
  * Example:
@@ -67,7 +67,7 @@
  *
  *	(void) fnv32_buf(buf2, len2, &hash_value);
  *
- *	    The 'hash_value' becomes the hash of buf concatinated with buf2.
+ *	    The 'hash_value' becomes the hash of buf concatenated with buf2.
  */
 fnv32
 fnv32_buf(char *buf, int len, fnv32 *hval)
@@ -79,7 +79,7 @@ fnv32_buf(char *buf, int len, fnv32 *hval)
      * Fowler/Noll/Vo hash - hash each character in the buffer
      *
      * The basis of the hash algorithm was taken from an idea
-     * sent by Email to the IEEE Posix P1003.2 mailing list from
+     * sent by Email to the IEEE POSIX P1003.2 mailing list from
      * Phong Vo (kpv@research.att.com) and Glenn Fowler (gsf@research.att.com).
      * Landon Curt Noll (chongo@toad.com) later improved on their
      * algorithm to come up with Fowler/Noll/Vo hash.
@@ -119,13 +119,13 @@ fnv32_buf(char *buf, int len, fnv32 *hval)
  *	str	- string to hash
  *	hval	- hash value to modify or NULL => just return hash value
  *
- * retuns:
+ * returns:
  *	32 bit hash as a static hash type
  *	*hval is also set to the returned hash value if it was non-NULL
  *
  * NOTE: If hval is NULL, this routine starts with a 0 hash value and
  * 	 returns the hash value.  If hval is non-NULL, that what it points
- *	 to as used as the previous hash value and on completeion becomes
+ *	 to as used as the previous hash value and on completion becomes
  *	 the new hash value as well as returning the new hash value.
  *
  * Example:
@@ -150,7 +150,7 @@ fnv32_str(char *str, fnv32 *hval)
      * Fowler/Noll/Vo hash - hash each character in the string
      *
      * The basis of the hash algorithm was taken from an idea
-     * sent by Email to the IEEE Posix P1003.2 mailing list from
+     * sent by Email to the IEEE POSIX P1003.2 mailing list from
      * Phong Vo (kpv@research.att.com) and Glenn Fowler (gsf@research.att.com).
      * Landon Curt Noll (chongo@toad.com) later improved on their
      * algorithm to come up with Fowler/Noll/Vo hash.

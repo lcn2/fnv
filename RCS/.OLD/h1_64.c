@@ -1,8 +1,8 @@
 /*
  * h64 - 64 bit Fowler/Noll/Vo64 hash code
  *
- * @(#) $Revision: 2.3 $
- * @(#) $Id: h64.c,v 2.3 1999/10/23 08:14:29 chongo Exp chongo $
+ * @(#) $Revision: 2.4 $
+ * @(#) $Id: h64.c,v 2.4 1999/10/23 09:44:31 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/lib/libfnv/RCS/h64.c,v $
  *
  * See:
@@ -49,13 +49,13 @@
  *	len	- length of buffer in octets
  *	hval	- hash value to modify or NULL => just return hash value
  *
- * retuns:
+ * returns:
  *	64 bit hash as a static hash type
  *	*hval is also set to the returned hash value if it was non-NULL
  *
  * NOTE: If hval is NULL, this routine starts with a 0 hash value and
  * 	 returns the hash value.  If hval is non-NULL, that what it points
- *	 to as used as the previous hash value and on completeion becomes
+ *	 to as used as the previous hash value and on completion becomes
  *	 the new hash value as well as returning the new hash value.
  *
  * Example:
@@ -67,7 +67,7 @@
  *
  *	(void) fnv64_buf(buf2, len2, &hash_value);
  *
- *	    The 'hash_value' becomes the hash of buf concatinated with buf2.
+ *	    The 'hash_value' becomes the hash of buf concatenated with buf2.
  */
 fnv64
 fnv64_buf(char *buf, int len, fnv64 *hval)
@@ -83,7 +83,7 @@ fnv64_buf(char *buf, int len, fnv64 *hval)
      * Fowler/Noll/Vo hash - hash each character in the buffer
      *
      * The basis of the hash algorithm was taken from an idea
-     * sent by Email to the IEEE Posix P1003.2 mailing list from
+     * sent by Email to the IEEE POSIX P1003.2 mailing list from
      * Phong Vo (kpv@research.att.com) and Glenn Fowler (gsf@research.att.com).
      * Landon Curt Noll (chongo@toad.com) later improved on their
      * algorithm to come up with Fowler/Noll/Vo hash.
@@ -91,7 +91,7 @@ fnv64_buf(char *buf, int len, fnv64 *hval)
      * The 32 hash was able to process 234936 words from the web2 dictionary
      * without any 32 bit collisions using a constant of 16777619 = 0x1000193.
      *
-     * The 64 bit hases uses 1099511628211 = 0x100000001b3 instead.
+     * The 64 bit hash uses 1099511628211 = 0x100000001b3 instead.
      *
      * See:
      *		http://reality.sgi.com/chongo/tech/comp/fnv/index.html
@@ -101,13 +101,13 @@ fnv64_buf(char *buf, int len, fnv64 *hval)
      */
 #if defined(HAVE_64BIT_LONG_LONG)
 
-    /* 
-     * setup the initial hash value 
+    /*
+     * setup the initial hash value
      */
     ret = (hval ? *hval : (fnv64)0);
 
-    /* 
-     * hash each octet of the buffer 
+    /*
+     * hash each octet of the buffer
      */
     while (buf < buf_end) {
 
@@ -139,8 +139,8 @@ fnv64_buf(char *buf, int len, fnv64 *hval)
 	val[0] = val[1] = val[2] = val[3] = (unsigned long)0;
     }
 
-    /* 
-     * hash each octet of the buffer 
+    /*
+     * hash each octet of the buffer
      */
     while (buf < buf_end) {
 
@@ -198,13 +198,13 @@ fnv64_buf(char *buf, int len, fnv64 *hval)
  *	buf	- start of buffer to hash
  *	hval	- hash value to modify or NULL => just return hash value
  *
- * retuns:
+ * returns:
  *	64 bit hash as a static hash type
  *	*hval is also set to the returned hash value if it was non-NULL
  *
  * NOTE: If hval is NULL, this routine starts with a 0 hash value and
  * 	 returns the hash value.  If hval is non-NULL, that what it points
- *	 to as used as the previous hash value and on completeion becomes
+ *	 to as used as the previous hash value and on completion becomes
  *	 the new hash value as well as returning the new hash value.
  *
  * Example:
@@ -216,7 +216,7 @@ fnv64_buf(char *buf, int len, fnv64 *hval)
  *
  *	(void) fnv64_str(buf2, len2, &hash_value);
  *
- *	    The 'hash_value' becomes the hash of buf concatinated with buf2.
+ *	    The 'hash_value' becomes the hash of buf concatenated with buf2.
  */
 fnv64
 fnv64_str(char *str, fnv64 *hval)
@@ -231,7 +231,7 @@ fnv64_str(char *str, fnv64 *hval)
      * Fowler/Noll/Vo hash - hash each character in the string
      *
      * The basis of the hash algorithm was taken from an idea
-     * sent by Email to the IEEE Posix P1003.2 mailing list from
+     * sent by Email to the IEEE POSIX P1003.2 mailing list from
      * Phong Vo (kpv@research.att.com) and Glenn Fowler (gsf@research.att.com).
      * Landon Curt Noll (chongo@toad.com) later improved on their
      * algorithm to come up with Fowler/Noll/Vo hash.
@@ -239,7 +239,7 @@ fnv64_str(char *str, fnv64 *hval)
      * The 32 hash was able to process 234936 words from the web2 dictionary
      * without any 32 bit collisions using a constant of 16777619 = 0x1000193.
      *
-     * The 64 bit hases uses 1099511628211 = 0x100000001b3 instead.
+     * The 64 bit hash uses 1099511628211 = 0x100000001b3 instead.
      *
      * See:
      *		http://reality.sgi.com/chongo/tech/comp/fnv/index.html
@@ -249,13 +249,13 @@ fnv64_str(char *str, fnv64 *hval)
      */
 #if defined(HAVE_64BIT_LONG_LONG)
 
-    /* 
-     * setup the initial hash value 
+    /*
+     * setup the initial hash value
      */
     ret = (hval ? *hval : (fnv64)0);
 
-    /* 
-     * hash each octet of the buffer 
+    /*
+     * hash each octet of the buffer
      */
     while (*str) {
 
@@ -287,8 +287,8 @@ fnv64_str(char *str, fnv64 *hval)
 	val[0] = val[1] = val[2] = val[3] = (unsigned long)0;
     }
 
-    /* 
-     * hash each octet of the buffer 
+    /*
+     * hash each octet of the buffer
      */
     while (*str) {
 
