@@ -2,8 +2,8 @@
 #
 # hash - makefile for hash tools
 #
-# @(#) $Revision: 2.8 $
-# @(#) $Id: Makefile,v 2.8 1999/10/23 09:45:28 chongo Exp chongo $
+# @(#) $Revision: 3.1 $
+# @(#) $Id: Makefile,v 3.1 1999/10/23 09:59:04 chongo Exp chongo $
 # @(#) $Source: /usr/local/src/lib/libfnv/RCS/Makefile,v $
 #
 # See:
@@ -36,6 +36,8 @@
 SHELL= /bin/sh
 CFLAGS= -g3
 #CFLAGS= -O2 -g3
+#CFLAGS= -g3 -DZERO_BASED
+#CFLAGS= -O2 -g3 -DZERO_BASED
 CC= cc
 AR= ar
 TAR= tar
@@ -138,7 +140,7 @@ install: libfnv.a
 	    echo "	mkdir -p ${DESTINC}"; \
 	    mkdir -p ${DESTINC}; \
 	fi
-	${INSTALL} -m 0755 ${PROGS} ${DESTLIB}
+	${INSTALL} -m 0755 ${PROGS} ${DESTBIN}
 	${INSTALL} -m 0644 ${LIBS} ${DESTLIB}
 	${RANLIB} ${DESTLIB}/libfnv.a
 	${INSTALL} -m 0644 ${HSRC} ${DESTINC}
@@ -156,9 +158,53 @@ install: libfnv.a
 	fi					# WWW
 
 clean:
-	-rm -f have_ulong64 have_ulong64.o ll_tmp longlong.h
+	-rm -f have_ulong64 have_ulong64.o ll_tmp ll_tmp2 longlong.h
 	-rm -f h32.o h64.o fnv32.o fnv64.o
 	-rm -f fnv_hash.tar.gz Makefile.ship	# WWW
 
 clobber: clean
 	-rm -f ${TARGETS}
+
+check: all
+	@echo "	These tests should not print an un-indented hash value:"
+	@echo
+	@echo "	fnv32 -s hi == 0x6977223c"
+	-@./fnv32 -s hi | ${EGREP} -v 0x6977223c; /bin/true
+	@echo "	fnv32 -s hello == 0xb6fa7167"
+	-@./fnv32 -s hello | ${EGREP} -v 0xb6fa7167; /bin/true
+	@echo "	fnv32 -s curds and whey == 0x08ebf912"
+	-@./fnv32 -s curds and whey | ${EGREP} -v 0x08ebf912; /bin/true
+	@echo "	fnv64 -s hi == 0x08326007b4eb2b9c"
+	-@./fnv64 -s hi | ${EGREP} -v 0x08326007b4eb2b9c; /bin/true
+	@echo "	fnv64 -s hello == 0x7b495389bdbdd4c7"
+	-@./fnv64 -s hello | ${EGREP} -v 0x7b495389bdbdd4c7; /bin/true
+	@echo "	fnv64 -s curds and whey == 0x795ad7b2d9a7dc72"
+	-@./fnv64 -s curds and whey | ${EGREP} -v 0x795ad7b2d9a7dc72; /bin/true
+	-@rm -f ll_tmp ll_tmp2
+	-@echo line 1 > ll_tmp
+	-@echo line 2 >> ll_tmp
+	-@echo line 3 >> ll_tmp
+	@echo "	fnv32 < ll_tmp == 0xb8cbeb33"
+	-@./fnv32 < ll_tmp | ${EGREP} -v 0xb8cbeb33; /bin/true
+	@echo "	fnv64 < ll_tmp == 0x79dcad190c3291b3"
+	-@./fnv64 < ll_tmp | ${EGREP} -v 0x79dcad190c3291b3; /bin/true
+	@echo "	fnv32 ll_tmp == 0xb8cbeb33"
+	-@./fnv32 ll_tmp | ${EGREP} -v 0xb8cbeb33; /bin/true
+	@echo "	fnv64 ll_tmp == 0x79dcad190c3291b3"
+	-@./fnv64 ll_tmp | ${EGREP} -v 0x79dcad190c3291b3; /bin/true
+	@echo "	fnv32 ll_tmp ll_tmp == 0x08ae22e5"
+	-@./fnv32 ll_tmp ll_tmp | ${EGREP} -v 0x08ae22e5; /bin/true
+	@echo "	fnv64 ll_tmp ll_tmp == 0x10a587a0ff68f305"
+	-@./fnv64 ll_tmp ll_tmp | ${EGREP} -v 0x10a587a0ff68f305; /bin/true
+	-@dd if=/dev/zero bs=1024k count=4 of=ll_tmp2 >/dev/null 2>&1
+	@echo "	fnv32 ll_tmp ll_tmp2 == 0x23cbeb33"
+	-@./fnv32 ll_tmp ll_tmp2 | ${EGREP} -v 0x23cbeb33; /bin/true
+	@echo "	fnv64 ll_tmp ll_tmp2 == 0xcafae19b7f3291b3"
+	-@./fnv64 ll_tmp ll_tmp2 | ${EGREP} -v 0xcafae19b7f3291b3; /bin/true
+	@echo "	fnv32 ll_tmp2 ll_tmp2 == 0x1b1c9dc5"
+	-@./fnv32 ll_tmp2 ll_tmp2 | ${EGREP} -v 0x1b1c9dc5; /bin/true
+	@echo "	fnv64 ll_tmp2 ll_tmp2 == 0x637a2df54e222325"
+	-@./fnv64 ll_tmp2 ll_tmp2 | ${EGREP} -v 0x637a2df54e222325; /bin/true
+	-@rm -f ll_tmp ll_tmp2
+	@echo
+	@echo "	All done!"

@@ -1,8 +1,8 @@
 /*
  * fnv64 - 64 bit Fowler/Noll/Vo hash of a string or rile
  *
- * @(#) $Revision: 2.1 $
- * @(#) $Id: fnv64.c,v 2.1 1999/10/23 09:43:59 chongo Exp chongo $
+ * @(#) $Revision: 3.1 $
+ * @(#) $Id: fnv64.c,v 3.1 1999/10/23 09:59:04 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/lib/libfnv/RCS/fnv64.c,v $
  *
  * usage:
@@ -145,9 +145,9 @@ main(int argc, char *argv[])
      * report hash and exit
      */
 #if defined(HAVE_64BIT_LONG_LONG)
-    printf("0x%16llx\n", hval);
+    printf("0x%016llx\n", hval);
 #else
-    printf("0x%08x%08x\n", hval->w32[1], hval->w32[0]);
+    printf("0x%08lx%08lx\n", hval.w32[1], hval.w32[0]);
 #endif
     return 0;	/* exit(0); */
 }

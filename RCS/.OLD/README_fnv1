@@ -1,9 +1,18 @@
 Fowler/Noll/Vo hash
 
+
+#========================#
+# Source Code Repository #
+#========================#
+
 See:
  	http://reality.sgi.com/chongo/tech/comp/fnv/index.html
 
 for the most up to date copy of this code and the FNV hash home page.
+
+Comments, questions, bug fixes and suggestions welcome at:
+
+    chongo_fnv@prime.engr.sgi.com
 
 
 #==================#

@@ -1,8 +1,8 @@
 /*
  * h32 - 32 bit Fowler/Noll/Vo hash code
  *
- * @(#) $Revision: 2.12 $
- * @(#) $Id: h32.c,v 2.12 1999/10/23 09:44:31 chongo Exp chongo $
+ * @(#) $Revision: 3.1 $
+ * @(#) $Id: h32.c,v 3.1 1999/10/23 09:59:04 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/lib/libfnv/RCS/h32.c,v $
  *
  * See:
@@ -42,6 +42,45 @@
 
 
 /*
+ * We start the hash at a non-zero value at the beginning so that
+ * hashing blocks of data with all 0 bits do not map onto the same
+ * 0 hash value.  The virgin value that we use below is the hash value
+ * that we would get from following 32 ASCII characters:
+ *
+ *		chongo <Landon Curt Noll> /\../\
+ *
+ * Note that the \'s above are not back-slashing escape characters.
+ * They are literal ASCII  backslash 0x5c characters.
+ *
+ * The effect of this virgin initial value is the same as starting
+ * with 0 and pre-pending those 32 characters onto the data being
+ * hashed.
+ *
+ * Yes, even with this non-zero virgin value there is a set of data
+ * that will result in a zero hash value.  Worse, appending any
+ * about of zero bytes will continue to produce a zero hash value.
+ * But that would happen with any initial value so long as the
+ * hash of the initial was the `inverse' of the virgin prefix string.
+ *
+ * But then again for any hash function, there exists sets of data
+ * which that the hash of every member is the same value.  That is
+ * life with many to few mapping functions.  All we do here is to
+ * prevent sets whose members consist of 0 or more bytes of 0's from
+ * being such an awkward set.
+ *
+ * And yes, someone can figure out what the magic 'inverse' of the
+ * 32 ASCII character are ... but this hash function is NOT intended
+ * to be a cryptographic hash function, just a fast and reasonably
+ * good hash function.
+ */
+#if defined(ZERO_BASED)
+static fnv32 virgin = 0;
+#else
+static fnv32 virgin = 0x811c9dc5;
+#endif
+
+
+/*
  * hash_buf - perform a 32 bit Fowler/Noll/Vo hash on a buffer
  *
  * input:
@@ -76,6 +115,11 @@ fnv32_buf(char *buf, int len, fnv32 *hval)
     char *buf_end = buf+len;	/* beyond end of hash area */
 
     /*
+     * load or initialize hash value
+     */
+    val = (hval ? *hval : virgin);
+
+    /*
      * Fowler/Noll/Vo hash - hash each character in the buffer
      *
      * The basis of the hash algorithm was taken from an idea
@@ -92,7 +136,6 @@ fnv32_buf(char *buf, int len, fnv32 *hval)
      *
      * for the most up to date copy of this code and the FNV hash home page.
      */
-    val = (hval ? *hval : (fnv32)0);
     while (buf < buf_end) {
 
 	/* multiply by 16777619 mod 2^32 using 32 bit longs */
@@ -147,6 +190,11 @@ fnv32_str(char *str, fnv32 *hval)
     fnv32 val;			/* current hash value */
 
     /*
+     * load or initialize hash value
+     */
+    val = (hval ? *hval : virgin);
+
+    /*
      * Fowler/Noll/Vo hash - hash each character in the string
      *
      * The basis of the hash algorithm was taken from an idea
@@ -163,7 +211,6 @@ fnv32_str(char *str, fnv32 *hval)
      *
      * for the most up to date copy of this code and the FNV hash home page.
      */
-    val = (hval ? *hval : (fnv32)0);
     while (*str) {
 
 	/* multiply by 16777619 mod 2^32 using 32 bit longs */
@@ -201,9 +248,13 @@ fnv32_fd(int fd, fnv32 *hval)
     fnv32 val;			/* current hash value */
 
     /*
+     * load or initialize hash value
+     */
+    val = (hval ? *hval : virgin);
+
+    /*
      * hash until EOF
      */
-    val = (hval ? *hval : (fnv32)0);
     while ((readcnt = read(fd, buf, BUF_SIZE)) > 0) {
 	(void) fnv32_buf(buf, readcnt, &val);
     }

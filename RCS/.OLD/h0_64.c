@@ -1,8 +1,8 @@
 /*
  * h64 - 64 bit Fowler/Noll/Vo64 hash code
  *
- * @(#) $Revision: 2.4 $
- * @(#) $Id: h64.c,v 2.4 1999/10/23 09:44:31 chongo Exp chongo $
+ * @(#) $Revision: 3.1 $
+ * @(#) $Id: h64.c,v 3.1 1999/10/23 09:59:04 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/lib/libfnv/RCS/h64.c,v $
  *
  * See:
@@ -39,6 +39,53 @@
 #include "fnv.h"
 
 #define BUF_SIZE (32*1024)	/* number of bytes to hash at a time */
+
+
+/*
+ * We start the hash at a non-zero value at the beginning so that
+ * hashing blocks of data with all 0 bits do not map onto the same
+ * 0 hash value.  The virgin value that we use below is the hash value
+ * that we would get from following 32 ASCII characters:
+ *
+ *		chongo <Landon Curt Noll> /\../\
+ *
+ * Note that the \'s above are not back-slashing escape characters.
+ * They are literal ASCII  backslash 0x5c characters.
+ *
+ * The effect of this virgin initial value is the same as starting
+ * with 0 and pre-pending those 32 characters onto the data being
+ * hashed.
+ *
+ * Yes, even with this non-zero virgin value there is a set of data
+ * that will result in a zero hash value.  Worse, appending any
+ * about of zero bytes will continue to produce a zero hash value.
+ * But that would happen with any initial value so long as the
+ * hash of the initial was the `inverse' of the virgin prefix string.
+ *
+ * But then again for any hash function, there exists sets of data
+ * which that the hash of every member is the same value.  That is
+ * life with many to few mapping functions.  All we do here is to
+ * prevent sets whose members consist of 0 or more bytes of 0's from
+ * being such an awkward set.
+ *
+ * And yes, someone can figure out what the magic 'inverse' of the
+ * 32 ASCII character are ... but this hash function is NOT intended
+ * to be a cryptographic hash function, just a fast and reasonably
+ * good hash function.
+ */
+#if defined(ZERO_BASED)
+# if defined(HAVE_64BIT_LONG_LONG)
+static fnv64 virgin = 0;
+# else
+static fnv64 virgin = { 0, 0 };
+# endif
+#else
+# if defined(HAVE_64BIT_LONG_LONG)
+static fnv64 virgin = 0xcbf29ce484222325;
+# else
+static fnv64 virgin = { 0x84222325, 0xcbf29ce4 };
+# endif
+#endif
 
 
 /*
@@ -102,9 +149,9 @@ fnv64_buf(char *buf, int len, fnv64 *hval)
 #if defined(HAVE_64BIT_LONG_LONG)
 
     /*
-     * setup the initial hash value
+     * load or initialize hash value
      */
-    ret = (hval ? *hval : (fnv64)0);
+    ret = (hval ? *hval : virgin);
 
     /*
      * hash each octet of the buffer
@@ -136,7 +183,12 @@ fnv64_buf(char *buf, int len, fnv64 *hval)
 	val[3] = (val[2] >> 16);
 	val[2] &= 0xffff;
     } else {
-	val[0] = val[1] = val[2] = val[3] = (unsigned long)0;
+	val[0] = virgin.w32[0];
+	val[1] = (val[0] >> 16);
+	val[0] &= 0xffff;
+	val[2] = virgin.w32[1];
+	val[3] = (val[2] >> 16);
+	val[2] &= 0xffff;
     }
 
     /*
@@ -164,7 +216,7 @@ fnv64_buf(char *buf, int len, fnv64 *hval)
 	val[0] = tmp[0] & 0xffff;
 	tmp[2] += (tmp[1] >> 16);
 	val[1] = tmp[1] & 0xffff;
-	val[3] += (tmp[2] >> 16);
+	val[3] = tmp[3] + (tmp[2] >> 16);
 	val[2] = tmp[2] & 0xffff;
 	/*
 	 * Doing a val[3] &= 0xffff; is not really needed since it simply
@@ -177,8 +229,8 @@ fnv64_buf(char *buf, int len, fnv64 *hval)
     }
 
     /* convert to fnv64 */
-    ret->w32[1] = ((val[3]<<16)&0xffff) + val[2];
-    ret->w32[0] = val[1]<<16 + val[0];
+    ret.w32[1] = ((val[3]<<16) | val[2]);
+    ret.w32[0] = ((val[1]<<16) | val[0]);
 
     /* save the hash if we were given a non-NULL initial hash value */
     if (hval) {
@@ -250,9 +302,9 @@ fnv64_str(char *str, fnv64 *hval)
 #if defined(HAVE_64BIT_LONG_LONG)
 
     /*
-     * setup the initial hash value
+     * load or initialize hash value
      */
-    ret = (hval ? *hval : (fnv64)0);
+    ret = (hval ? *hval : virgin);
 
     /*
      * hash each octet of the buffer
@@ -284,7 +336,12 @@ fnv64_str(char *str, fnv64 *hval)
 	val[3] = (val[2] >> 16);
 	val[2] &= 0xffff;
     } else {
-	val[0] = val[1] = val[2] = val[3] = (unsigned long)0;
+	val[0] = virgin.w32[0];
+	val[1] = (val[0] >> 16);
+	val[0] &= 0xffff;
+	val[2] = virgin.w32[1];
+	val[3] = (val[2] >> 16);
+	val[2] &= 0xffff;
     }
 
     /*
@@ -312,7 +369,7 @@ fnv64_str(char *str, fnv64 *hval)
 	val[0] = tmp[0] & 0xffff;
 	tmp[2] += (tmp[1] >> 16);
 	val[1] = tmp[1] & 0xffff;
-	val[3] += (tmp[2] >> 16);
+	val[3] = tmp[3] + (tmp[2] >> 16);
 	val[2] = tmp[2] & 0xffff;
 	/*
 	 * Doing a val[3] &= 0xffff; is not really needed since it simply
@@ -325,8 +382,8 @@ fnv64_str(char *str, fnv64 *hval)
     }
 
     /* convert to fnv64 */
-    ret->w32[1] = ((val[3]<<16)&0xffff) + val[2];
-    ret->w32[0] = val[1]<<16 + val[0];
+    ret.w32[1] = ((val[3]<<16) | val[2]);
+    ret.w32[0] = ((val[1]<<16) | val[0]);
 
     /* save the hash if we were given a non-NULL initial hash value */
     if (hval) {
@@ -357,18 +414,13 @@ fnv64_fd(int fd, fnv64 *hval)
     fnv64 val;			/* current hash value */
 
     /*
+     * load or initialize hash value
+     */
+    val = (hval ? *hval : virgin);
+
+    /*
      * hash until EOF
      */
-#if defined(HAVE_64BIT_LONG_LONG)
-    val = (hval ? *hval : (fnv64)0);
-#else
-    if (hval) {
-	val = *hval;
-    } else {
-	val->w32[0] = 0;
-	val->w32[1] = 0;
-    }
-#endif
     while ((readcnt = read(fd, buf, BUF_SIZE)) > 0) {
 	(void) fnv64_buf(buf, readcnt, &val);
     }

@@ -1,8 +1,8 @@
 /*
  * fnv32 - 32 bit Fowler/Noll/Vo hash of a string or rile
  *
- * @(#) $Revision: 2.1 $
- * @(#) $Id: fnv32.c,v 2.1 1999/10/23 09:43:59 chongo Exp chongo $
+ * @(#) $Revision: 3.1 $
+ * @(#) $Id: fnv32.c,v 3.1 1999/10/23 09:59:04 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/lib/libfnv/RCS/fnv32.c,v $
  *
  * usage:
@@ -143,6 +143,6 @@ main(int argc, char *argv[])
     /*
      * report hash and exit
      */
-    printf("0x%08x\n", hval);
+    printf("0x%08lx\n", hval);
     return 0;	/* exit(0); */
 }
