@@ -1,8 +1,8 @@
 /*
  * fnv0 - Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 3.4 $
- * @(#) $Id: fnv0.h,v 3.4 1999/10/27 01:53:29 chongo Exp chongo $
+ * @(#) $Revision: 3.5 $
+ * @(#) $Id: fnv0.h,v 3.5 1999/10/27 05:36:12 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv0.h,v $
  *
  ***
@@ -38,17 +38,7 @@
  *
  ***
  *
- * Copyright (C) 1999 Landon Curt Noll, all rights reserved.
- *
- * Permission to use, copy, modify, and distribute this software and
- * its documentation for any purpose and without fee is hereby granted,
- * provided that the above copyright, this permission notice and text
- * this comment, and the disclaimer below appear in all of the following:
- *
- *       supporting documentation
- *       source copies
- *       source works derived from this source
- *       binaries derived from this source or from derived source
+ * Please do not copyright this code.  This code is in the public domain.
  *
  * LANDON CURT NOLL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
  * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO
@@ -58,9 +48,10 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  *
- * chongo <Landon Curt Noll> /\oo/\
- * http://reality.sgi.com/chongo
- * EMail: chongo_fnv at prime dot engr dot sgi dot com
+ * By:
+ *	chongo <Landon Curt Noll> /\oo/\
+ *	http://reality.sgi.com/chongo
+ *	EMail: chongo_fnv at prime dot engr dot sgi dot com
  *
  * Share and Enjoy!	:-)
  */
@@ -72,7 +63,8 @@
 /*
  * 32 bit hash value
  */
-typedef unsigned long fnv32;
+typedef unsigned long Fnv32_t;
+extern const Fnv32_t fnv_32_init;		/* 32 bit FNV-0 initial basis */
 
 
 /*
@@ -85,24 +77,27 @@ typedef unsigned long fnv32;
  * 64 bit hash value
  */
 #if defined(HAVE_64BIT_LONG_LONG)
-typedef unsigned long long fnv64;
+
+typedef unsigned long long Fnv64_t;
+
 #else
-struct s_fnv64 {
+
+struct s_Fnv64 {
     unsigned long w32[2];
 };
-typedef struct s_fnv64 fnv64;
+typedef struct s_Fnv64 Fnv64_t;
+
 #endif
+extern const Fnv64_t fnv_64_init;		/* 64 bit FNV-0 initial basis */
 
 
 /*
  * external functions
  */
-extern fnv32 fnv0_32_buf(char *buf, int len, fnv32 *hval);
-extern fnv32 fnv0_32_str(char *buf, fnv32 *hval);
-extern fnv32 fnv0_32_fd(int fd, fnv32 *hval);
-extern fnv64 fnv0_64_buf(char *buf, int len, fnv64 *hval);
-extern fnv64 fnv0_64_str(char *buf, fnv64 *hval);
-extern fnv64 fnv0_64_fd(int fd, fnv64 *hval);
+extern Fnv32_t fnv0_32_buf(void *buf, size_t len, Fnv32_t hval);
+extern Fnv32_t fnv0_32_str(char *buf, Fnv32_t hval);
+extern Fnv64_t fnv0_64_buf(void *buf, size_t len, Fnv64_t hval);
+extern Fnv64_t fnv0_64_str(char *buf, Fnv64_t hval);
 
 
 #endif /* __FNV0_H__ */
