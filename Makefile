@@ -2,8 +2,8 @@
 #
 # hash - makefile for hash tools
 #
-# @(#) $Revision: 1.8 $
-# @(#) $Id: Makefile,v 1.8 1999/09/26 00:03:43 chongo Exp chongo $
+# @(#) $Revision: 2.1 $
+# @(#) $Id: Makefile,v 2.1 1999/10/18 21:15:52 chongo Exp chongo $
 # @(#) $Source: /usr/local/src/cmd/fnvhash/RCS/Makefile,v $
 #
 # See:
@@ -37,21 +37,30 @@ SHELL= /bin/sh
 CFLAGS= -O2 -g3
 CC= cc
 AR= ar
+GREP= grep
+TAR= tar
+GZIP_BINARY= gzip
+MAKE= make
+INSTALL= install
+
+# If your system needs ranlib use:
+#	RANLIB= ranlib
+# otherwise use:
+#	RANLIB= :
+#
 #RANLIB= ranlib
 RANLIB= :
-LOOK= look
-INSTALL=/sbin/install
 
-# where hash.h will be installed
-#
-DESTINC= /usr/local/include
-
-# where hash.a will be installed
+# where to install things
 #
 DESTLIB= /usr/local/lib
+# NOTE: Lines with WWW in them are removed from the shipped Makefile
+WWW= /usr/local/ns-home/docs/chongo/src/fnv
 
 # what to build
 #
+SRC= h32.c h64.c have_ulong64.c
+ALL= ${SRC} Makefile README
 TARGETS= libfnv.a
 
 # default rule
@@ -97,15 +106,31 @@ longlong.h: have_ulong64.c Makefile
 	-@rm -f have_ulong64 have_ulong64.o ll_tmp
 	@echo 'longlong.h formed'
 
+# NOTE: Lines with WWW in them are removed from the shipped Makefile
+Makefile.ship: Makefile	# WWW
+	rm -f $@	# WWW
+	${GREP} -v WWW Makefile > Makefile.ship
+fnv_hash.tar.gz: ${ALL}
+	${MAKE} Makefile.ship		# WWW
+	rm -f Makefile.save		# WWW
+	ln Makefile Makefile.save	# WWW
+	cp -f Makefile.ship Makefile	# WWW
+	rm -f $@
+	${TAR} -cvf - ${ALL} | ${GZIP_BINARY} --best > fnv_hash.tar.gz
+	mv -f Makefile.save Makefile	# WWW
+
 # utilities
 #
 install: libfnv.a
 	rm -f ${DESTLIB}/libfnv.a
-	${INSTALL} -c -m 0644 libfnv.a ${DESTLIB}
+	${INSTALL} -m 0644 libfnv.a ${DESTLIB}
 	${RANLIB} ${DESTLIB}/libfnv.a
+	${MAKE} fnv_hash.tar.gz		# WWW
+	${INSTALL} -m 0644 fnv_hash.tar.gz ${ALL} ${WWW}
 
 clean:
 	-rm -f h32.o h64.o have_ulong64 have_ulong64.o ll_tmp longlong.h
+	-rm -f fnv_hash.tar.gz Makefile.ship	# WWW
 
 clobber: clean
 	-rm -f ${TARGETS}
