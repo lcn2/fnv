@@ -54,7 +54,7 @@ hash_buf(char *buf, int len, hash *hval)
      * The basis of the hash algorithm was taken from an idea
      * sent by Email to the IEEE Posix P1003.2 mailing list from
      * Phong Vo (kpv@research.att.com) and Glenn Fowler (gsf@research.att.com).
-     * Landon Curt Noll (chongo@toad.com) later improved on there
+     * Landon Curt Noll (chongo@toad.com) later improved on their
      * algorithm to come up with Fowler/Noll/Vo hash.
      *
      * The 32 hash was able to process 234936 words from the web2 dictionary
