@@ -1,8 +1,8 @@
 /*
  * h1_64 - 64 bit Fowler/Noll/Vo-1 hash code
  *
- * @(#) $Revision: 3.7 $
- * @(#) $Id: h1_64.c,v 3.7 1999/10/24 13:15:57 chongo Exp chongo $
+ * @(#) $Revision: 3.8 $
+ * @(#) $Id: h1_64.c,v 3.8 1999/10/27 01:53:29 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/h1_64.c,v $
  *
  ***
@@ -82,7 +82,7 @@
  * good hash function.
  */
 #if defined(HAVE_64BIT_LONG_LONG)
-static fnv64 virgin = 0xcbf29ce484222325;
+static fnv64 virgin = 0xcbf29ce484222325ULL;
 #else
 static fnv64 virgin = { 0x84222325, 0xcbf29ce4 };
 #endif
