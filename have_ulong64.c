@@ -14,17 +14,8 @@
  *		undefined ==> we must simulate a 64 bit unsigned long long
  */
 /*
- * Copyright (c) 1997 by Landon Curt Noll.  All Rights Reserved.
  *
- * Permission to use, copy, modify, and distribute this software and
- * its documentation for any purpose and without fee is hereby granted,
- * provided that the above copyright, this permission notice and text
- * this comment, and the disclaimer below appear in all of the following:
- *
- *	supporting documentation
- *	source copies
- *	source works derived from this source
- *	binaries derived from this source or from derived source
+ * Please do not copyright this code.  This code is in the public domain.
  *
  * LANDON CURT NOLL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
  * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO
@@ -34,7 +25,12 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  *
- * chongo <was here>	/\../\
+ * By:
+ *	chongo <Landon Curt Noll> /\oo/\
+ *	http://reality.sgi.com/chongo
+ *	EMail: chongo_fnv at prime dot engr dot sgi dot com
+ *
+ * Share and Enjoy!	:-)
  */
 
 /*
