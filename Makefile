@@ -24,7 +24,7 @@ all: ${TARGETS}
 
 hash.a: hash.o
 	rm -f hash.a
-	${AR} -rv hash.a hash.o
+	${AR} rv hash.a hash.o
 	${RANLIB} hash.a
 
 test: ${TESTS} words web2 standalone stand
