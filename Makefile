@@ -63,10 +63,10 @@ besthash: besthash.sh
 
 install: hash.a hash.h
 	rm -f ${DESTLIB}/hash.a
-	${INSTALL} -m 0644 hash.a ${DESTLIB}
+	${INSTALL} -c -m 0644 hash.a ${DESTLIB}
 	${RANLIB} ${DESTLIB}/hash.a
 	rm -f ${DESTINC}/hash.h
-	${INSTALL} -m 0644 hash.h ${DESTINC}
+	${INSTALL} -c -m 0644 hash.h ${DESTINC}
 
 clean:
 	-rm -f hash.o hasheval.o
