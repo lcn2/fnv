@@ -1,8 +1,8 @@
 /*
  * fnv_64 - 64 bit Fowler/Noll/Vo hash of a buffer or string
  *
- * @(#) $Revision: 1.3 $
- * @(#) $Id: fnv64.c,v 1.3 1999/11/07 14:04:35 chongo Exp chongo $
+ * @(#) $Revision: 1.4 $
+ * @(#) $Id: fnv64.c,v 1.4 2001/05/30 15:01:06 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv64.c,v $
  *
  ***
@@ -44,7 +44,7 @@
  * and found that it worked rather well.  In an EMail message
  * to Landon, they named it the ``Fowler/Noll/Vo'' or FNV hash.
  *
- * FNV hashes are architected to be fast while maintaining a low
+ * FNV hashes are designed to be fast while maintaining a low
  * collision rate. The FNV speed allows one to quickly hash lots
  * of data while maintaining a reasonable collision rate.  See:
  *
@@ -198,7 +198,7 @@ main(int argc, char *argv[])
     }
 #endif
 
-    /* 
+    /*
      * start with the initial basis depending on the hash type
      */
     p = strrchr(program, '/');

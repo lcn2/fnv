@@ -1,8 +1,8 @@
 /*
  * hash_32 - 32 bit Fowler/Noll/Vo hash code
  *
- * @(#) $Revision: 1.4 $
- * @(#) $Id: hash_32.c,v 1.4 1999/11/07 14:04:35 chongo Exp chongo $
+ * @(#) $Revision: 1.5 $
+ * @(#) $Id: hash_32.c,v 1.5 2001/05/30 15:01:06 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/hash_32.c,v $
  *
  ***
@@ -23,7 +23,7 @@
  * and found that it worked rather well.  In an EMail message
  * to Landon, they named it the ``Fowler/Noll/Vo'' or FNV hash.
  *
- * FNV hashes are architected to be fast while maintaining a low
+ * FNV hashes are designed to be fast while maintaining a low
  * collision rate. The FNV speed allows one to quickly hash lots
  * of data while maintaining a reasonable collision rate.  See:
  *
@@ -64,10 +64,10 @@
 #include "fnv.h"
 
 
-/* 
- * 32 bit magic FNV-0 and FNV-1 prime 
+/*
+ * 32 bit magic FNV-0 and FNV-1 prime
  */
-#define FNV_32_PRIME ((Fnv32_t)0x01000193)	
+#define FNV_32_PRIME ((Fnv32_t)0x01000193)
 
 
 /*

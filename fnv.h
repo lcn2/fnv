@@ -1,8 +1,8 @@
 /*
  * fnv - Fowler/Noll/Vo- hash code
  *
- * @(#) $Revision: 1.2 $
- * @(#) $Id: fnv.h,v 1.2 1999/11/07 14:04:35 chongo Exp chongo $
+ * @(#) $Revision: 1.3 $
+ * @(#) $Id: fnv.h,v 1.3 2001/05/30 15:01:06 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv.h,v $
  *
  ***
@@ -23,7 +23,7 @@
  * and found that it worked rather well.  In an EMail message
  * to Landon, they named it the ``Fowler/Noll/Vo'' or FNV hash.
  *
- * FNV hashes are architected to be fast while maintaining a low
+ * FNV hashes are designed to be fast while maintaining a low
  * collision rate. The FNV speed allows one to quickly hash lots
  * of data while maintaining a reasonable collision rate.  See:
  *
@@ -77,11 +77,11 @@
 typedef unsigned long Fnv32_t;
 
 
-/* 
+/*
  * 32 bit FNV-0 zero initial basis
  *
  * This historic hash is not recommended.  One should use
- * the FNV-1 hash and inital basis instead.
+ * the FNV-1 hash and initial basis instead.
  */
 #define FNV0_32_INIT ((Fnv32_t)0)
 
@@ -121,7 +121,7 @@ typedef struct {
  * 64 bit FNV-0 zero initial basis
  *
  * This historic hash is not recommended.  One should use
- * the FNV-1 hash and inital basis instead.
+ * the FNV-1 hash and initial basis instead.
  */
 #if defined(HAVE_64BIT_LONG_LONG)
 #define FNV0_64_INIT ((Fnv64_t)0)

@@ -16,7 +16,7 @@ improved on their algorithm.  Some people tried this hash
 and found that it worked rather well.  In an EMail message
 to Landon, they named it the ``Fowler/Noll/Vo'' or FNV hash.
 
-FNV hashes are architected to be fast while maintaining a low
+FNV hashes are designed to be fast while maintaining a low
 collision rate. The FNV speed allows one to quickly hash lots
 of data while maintaining a reasonable collision rate.  See:
 
@@ -51,7 +51,7 @@ or:
  	-v	  verbose mode, print arg after hash (implies -m)
 	arg	  string (if -s was given) or filename (default stdin)
 
-These serve as examples of how to use the FNV hash library.  For those 
+These serve as examples of how to use the FNV hash library.  For those
 who do not like _'s, the same tools exist without the _ are provided.  :-)
 
 The fnv0_32, fnv0_64 (fnv032, fnv064) implement the historic FNV-0 hash.

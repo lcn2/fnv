@@ -1,8 +1,8 @@
 /*
  * hash_64 - 64 bit Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 1.5 $
- * @(#) $Id: hash_64.c,v 1.5 1999/11/07 14:04:35 chongo Exp chongo $
+ * @(#) $Revision: 1.6 $
+ * @(#) $Id: hash_64.c,v 1.6 2001/05/30 15:01:06 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/hash_64.c,v $
  *
  ***
@@ -23,7 +23,7 @@
  * and found that it worked rather well.  In an EMail message
  * to Landon, they named it the ``Fowler/Noll/Vo'' or FNV hash.
  *
- * FNV hashes are architected to be fast while maintaining a low
+ * FNV hashes are designed to be fast while maintaining a low
  * collision rate. The FNV speed allows one to quickly hash lots
  * of data while maintaining a reasonable collision rate.  See:
  *
@@ -81,8 +81,8 @@ const Fnv64_t fnv1_64_init = { 0x84222325, 0xcbf29ce4 };
 #endif
 
 
-/* 
- * 64 bit magic FNV-0 and FNV-1 prime 
+/*
+ * 64 bit magic FNV-0 and FNV-1 prime
  */
 #if defined(HAVE_64BIT_LONG_LONG)
 #define FNV_64_PRIME ((Fnv64_t)0x100000001b3ULL)
@@ -168,7 +168,7 @@ fnv_64_buf(void *buf, size_t len, Fnv64_t hval)
 	/* multiply by the other non-zero digit */
 	tmp[2] += val[0] << FNV_64_PRIME_SHIFT;	/* tmp[2] += val[0] * 0x100 */
 	tmp[3] += val[1] << FNV_64_PRIME_SHIFT;	/* tmp[3] += val[1] * 0x100 */
-	/* proapage carries */
+	/* propagate carries */
 	tmp[1] += (tmp[0] >> 16);
 	val[0] = tmp[0] & 0xffff;
 	tmp[2] += (tmp[1] >> 16);
@@ -272,7 +272,7 @@ fnv_64_str(char *str, Fnv64_t hval)
 	/* multiply by the other non-zero digit */
 	tmp[2] += val[0] << FNV_64_PRIME_SHIFT;	/* tmp[2] += val[0] * 0x100 */
 	tmp[3] += val[1] << FNV_64_PRIME_SHIFT;	/* tmp[3] += val[1] * 0x100 */
-	/* proapage carries */
+	/* propagate carries */
 	tmp[1] += (tmp[0] >> 16);
 	val[0] = tmp[0] & 0xffff;
 	tmp[2] += (tmp[1] >> 16);
