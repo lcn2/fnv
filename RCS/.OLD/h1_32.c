@@ -21,7 +21,7 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-char *fnv_copyright=""@(#) $Revision$ $Date$ : Fowler/Noll/Vo hash: Copyright (C) 1997 Landon Curt Noll, all rights reserved. Used in InterNetNews by permission.";
+char *fnv_copyright="@(#) $Revision$ $Date$ : Fowler/Noll/Vo hash: Copyright (C) 1997 Landon Curt Noll, all rights reserved. Used in InterNetNews by permission.";
 
 
 /*
@@ -45,11 +45,12 @@ hash
 hash_buf(char *buf, int len, hash *hval)
 {
     unsigned long val;		/* current hash value */
-    char c;			/* the current string character */
+    char *buf_end = buf+len;	/* beyond end of hash area */
+    char c;			/* the current bufing character */
     int i;
 
     /*
-     * Fowler/Noll/Vo hash - hash each character in the string
+     * Fowler/Noll/Vo hash - hash each character in the bufing
      *
      * The basis of the hash algorithm was taken from an idea
      * sent by Email to the IEEE Posix P1003.2 mailing list from
@@ -60,11 +61,7 @@ hash_buf(char *buf, int len, hash *hval)
      * The 32 hash was able to process 234936 words from the web2 dictionary
      * without any 32 bit collisions using a constant of 16777619 = 0x1000193.
      */
-    /* setup */
-    val = 0;
-
-    /* hash each octet of the buffer */
-    for (i = 0; i < len; ++i, ++buf) {
+    for (val = 0; buf < buf_end; ++buf) {
 
 	/* multiply by 16777619 mod 2^32 using 32 bit longs */
 	val *= 16777619;

@@ -58,6 +58,7 @@ hash_buf(char *buf, int len, hash64 *hval)
     unsigned long tmp[4];	/* tmp 64 bit value */
     int j;
 #endif
+    char *buf_end = buf+len;	/* beyond end of hash area */
     char c;			/* the current string character */
     int i;
 
@@ -76,12 +77,8 @@ hash_buf(char *buf, int len, hash64 *hval)
      * The 64 bit hases uses 1099511628211 = 0x100000001b3 instead.
      */
 #if defined(HAVE_64BIT_LONG_LONG)
-
-    /* setup */
-    val = 0;
-
     /* hash each octet of the buffer */
-    for (i = 0; i < len; ++i, ++buf) {
+    for (val = 0; buf < buf_end; ++buf) {
 
 	/* multiply by 1099511628211ULL mod 2^64 using 64 bit longs */
 	val *= 1099511628211ULL;
@@ -95,13 +92,8 @@ hash_buf(char *buf, int len, hash64 *hval)
 
 #else
 
-    /* setup */
-    for (i=0; i < 4; ++i) {
-	val[i] = 0;
-    }
-
     /* hash each octet of the buffer */
-    for (i=0; i < len; ++i, ++buf) {
+    for (val[0]=val[1]=val[2]=val[3]=0; buf < buf_end; ++buf) {
 
 	/* 
 	 * multiply by 1099511628211 mod 2^64 using 32 bit longs 
