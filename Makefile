@@ -9,7 +9,7 @@ AR= ar
 #RANLIB= ranlib
 RANLIB= :
 LOOK= look
-INSTALL=/usr/bin/install
+INSTALL=/sbin/install
 
 # where hash.h will be installed
 DESTINC= /usr/local/include
