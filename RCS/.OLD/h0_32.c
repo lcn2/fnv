@@ -1,13 +1,13 @@
-/* $Id: h32.c,v 2.8 1999/09/26 00:03:43 chongo Exp chongo $  */
+/* $Id: h32.c,v 2.9 1999/10/18 21:44:33 chongo Exp chongo $  */
 /*
  * hash32 - 32 bit Fowler/Noll/Vo hash code
  *
- * @(#) $Revision: 2.8 $
- * @(#) $Id: h32.c,v 2.8 1999/09/26 00:03:43 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/cmd/fnvhash/RCS/h32.c,v $
+ * @(#) $Revision: 2.9 $
+ * @(#) $Id: h32.c,v 2.9 1999/10/18 21:44:33 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src/cmd/fnv/RCS/h32.c,v $
  *
  * See:
- *	http://reality.sgi.com/chongo/fnv/index.html
+ *	http://reality.sgi.com/chongo/tech/comp/fnv/index.html
  *
  * for the most up to date copy of this code and the FNV hash home page.
  *

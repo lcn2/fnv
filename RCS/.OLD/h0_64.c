@@ -1,12 +1,12 @@
 /*
  * hash64 - 64 bit Fowler/Noll/Vo64 hash code
  *
- * @(#) $Revision: 1.11 $
- * @(#) $Id: h64.c,v 1.11 1999/09/26 00:03:43 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/cmd/fnvhash/RCS/h64.c,v $
+ * @(#) $Revision: 2.1 $
+ * @(#) $Id: h64.c,v 2.1 1999/10/18 21:15:52 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src/cmd/fnv/RCS/h64.c,v $
  *
  * See:
- *	http://reality.sgi.com/chongo/fnv/index.html
+ *	http://reality.sgi.com/chongo/tech/comp/fnv/index.html
  *
  * for the most up to date copy of this code and the FNV hash home page.
  *

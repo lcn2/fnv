@@ -2,12 +2,12 @@
 #
 # hash - makefile for hash tools
 #
-# @(#) $Revision: 2.2 $
-# @(#) $Id: Makefile,v 2.2 1999/10/18 21:44:45 chongo Exp chongo $
-# @(#) $Source: /usr/local/src/cmd/fnvhash/RCS/Makefile,v $
+# @(#) $Revision: 2.5 $
+# @(#) $Id: Makefile,v 2.5 1999/10/18 22:00:16 chongo Exp chongo $
+# @(#) $Source: /usr/local/src/cmd/fnv/RCS/Makefile,v $
 #
 # See:
-#	http://reality.sgi.com/chongo/fnv/index.html
+#	http://reality.sgi.com/chongo/tech/comp/fnv/index.html
 #
 # for the most up to date copy of this code and the FNV hash home page.
 #
