@@ -1,8 +1,8 @@
 /*
  * hash_64 - 64 bit Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 1.1 $
- * @(#) $Id: hash_64.c,v 1.1 1999/10/29 07:35:40 chongo Exp chongo $
+ * @(#) $Revision: 1.2 $
+ * @(#) $Id: hash_64.c,v 1.2 1999/10/29 08:30:31 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/hash_64.c,v $
  *
  ***
@@ -218,18 +218,20 @@ fnv_64_buf(void *buf, size_t len, Fnv64_t hval)
 Fnv64_t
 fnv_64_str(char *str, Fnv64_t hval)
 {
+    unsigned char *s = (unsigned char)str;	/* unsigned string */
+
 #if defined(HAVE_64BIT_LONG_LONG)
 
     /*
      * FNV-1 hash each octet of the string
      */
-    while (*str) {
+    while (*s) {
 
 	/* multiply by the 64 bit FNV magic prime mod 2^64 */
 	hval *= FNV_64_PRIME;
 
 	/* xor the bottom with the current octet */
-	hval ^= (Fnv64_t)*str++;
+	hval ^= (Fnv64_t)*s++;
     }
 
 #else /* !HAVE_64BIT_LONG_LONG */
@@ -250,7 +252,7 @@ fnv_64_str(char *str, Fnv64_t hval)
     /*
      * FNV-1 hash each octet of the string
      */
-    while (*str) {
+    while (*s) {
 
 	/*
 	 * multiply by the 64 bit FNV magic prime mod 2^64
@@ -285,7 +287,7 @@ fnv_64_str(char *str, Fnv64_t hval)
 	 */
 
 	/* xor the bottom with the current octet */
-	val[0] ^= (unsigned long)(*str++);
+	val[0] ^= (unsigned long)(*s++);
     }
 
     /*
