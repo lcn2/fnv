@@ -1,8 +1,8 @@
 /*
  * h_64 - 64 bit Fowler/Noll/Vo hash code
  *
- * @(#) $Revision: 3.3 $
- * @(#) $Id: h_64.c,v 3.3 1999/10/23 13:14:40 chongo Exp chongo $
+ * @(#) $Revision: 3.4 $
+ * @(#) $Id: h_64.c,v 3.4 1999/10/24 00:05:01 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/h_64.c,v $
  *
  * See:
@@ -133,7 +133,7 @@ fnv_64_buf(char *buf, int len, fnv64 *hval)
      * The basis of the hash algorithm was taken from an idea
      * sent by Email to the IEEE POSIX P1003.2 mailing list from
      * Phong Vo (kpv@research.att.com) and Glenn Fowler (gsf@research.att.com).
-     * Landon Curt Noll (chongo@toad.com) later improved on their
+     * Landon Curt Noll (http://reality.sgi.com/chongo) later improved on their
      * algorithm to come up with Fowler/Noll/Vo hash.
      *
      * The 32 hash was able to process 234936 words from the web2 dictionary
@@ -286,7 +286,7 @@ fnv_64_str(char *str, fnv64 *hval)
      * The basis of the hash algorithm was taken from an idea
      * sent by Email to the IEEE POSIX P1003.2 mailing list from
      * Phong Vo (kpv@research.att.com) and Glenn Fowler (gsf@research.att.com).
-     * Landon Curt Noll (chongo@toad.com) later improved on their
+     * Landon Curt Noll (http://reality.sgi.com/chongo) later improved on their
      * algorithm to come up with Fowler/Noll/Vo hash.
      *
      * The 32 hash was able to process 234936 words from the web2 dictionary
