@@ -15,7 +15,7 @@
  */
 
 #include <stdio.h>
-#include <string.h>
+#include <memory.h>
 #include <ctype.h>
 
 #define CHUNK 65536		/* number of elements to malloc at a time */
@@ -29,10 +29,12 @@ long mult;			/* Vo/Fowler/Noll multiplier */
 #endif /* FOWLER_NOLL_VO */
 
 char alphabet[] = 
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'&-.";
+    "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
+#if 0
 extern void *malloc();
 extern void *realloc();
+#endif
 
 int hash_cmp();		/* compare two hash values */
 void hash_str();	/* add hash of string to the hashval table */

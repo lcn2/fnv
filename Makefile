@@ -3,10 +3,11 @@
 # hash - makefile for hash tools
 
 SHELL= /bin/sh
-CFLAGS= -O
-CC= gcc
+CFLAGS= -O2 -g3
+CC= cc
 AR= ar
-RANLIB= ranlib
+#RANLIB= ranlib
+RANLIB= :
 LOOK= look
 INSTALL=/usr/bin/install
 
@@ -15,6 +16,10 @@ DESTINC= /usr/local/include
 
 # where hash.a will be installed
 DESTLIB= /usr/local/lib
+
+# where the dictionary is found
+#WORDS= /usr/share/lib/dict/words
+WORDS= ./Message.ID
 
 TRIALS= fowler.vo1 fowler.vo2 fowler.noll.vo
 TESTS= ${TRIALS} besthash standalone
@@ -27,22 +32,16 @@ hash.a: hash.o
 	${AR} rv hash.a hash.o
 	${RANLIB} hash.a
 
-test: ${TESTS} words web2 standalone stand
+test: ${TESTS} words #standalone stand
 
-words: /usr/dict/words
+words: ${WORDS}
 	-@for i in ${TRIALS}; do \
-	    echo "$$i < /usr/dict/words"; \
-	    $$i < /usr/dict/words; \
-	done
-
-web2: /usr/share/dict/web2
-	-@for i in ${TRIALS}; do \
-	    echo "$$i < /usr/share/dict/web2"; \
-	    $$i < /usr/share/dict/web2; \
+	    echo "$$i < ${WORDS}"; \
+	    ./$$i < ${WORDS}; \
 	done
 
 stand: standalone
-	${LOOK} ya | ./standalone
+	grep '^ya' ${WORDS} | ./standalone
 
 standalone: hash.c hash.h
 	${CC} ${CFLAGS} hash.c -DFOWLER_NOLL_VO -DSTANDALONE -o standalone
