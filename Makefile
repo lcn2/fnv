@@ -2,8 +2,8 @@
 #
 # hash - makefile for hash tools
 #
-# @(#) $Revision: 2.6 $
-# @(#) $Id: Makefile,v 2.6 1999/10/19 06:15:45 chongo Exp chongo $
+# @(#) $Revision: 2.7 $
+# @(#) $Id: Makefile,v 2.7 1999/10/23 08:14:29 chongo Exp $
 # @(#) $Source: /usr/local/src/lib/libfnv/RCS/Makefile,v $
 #
 # See:
@@ -34,13 +34,13 @@
 # make tools
 #
 SHELL= /bin/sh
-CFLAGS= -O2 -g3
+CFLAGS= -g3
+#CFLAGS= -O2 -g3
 CC= cc
 AR= ar
-GREP= grep
 TAR= tar
+EGREP= egrep
 GZIP_BIN= gzip
-MAKE= make
 INSTALL= install
 
 # If your system needs ranlib use:
@@ -53,17 +53,20 @@ RANLIB= :
 
 # where to install things
 #
+DESTBIN= /usr/local/bin
 DESTLIB= /usr/local/lib
-INCDIR= /usr/local/include
+DESTINC= /usr/local/include
 # NOTE: Lines with WWW in them are removed from the shipped Makefile
 WWW= /usr/local/ns-home/docs/chongo/src/fnv
 
 # what to build
 #
-SRC= h32.c h64.c have_ulong64.c
+SRC= h32.c h64.c have_ulong64.c fnv32.c fnv64.c
 HSRC= longlong.h fnv.h
 ALL= ${SRC} fnv.h Makefile README
-TARGETS= libfnv.a
+PROGS= fnv32 fnv64
+LIBS= libfnv.a
+TARGETS= ${LIBS} ${PROGS}
 
 # default rule
 #
@@ -81,6 +84,18 @@ libfnv.a: h32.o h64.o
 	rm -f $@
 	${AR} rv $@ h32.o h64.o
 	${RANLIB} $@
+
+fnv32.o: fnv32.c longlong.h fnv.h
+	${CC} ${CFLAGS} fnv32.c -c
+
+fnv32: fnv32.o libfnv.a
+	${CC} fnv32.o libfnv.a -o fnv32
+
+fnv64.o: fnv64.c longlong.h fnv.h
+	${CC} ${CFLAGS} fnv64.c -c
+
+fnv64: fnv64.o libfnv.a
+	${CC} fnv64.o libfnv.a -o fnv64
 
 longlong.h: have_ulong64.c Makefile
 	-@rm -f have_ulong64 have_ulong64.o ll_tmp longlong.h
@@ -111,21 +126,26 @@ longlong.h: have_ulong64.c Makefile
 # utilities
 #
 install: libfnv.a
+	-@if [ -d "${DESTBIN}" ]; then \
+	    echo "	mkdir -p ${DESTBIN}"; \
+	    mkdir -p ${DESTBIN}; \
+	fi
 	-@if [ -d "${DESTLIB}" ]; then \
 	    echo "	mkdir -p ${DESTLIB}"; \
 	    mkdir -p ${DESTLIB}; \
 	fi
-	-@if [ -d "${INCDIR}" ]; then \
-	    echo "	mkdir -p ${INCDIR}"; \
-	    mkdir -p ${INCDIR}; \
+	-@if [ -d "${DESTINC}" ]; then \
+	    echo "	mkdir -p ${DESTINC}"; \
+	    mkdir -p ${DESTINC}; \
 	fi
-	${INSTALL} -m 0644 libfnv.a ${DESTLIB}
+	${INSTALL} -m 0755 ${PROGS} ${DESTLIB}
+	${INSTALL} -m 0644 ${LIBS} ${DESTLIB}
 	${RANLIB} ${DESTLIB}/libfnv.a
-	${INSTALL} -m 0644 ${HSRC} ${INCDIR}
+	${INSTALL} -m 0644 ${HSRC} ${DESTINC}
 	# NOTE: Lines with WWW in them are removed from the shipped Makefile
 	-if [ -d ${WWW} ]; then \
 	    rm -f Makefile.ship			# WWW; \
-	    ${GREP} -v WWW Makefile > Makefile.ship 	# WWW; \
+	    ${EGREP} -v WWW Makefile > Makefile.ship 	# WWW; \
 	    rm -f Makefile.save			# WWW; \
 	    ln Makefile Makefile.save		# WWW; \
 	    cp -f Makefile.ship Makefile	# WWW; \
@@ -141,9 +161,3 @@ clean:
 
 clobber: clean
 	-rm -f ${TARGETS}
-
-
-# dependency
-#
-h32.o: fnv.h longlong.h
-h64.o: fnv.h longlong.h
