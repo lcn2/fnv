@@ -1,9 +1,9 @@
 /*
  * fnv32 - 32 bit Fowler/Noll/Vo hash of a buffer or string
  *
- * @(#) $Revision: 1.1 $
- * @(#) $Id: fnv32.c,v 1.1 1999/10/29 07:35:40 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv32.c,v $
+ * @(#) $Revision: 1.2 $
+ * @(#) $Id: fnv32.c,v 1.2 1999/10/29 18:06:14 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src.lehmer/cmd/fnv/RCS/fnv32.c,v $
  *
  ***
  *
@@ -33,12 +33,12 @@
  * The basis of this hash algorithm was taken from an idea sent
  * as reviewer comments to the IEEE POSIX P1003.2 committee by:
  *
- *      Phong Vo (http://www.research.att.com/info/kpv)
+ *      Phong Vo (http://www.research.att.com/info/kpv/)
  *      Glenn Fowler (http://www.research.att.com/~gsf/)
  *
  * In a subsequent ballot round:
  *
- *      Landon Curt Noll (http://reality.sgi.com/chongo)
+ *      Landon Curt Noll (http://reality.sgi.com/chongo/)
  *
  * improved on their algorithm.  Some people tried this hash
  * and found that it worked rather well.  In an EMail message
@@ -66,7 +66,7 @@
  *
  * By:
  *	chongo <Landon Curt Noll> /\oo/\
- *	http://reality.sgi.com/chongo
+ *	http://reality.sgi.com/chongo/
  *	EMail: chongo_fnv at prime dot engr dot sgi dot com
  *
  * Share and Enjoy!	:-)

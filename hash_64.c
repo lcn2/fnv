@@ -1,9 +1,9 @@
 /*
  * hash_64 - 64 bit Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 1.3 $
- * @(#) $Id: hash_64.c,v 1.3 1999/10/29 17:59:15 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/cmd/fnv/RCS/hash_64.c,v $
+ * @(#) $Revision: 1.4 $
+ * @(#) $Id: hash_64.c,v 1.4 1999/10/29 18:00:23 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src.lehmer/cmd/fnv/RCS/hash_64.c,v $
  *
  ***
  *
@@ -12,12 +12,12 @@
  * The basis of this hash algorithm was taken from an idea sent
  * as reviewer comments to the IEEE POSIX P1003.2 committee by:
  *
- *      Phong Vo (http://www.research.att.com/info/kpv)
+ *      Phong Vo (http://www.research.att.com/info/kpv/)
  *      Glenn Fowler (http://www.research.att.com/~gsf/)
  *
  * In a subsequent ballot round:
  *
- *      Landon Curt Noll (http://reality.sgi.com/chongo)
+ *      Landon Curt Noll (http://reality.sgi.com/chongo/)
  *
  * improved on their algorithm.  Some people tried this hash
  * and found that it worked rather well.  In an EMail message
@@ -56,7 +56,7 @@
  *
  * By:
  *	chongo <Landon Curt Noll> /\oo/\
- *	http://reality.sgi.com/chongo
+ *	http://reality.sgi.com/chongo/
  *	EMail: chongo_fnv at prime dot engr dot sgi dot com
  *
  * Share and Enjoy!	:-)

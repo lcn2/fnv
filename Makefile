@@ -2,9 +2,9 @@
 #
 # hash - makefile for FNV hash tools
 #
-# @(#) $Revision: 3.14 $
-# @(#) $Id: Makefile,v 3.14 1999/10/29 07:52:20 chongo Exp chongo $
-# @(#) $Source: /usr/local/src/cmd/fnv/RCS/Makefile,v $
+# @(#) $Revision: 3.15 $
+# @(#) $Id: Makefile,v 3.15 1999/10/29 08:23:57 chongo Exp chongo $
+# @(#) $Source: /usr/local/src.lehmer/cmd/fnv/RCS/Makefile,v $
 #
 # See:
 #	http://reality.sgi.com/chongo/tech/comp/fnv/index.html
@@ -23,7 +23,7 @@
 #
 # By:
 #	chongo <Landon Curt Noll> /\oo/\
-#	http://reality.sgi.com/chongo
+#	http://reality.sgi.com/chongo/
 #	EMail: chongo_fnv at prime dot engr dot sgi dot com
 #
 # Share and Enjoy!	:-)
