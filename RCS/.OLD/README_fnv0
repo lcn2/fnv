@@ -7,46 +7,45 @@ for the most up to date copy of this code and the FNV hash home page.
 
 =-=
 
-Here are sample codes for the Fowler/Noll/Vo hash:
-
-	h32.c	32 bit (Fowler/Noll/Vo)
-	h64.c	64 bit (Fowler/Noll/Vo64)
-
-Both these files implement a function that FNV hashes either an collection
-of bytes or a NUL terminated string.
+This soource implements both a 32 bit and a 64 bit FNV hash on collections
+of bytes or a NUL terminated strings.
 
 Here is the 32 bit FNV hash:
 
-	hash32 hash32_buf(char *buf, int len, hash32 *hval);
-	hash32 hash32_str(char *string, hash32 *hval);
+	fnv32 fnv32_buf(char *buf, int len, fnv32 *hval);
+	fnv32 fnv32_str(char *string, fnv32 *hval);
+	fnv32 fnv32_fd(int fd, fnv32 *hval);
 or:
-	hash32 hash32_buf(char *buf, int len, NULL);
-	hash32 hash32_str(char *string, NULL);
+	fnv32 fnv32_buf(char *buf, int len, NULL);
+	fnv32 fnv32_str(char *string, NULL);
+	fnv32 fnv32_fd(int fd, NULL);
 
 Here is the 64 bit FNV hash:
 
-	hash64 hash64_buf(char *buf, int len, hash64 *hval);
-	hash64 hash64_str(char *string, hash64 *hval);
+	fnv64 fnv64_buf(char *buf, int len, fnv64 *hval);
+	fnv64 fnv64_str(char *string, fnv64 *hval);
+	fnv64 fnv64_fd(int fd, fnv64 *hval);
 or:
-	hash64 hash64_buf(char *buf, int len, NULL);
-	hash64 hash64_str(char *string, NULL);
+	fnv64 fnv64_buf(char *buf, int len, NULL);
+	fnv64 fnv64_str(char *string, NULL);
+	fnv64 fnv64_fd(int fd, NULL);
 
 If hval is NULL, then only the FNV hash of the first arg (buffer or string)
 will be returned.  If hval is non-NULL, then its value will be used as
 an initial FNV hash value and on return it will be updated with the
 returned value.  For example:
 
-	hash64 hash_val;
+	fnv64 hash_val;
 
-	hash_val = hash64_str("a string", NULL);
-	(void) hash64_str("more string", &hash_val);
+	hash_val = fnv64_str("a string", NULL);
+	(void) fnv64_str("more string", &hash_val);
 
 produces the same final hash value as:
 
-	hash_val = hash64_str("a stringmore string", NULL);
+	hash_val = fnv64_str("a stringmore string", NULL);
 
 NOTE: If you system has a 64 bit 'unsigned long long' data type, then
-hash64 will be an unsigned long long; otherwise hash64 will be a structure
+fnv64 will be an unsigned long long; otherwise fnv64 will be a structure
 containing 2 unsigned long's.
 
 chongo <Landon Curt Noll> /\oo/\
