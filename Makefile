@@ -2,8 +2,8 @@
 #
 # hash - makefile for FNV hash tools
 #
-# @(#) $Revision: 3.13 $
-# @(#) $Id: Makefile,v 3.13 1999/10/29 07:50:53 chongo Exp chongo $
+# @(#) $Revision: 3.14 $
+# @(#) $Id: Makefile,v 3.14 1999/10/29 07:52:20 chongo Exp chongo $
 # @(#) $Source: /usr/local/src/cmd/fnv/RCS/Makefile,v $
 #
 # See:
@@ -59,7 +59,6 @@ WWW= /usr/local/ns-home/docs/chongo/src/fnv
 # what to build
 #
 SRC=	hash_32.c hash_64.c \
-	fnv32.c fnv64.c \
 	fnv32.c fnv64.c \
 	have_ulong64.c
 HSRC=	fnv.h \
