@@ -1,16 +1,18 @@
 /*
  * fnv1_64 - 64 bit Fowler/Noll/Vo-1 hash of a string or rile
  *
- * @(#) $Revision: 3.3 $
- * @(#) $Id: fnv1_64.c,v 3.3 1999/10/23 13:16:16 chongo Exp chongo $
+ * @(#) $Revision: 3.4 $
+ * @(#) $Id: fnv1_64.c,v 3.4 1999/10/24 00:54:47 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv1_64.c,v $
  *
  * usage:
- *	fnv164 [-b bcnt] [-s arg] [arg ...]
- *	fnv1_64 [-b bcnt] [-s arg] [arg ...]
+ *	fnv164 [-b bcnt] [-m] [-s arg] [-v] [arg ...]
+ *	fnv1_64 [-b bcnt] [-m] [-s arg] [-v] [arg ...]
  *
  *	-b bcnt	  mask off all but the lower bcnt bits (default: 32)
+ *	-m	  multiple hashes, one per line for each arg
  *	-s	  hash arg as a string (ignoring terminating NUL bytes)
+ *	-v	  verbose mode, print arg after hash
  *	arg	  string (if -s was given) or filename (default stdin)
  *
  * See:
