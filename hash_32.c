@@ -1,8 +1,8 @@
 /*
  * hash_32 - 32 bit Fowler/Noll/Vo hash code
  *
- * @(#) $Revision: 1.6 $
- * @(#) $Id: hash_32.c,v 1.6 2001/05/30 15:34:30 chongo Exp chongo $
+ * @(#) $Revision: 1.7 $
+ * @(#) $Id: hash_32.c,v 1.7 2003/10/03 20:37:14 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/hash_32.c,v $
  *
  ***
@@ -98,7 +98,7 @@ fnv_32_buf(void *buf, size_t len, Fnv32_t hval)
      */
     while (bp < be) {
 
-	/* multiply by the 32 bit FNV magic prime mod 2^64 */
+	/* multiply by the 32 bit FNV magic prime mod 2^32 */
 #if defined(NO_FNV_GCC_OPTIMIZATION)
 	hval *= FNV_32_PRIME;
 #else
@@ -140,7 +140,7 @@ fnv_32_str(char *str, Fnv32_t hval)
      */
     while (*s) {
 
-	/* multiply by the 32 bit FNV magic prime mod 2^64 */
+	/* multiply by the 32 bit FNV magic prime mod 2^32 */
 #if defined(NO_FNV_GCC_OPTIMIZATION)
 	hval *= FNV_32_PRIME;
 #else
