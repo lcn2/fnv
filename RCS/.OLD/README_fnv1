@@ -21,25 +21,26 @@ Comments, questions, bug fixes and suggestions welcome at:
 
 Two hash utilities (32 bit and 64 bit) are provided:
 
-	fnv_32 [-s arg] [arg ...]
-	fnv_64 [-s arg] [arg ...]
-	fnv1_32 [-s arg] [arg ...]
-	fnv1_64 [-s arg] [arg ...]
+	fnv_32 [-b bcnt] [-s arg] [arg ...]
+	fnv_64 [-b bcnt] [-s arg] [arg ...]
+	fnv1_32 [-b bcnt] [-s arg] [arg ...]
+	fnv1_64 [-b bcnt] [-s arg] [arg ...]
 
-	-s	hash arg as a string (ignoring terminating NUL bytes)
-	arg	string (if -s was given) or filename (default stdin)
+	-b bcnt	  mask off all but the lower bcnt bits (default: 32)
+	-s	  hash arg as a string (ignoring terminating NUL bytes)
+	arg	  string (if -s was given) or filename (default stdin)
 
-as examples of how to use the FNV hash library.
+as examples of how to use the FNV hash library.  And for those who do
+not like _'s, the same tools exist without the _:
 
-Also for those who do not like to type the _, the same tools exist:
+	fnv32 [-b bcnt] [-s arg] [arg ...]
+	fnv64 [-b bcnt] [-s arg] [arg ...]
+	fnv132 [-b bcnt] [-s arg] [arg ...]
+	fnv164 [-b bcnt] [-s arg] [arg ...]
 
-	fnv32 [-s arg] [arg ...]
-	fnv64 [-s arg] [arg ...]
-	fnv132 [-s arg] [arg ...]
-	fnv164 [-s arg] [arg ...]
-
-	-s	hash arg as a string (ignoring terminating NUL bytes)
-	arg	string (if -s was given) or filename (default stdin)
+	-b bcnt	  mask off all but the lower bcnt bits (default: 32)
+	-s	  hash arg as a string (ignoring terminating NUL bytes)
+	arg	  string (if -s was given) or filename (default stdin)
 
 
 #==================#

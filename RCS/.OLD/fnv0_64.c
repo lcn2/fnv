@@ -1,16 +1,17 @@
 /*
  * fnv_64 - 64 bit Fowler/Noll/Vo hash of a string or rile
  *
- * @(#) $Revision: 3.3 $
- * @(#) $Id: fnv_64.c,v 3.3 1999/10/23 13:14:40 chongo Exp chongo $
+ * @(#) $Revision: 3.4 $
+ * @(#) $Id: fnv_64.c,v 3.4 1999/10/24 00:05:01 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv_64.c,v $
  *
  * usage:
- *	fnv64 [-s arg] [arg ...]
- *	fnv_64 [-s arg] [arg ...]
+ *	fnv64 [-b bcnt] [-s arg] [arg ...]
+ *	fnv_64 [-b bcnt] [-s arg] [arg ...]
  *
- *	-s	hash arg as a string (ignoring terminating NUL bytes)
- *	arg	string (if -s was given) or filename (default stdin)
+ *	-b bcnt	  mask off all but the lower bcnt bits (default: 32)
+ *	-s	  hash arg as a string (ignoring terminating NUL bytes)
+ *	arg	  string (if -s was given) or filename (default stdin)
  *
  * See:
  *	http://reality.sgi.com/chongo/tech/comp/fnv/index.html
@@ -52,7 +53,9 @@
 #include "fnv.h"
 #include "longlong.h"
 
-static char *usage = "usage: %s [-s arg] [arg ...]\n";
+#define WIDTH 64	/* bit width of hash */
+
+static char *usage = "usage: %s [-b bcnt] [-s arg] [arg ...]\n";
 static char *program;	/* our name */
 
 
@@ -62,6 +65,8 @@ main(int argc, char *argv[])
     char buf[BUFSIZ+1];	/* read buffer */
     fnv64 hval;		/* current hash value */
     int s_flag = 0;	/* 1 => -s was given, hash args as strings */
+    int b_flag = WIDTH;	/* -b flag value */
+    fnv64 bmask;	/* mask to apply to output */
     extern int optind;	/* argv index of the next argument to be processed */
     int fd;		/* open file to process */
     int i;
@@ -70,8 +75,11 @@ main(int argc, char *argv[])
      * parse args
      */
     program = argv[0];
-    while ((i = getopt(argc, argv, "s")) != -1) {
+    while ((i = getopt(argc, argv, "b:s")) != -1) {
 	switch (i) {
+	case 'b':	/* bcnt bit mask count */
+	    b_flag = atoi(optarg);
+	    break;
 	case 's':	/* hash args as strings */
 	    s_flag = 1;
 	    break;
@@ -85,6 +93,30 @@ main(int argc, char *argv[])
 	fprintf(stderr, usage, program);
 	exit(2);
     }
+    /* limit -b values */
+    if (b_flag < 0 || b_flag > WIDTH) {
+	fprintf(stderr, "%s: -b bcnt: %d must be >= 0 and < %d\n",
+		program, b_flag, WIDTH);
+	exit(3);
+    }
+#if defined(HAVE_64BIT_LONG_LONG)
+    if (b_flag == WIDTH) {
+	bmask = (fnv64)0xffffffffffffffffULL;
+    } else {
+	bmask = (fnv64)((1ULL << b_flag) - 1ULL);
+    }
+#else
+    if (b_flag == WIDTH) {
+	bmask.w32[0] = 0xffffffffUL;
+	bmask.w32[1] = 0xffffffffUL;
+    } else if (b_flag >= WIDTH/2) {
+	bmask.w32[0] = 0xffffffffUL;
+	bmask.w32[1] = ((1UL << (b_flag-(WIDTH/2))) - 1UL);
+    } else {
+	bmask.w32[0] = ((1UL << b_flag) - 1UL);
+	bmask.w32[1] = 0UL;
+    }
+#endif
 
     /*
      * string hashing
@@ -120,7 +152,7 @@ main(int argc, char *argv[])
 	    if (fd < 0) {
 		fprintf(stderr, "%s: unable to open file: %s\n",
 			program, argv[optind]);
-		exit(3);
+		exit(4);
 	    }
 	    hval = fnv_64_fd(fd, NULL);
 	    close(fd);
@@ -136,7 +168,7 @@ main(int argc, char *argv[])
 	    if (fd < 0) {
 		fprintf(stderr, "%s: unable to open file: %s\n",
 			program, argv[i]);
-		exit(4);
+		exit(5);
 	    }
 	    (void) fnv_64_fd(fd, &hval);
 	    close(fd);
@@ -147,9 +179,11 @@ main(int argc, char *argv[])
      * report hash and exit
      */
 #if defined(HAVE_64BIT_LONG_LONG)
-    printf("0x%016llx\n", hval);
+    printf("0x%016llx\n", hval & bmask);
 #else
-    printf("0x%08lx%08lx\n", hval.w32[1], hval.w32[0]);
+    printf("0x%08lx%08lx\n",
+	   hval.w32[1] & bmask.w32[1], 
+	   hval.w32[0] & bmask.w32[0]);
 #endif
     return 0;	/* exit(0); */
 }
