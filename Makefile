@@ -2,12 +2,12 @@
 #
 # hash - makefile for FNV hash tools
 #
-# @(#) $Revision: 3.15 $
-# @(#) $Id: Makefile,v 3.15 1999/10/29 08:23:57 chongo Exp chongo $
-# @(#) $Source: /usr/local/src.lehmer/cmd/fnv/RCS/Makefile,v $
+# @(#) $Revision: 3.16 $
+# @(#) $Id: Makefile,v 3.16 1999/11/07 14:01:02 chongo Exp chongo $
+# @(#) $Source: /usr/local/src/cmd/fnv/RCS/Makefile,v $
 #
 # See:
-#	http://reality.sgi.com/chongo/tech/comp/fnv/index.html
+#	http://www.isthe.com/chongo/tech/comp/fnv/index.html
 #
 # for the most up to date copy of this code and the FNV hash home page.
 #
@@ -23,16 +23,15 @@
 #
 # By:
 #	chongo <Landon Curt Noll> /\oo/\
-#	http://reality.sgi.com/chongo/
-#	EMail: chongo_fnv at prime dot engr dot sgi dot com
+#	http://www.isthe.com/chongo/
 #
 # Share and Enjoy!	:-)
 
 # make tools
 #
 SHELL= /bin/sh
-#CFLAGS= -g3
-CFLAGS= -O2 -g3
+CFLAGS= -O3 -g3
+#CFLAGS= -O2 -g3
 CC= cc
 AR= ar
 TAR= tar
@@ -54,7 +53,7 @@ DESTBIN= /usr/local/bin
 DESTLIB= /usr/local/lib
 DESTINC= /usr/local/include
 # NOTE: Lines with WWW in them are removed from the shipped Makefile
-WWW= /usr/local/ns-home/docs/chongo/src/fnv
+WWW= /web/isthe/chroot/html/chongo/src/fnv
 
 # what to build
 #
