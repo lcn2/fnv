@@ -1,8 +1,8 @@
 /*
  * h0_64 - 64 bit Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 3.5 $
- * @(#) $Id: h0_64.c,v 3.5 1999/10/24 00:23:45 chongo Exp chongo $
+ * @(#) $Revision: 3.6 $
+ * @(#) $Id: h0_64.c,v 3.6 1999/10/24 11:19:50 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/h0_64.c,v $
  *
  ***
@@ -106,9 +106,6 @@ fnv0_64_buf(char *buf, int len, fnv64 *hval)
      * Phong Vo (kpv@research.att.com) and Glenn Fowler (gsf@research.att.com).
      * Landon Curt Noll (http://reality.sgi.com/chongo) later improved on their
      * algorithm to come up with Fowler/Noll/Vo hash.
-     *
-     * The 32 hash was able to process 234936 words from the web2 dictionary
-     * without any 32 bit collisions using a constant of 16777619 = 0x1000193.
      *
      * The 64 bit hash uses 1099511628211 = 0x100000001b3 instead.
      *
@@ -259,9 +256,6 @@ fnv0_64_str(char *str, fnv64 *hval)
      * Phong Vo (kpv@research.att.com) and Glenn Fowler (gsf@research.att.com).
      * Landon Curt Noll (http://reality.sgi.com/chongo) later improved on their
      * algorithm to come up with Fowler/Noll/Vo hash.
-     *
-     * The 32 hash was able to process 234936 words from the web2 dictionary
-     * without any 32 bit collisions using a constant of 16777619 = 0x1000193.
      *
      * The 64 bit hash uses 1099511628211 = 0x100000001b3 instead.
      *
