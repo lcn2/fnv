@@ -1,12 +1,13 @@
 /*
  * fnv32 - 32 bit Fowler/Noll/Vo hash of a string or rile
  *
- * @(#) $Revision: 3.1 $
- * @(#) $Id: fnv32.c,v 3.1 1999/10/23 09:59:04 chongo Exp chongo $
+ * @(#) $Revision: 3.2 $
+ * @(#) $Id: fnv32.c,v 3.2 1999/10/23 11:58:55 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/lib/libfnv/RCS/fnv32.c,v $
  *
  * usage:
  *	fnv32 [-s arg] [arg ...]
+ *	fnv_32 [-s arg] [arg ...]
  *
  *	-s	hash arg as a string (ignoring terminating NUL bytes)
  *	arg	string (if -s was given) or filename (default stdin)
@@ -16,7 +17,7 @@
  *
  * for the most up to date copy of this code and the FNV hash home page.
  *
- * Copyright (C) 1997 Landon Curt Noll, all rights reserved.
+ * Copyright (C) 1999 Landon Curt Noll, all rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and
  * its documentation for any purpose and without fee is hereby granted,
@@ -37,9 +38,10 @@
  * PERFORMANCE OF THIS SOFTWARE.
  *
  * chongo <Landon Curt Noll> /\oo/\
+ * http://reality.sgi.com/chongo
  * chongo_fnv@prime.engr.sgi.com
  *
- * Share and Enjoy!
+ * Share and Enjoy!	:-)
  */
 
 #include <stdio.h>
@@ -89,11 +91,11 @@ main(int argc, char *argv[])
     if (s_flag) {
 
 	/* hash the 1st string */
-	hval = fnv32_str(argv[optind], NULL);
+	hval = fnv_32_str(argv[optind], NULL);
 
 	/* hash any other strings */
 	for (i=optind+1; i < argc; ++i) {
-	    fnv32_str(argv[i], &hval);
+	    fnv_32_str(argv[i], &hval);
 	}
 
 
@@ -108,7 +110,7 @@ main(int argc, char *argv[])
 	if (optind >= argc) {
 
 	    /* case: process only stdin */
-	    hval = fnv32_fd(0, NULL);
+	    hval = fnv_32_fd(0, NULL);
 
 	} else {
 
@@ -119,7 +121,7 @@ main(int argc, char *argv[])
 			program, argv[optind]);
 		exit(3);
 	    }
-	    hval = fnv32_fd(fd, NULL);
+	    hval = fnv_32_fd(fd, NULL);
 	    close(fd);
 	}
 
@@ -135,7 +137,7 @@ main(int argc, char *argv[])
 			program, argv[i]);
 		exit(4);
 	    }
-	    (void) fnv32_fd(fd, &hval);
+	    (void) fnv_32_fd(fd, &hval);
 	    close(fd);
 	}
     }

@@ -2,8 +2,8 @@
 #
 # hash - makefile for hash tools
 #
-# @(#) $Revision: 3.3 $
-# @(#) $Id: Makefile,v 3.3 1999/10/23 12:06:09 chongo Exp chongo $
+# @(#) $Revision: 3.4 $
+# @(#) $Id: Makefile,v 3.4 1999/10/23 12:12:14 chongo Exp chongo $
 # @(#) $Source: /usr/local/src/lib/libfnv/RCS/Makefile,v $
 #
 # See:
@@ -63,10 +63,11 @@ WWW= /usr/local/ns-home/docs/chongo/src/fnv
 
 # what to build
 #
-SRC= h32.c h64.c have_ulong64.c fnv32.c fnv64.c
+SRC= h32.c h64.c h1_32.c h1_64.c have_ulong64.c \
+	fnv32.c fnv64.c fnv1_32.c fnv1_64.c
 HSRC= longlong.h fnv.h
 ALL= ${SRC} fnv.h Makefile README
-PROGS= fnv32 fnv64
+PROGS= fnv32 fnv64 fnv1_32 fnv1_64 fnv132 fnv164 fnv_32 fnv_64
 LIBS= libfnv.a
 TARGETS= ${LIBS} ${PROGS}
 
@@ -82,9 +83,15 @@ h32.o: h32.c longlong.h fnv.h
 h64.o: h64.c longlong.h fnv.h
 	${CC} ${CFLAGS} h64.c -c
 
-libfnv.a: h32.o h64.o
+h1_32.o: h1_32.c longlong.h fnv.h
+	${CC} ${CFLAGS} h1_32.c -c
+
+h1_64.o: h1_64.c longlong.h fnv.h
+	${CC} ${CFLAGS} h1_64.c -c
+
+libfnv.a: h32.o h64.o h1_32.o h1_64.o
 	rm -f $@
-	${AR} rv $@ h32.o h64.o
+	${AR} rv $@ h32.o h64.o h1_32.o h1_64.o
 	${RANLIB} $@
 
 fnv32.o: fnv32.c longlong.h fnv.h
@@ -98,6 +105,34 @@ fnv64.o: fnv64.c longlong.h fnv.h
 
 fnv64: fnv64.o libfnv.a
 	${CC} fnv64.o libfnv.a -o fnv64
+
+fnv1_32.o: fnv1_32.c longlong.h fnv.h
+	${CC} ${CFLAGS} fnv1_32.c -c
+
+fnv1_32: fnv1_32.o libfnv.a
+	${CC} fnv1_32.o libfnv.a -o fnv1_32
+
+fnv1_64.o: fnv1_64.c longlong.h fnv.h
+	${CC} ${CFLAGS} fnv1_64.c -c
+
+fnv1_64: fnv1_64.o libfnv.a
+	${CC} fnv1_64.o libfnv.a -o fnv1_64
+
+fnv132: fnv1_32
+	-rm -f $@
+	-cp -f $? $@
+
+fnv164: fnv1_64
+	-rm -f $@
+	-cp -f $? $@
+
+fnv_32: fnv32
+	-rm -f $@
+	-cp -f $? $@
+
+fnv_64: fnv64
+	-rm -f $@
+	-cp -f $? $@
 
 longlong.h: have_ulong64.c Makefile
 	-@rm -f have_ulong64 have_ulong64.o ll_tmp longlong.h
@@ -159,7 +194,8 @@ install: libfnv.a
 
 clean:
 	-rm -f have_ulong64 have_ulong64.o ll_tmp ll_tmp2 longlong.h
-	-rm -f h32.o h64.o fnv32.o fnv64.o
+	-rm -f h32.o h64.o fnv32.o fnv64.o 
+	-rm -f h1_32.o h1_64.o fnv1_32.o fnv1_64.o
 	-rm -f fnv_hash.tar.gz Makefile.ship	# WWW
 
 clobber: clean

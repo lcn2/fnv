@@ -1,8 +1,8 @@
 /*
  * fnv - Fowler/Noll/Vo hash code
  *
- * @(#) $Revision: 2.2 $
- * @(#) $Id: fnv.h,v 2.2 1999/10/23 09:44:31 chongo Exp chongo $
+ * @(#) $Revision: 3.1 $
+ * @(#) $Id: fnv.h,v 3.1 1999/10/23 10:00:42 chongo Exp $
  * @(#) $Source: /usr/local/src/lib/libfnv/RCS/fnv.h,v $
  *
  * See:
@@ -34,7 +34,7 @@
  * http://reality.sgi.com/chongo
  * chongo_fnv@prime.engr.sgi.com
  *
- * Share and Enjoy!
+ * Share and Enjoy!	:-)
  */
 
 #if !defined(__FNV_H__)
@@ -69,12 +69,19 @@ typedef struct s_fnv64 fnv64;
 /*
  * external functions
  */
-extern fnv32 fnv32_buf(char *buf, int len, fnv32 *hval);
-extern fnv32 fnv32_str(char *buf, fnv32 *hval);
-extern fnv32 fnv32_fd(int fd, fnv32 *hval);
-extern fnv64 fnv64_buf(char *buf, int len, fnv64 *hval);
-extern fnv64 fnv64_str(char *buf, fnv64 *hval);
-extern fnv64 fnv64_fd(int fd, fnv64 *hval);
+extern fnv32 fnv_32_buf(char *buf, int len, fnv32 *hval);
+extern fnv32 fnv_32_str(char *buf, fnv32 *hval);
+extern fnv32 fnv_32_fd(int fd, fnv32 *hval);
+extern fnv64 fnv_64_buf(char *buf, int len, fnv64 *hval);
+extern fnv64 fnv_64_str(char *buf, fnv64 *hval);
+extern fnv64 fnv_64_fd(int fd, fnv64 *hval);
+
+extern fnv32 fnv1_32_buf(char *buf, int len, fnv32 *hval);
+extern fnv32 fnv1_32_str(char *buf, fnv32 *hval);
+extern fnv32 fnv1_32_fd(int fd, fnv32 *hval);
+extern fnv64 fnv1_64_buf(char *buf, int len, fnv64 *hval);
+extern fnv64 fnv1_64_str(char *buf, fnv64 *hval);
+extern fnv64 fnv1_64_fd(int fd, fnv64 *hval);
 
 
 #endif /* __FNV_H__ */

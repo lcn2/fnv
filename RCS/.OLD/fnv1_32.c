@@ -1,11 +1,12 @@
 /*
  * fnv1_32 - 32 bit Fowler/Noll/Vo-1 hash of a string or rile
  *
- * @(#) $Revision: 3.2 $
- * @(#) $Id: fnv32.c,v 3.2 1999/10/23 11:58:55 chongo Exp $
- * @(#) $Source: /usr/local/src/lib/libfnv/RCS/fnv32.c,v $
+ * @(#) $Revision: 3.1 $
+ * @(#) $Id: fnv1_32.c,v 3.1 1999/10/23 12:59:15 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src/lib/libfnv/RCS/fnv1_32.c,v $
  *
  * usage:
+ *	fnv132 [-s arg] [arg ...]
  *	fnv1_32 [-s arg] [arg ...]
  *
  *	-s	hash arg as a string (ignoring terminating NUL bytes)

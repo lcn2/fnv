@@ -1,8 +1,8 @@
 /*
- * h64 - 64 bit Fowler/Noll/Vo64 hash code
+ * h64 - 64 bit Fowler/Noll/Vo hash code
  *
- * @(#) $Revision: 3.1 $
- * @(#) $Id: h64.c,v 3.1 1999/10/23 09:59:04 chongo Exp chongo $
+ * @(#) $Revision: 3.2 $
+ * @(#) $Id: h64.c,v 3.2 1999/10/23 11:58:55 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/lib/libfnv/RCS/h64.c,v $
  *
  * See:
@@ -10,7 +10,7 @@
  *
  * for the most up to date copy of this code and the FNV hash home page.
  *
- * Copyright (C) 1997 Landon Curt Noll, all rights reserved.
+ * Copyright (C) 1999 Landon Curt Noll, all rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and
  * its documentation for any purpose and without fee is hereby granted,
@@ -31,9 +31,10 @@
  * PERFORMANCE OF THIS SOFTWARE.
  *
  * chongo <Landon Curt Noll> /\oo/\
+ * http://reality.sgi.com/chongo
  * chongo_fnv@prime.engr.sgi.com
  *
- * Share and Enjoy!
+ * Share and Enjoy!	:-)
  */
 
 #include "fnv.h"
@@ -108,16 +109,16 @@ static fnv64 virgin = { 0x84222325, 0xcbf29ce4 };
  * Example:
  *	fnv64 hash_value;
  *
- *	hash_value = fnv64_buf(buf, len, NULL);
+ *	hash_value = fnv_64_buf(buf, len, NULL);
  *
  *	    The 'hash_value' becomes the FNV hash of the 'buf' buffer.
  *
- *	(void) fnv64_buf(buf2, len2, &hash_value);
+ *	(void) fnv_64_buf(buf2, len2, &hash_value);
  *
  *	    The 'hash_value' becomes the hash of buf concatenated with buf2.
  */
 fnv64
-fnv64_buf(char *buf, int len, fnv64 *hval)
+fnv_64_buf(char *buf, int len, fnv64 *hval)
 {
 #if !defined(HAVE_64BIT_LONG_LONG)
     unsigned long val[4];	/* hash value in base 2^16 */
@@ -262,16 +263,16 @@ fnv64_buf(char *buf, int len, fnv64 *hval)
  * Example:
  *	fnv64 hash_value;
  *
- *	hash_value = fnv64_str(buf, len, NULL);
+ *	hash_value = fnv_64_str(buf, len, NULL);
  *
  *	    The 'hash_value' becomes the FNV hash of the 'buf' buffer.
  *
- *	(void) fnv64_str(buf2, len2, &hash_value);
+ *	(void) fnv_64_str(buf2, len2, &hash_value);
  *
  *	    The 'hash_value' becomes the hash of buf concatenated with buf2.
  */
 fnv64
-fnv64_str(char *str, fnv64 *hval)
+fnv_64_str(char *str, fnv64 *hval)
 {
 #if !defined(HAVE_64BIT_LONG_LONG)
     unsigned long val[4];	/* hash value in base 2^16 */
@@ -397,7 +398,7 @@ fnv64_str(char *str, fnv64 *hval)
 
 
 /*
- * fnv64_fd - FNV hash an open filename
+ * fnv_64_fd - FNV hash an open filename
  *
  * usage:
  *      fd	- open file descriptor to hash
@@ -407,7 +408,7 @@ fnv64_str(char *str, fnv64 *hval)
  *      64 bit hash as a static hash type
  */
 fnv64
-fnv64_fd(int fd, fnv64 *hval)
+fnv_64_fd(int fd, fnv64 *hval)
 {
     char buf[BUF_SIZE+1];	/* read buffer */
     int readcnt;		/* number of characters written */
@@ -422,7 +423,7 @@ fnv64_fd(int fd, fnv64 *hval)
      * hash until EOF
      */
     while ((readcnt = read(fd, buf, BUF_SIZE)) > 0) {
-	(void) fnv64_buf(buf, readcnt, &val);
+	(void) fnv_64_buf(buf, readcnt, &val);
     }
 
     /* save the hash if we were given a non-NULL initial hash value */
