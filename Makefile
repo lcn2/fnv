@@ -18,12 +18,12 @@ DESTINC= /usr/local/include
 DESTLIB= /usr/local/lib
 
 # where the dictionary is found
-#WORDS= /usr/share/lib/dict/words
-WORDS= ./Message.ID
+WORDS= /usr/share/lib/dict/words
+#WORDS= ./Message.ID
 
-TRIALS= fowler.vo1 fowler.vo2 fowler.noll.vo
+TRIALS= fowler.vo1 fowler.vo2 fowler.noll.vo fowler.noll.vo64
 TESTS= ${TRIALS} besthash standalone
-TARGETS= hash.a
+TARGETS= hash.a h64.o
 
 all: ${TARGETS}
 
@@ -36,7 +36,7 @@ test: ${TESTS} words #standalone stand
 
 words: ${WORDS}
 	-@for i in ${TRIALS}; do \
-	    echo "$$i < ${WORDS}"; \
+	    echo "./$$i < ${WORDS}"; \
 	    ./$$i < ${WORDS}; \
 	done
 
@@ -54,6 +54,9 @@ fowler.vo2: hasheval.c
 
 fowler.noll.vo: hasheval.c
 	${CC} ${CFLAGS} hasheval.c -DFOWLER_NOLL_VO -o fowler.noll.vo
+
+fowler.noll.vo64: hasheval.c
+	${CC} ${CFLAGS} hasheval.c -DFOWLER_NOLL_VO64 -o fowler.noll.vo64
 
 besthash: besthash.sh
 	rm -f besthash
