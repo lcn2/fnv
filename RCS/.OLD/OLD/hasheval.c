@@ -20,7 +20,7 @@
 
 #define CHUNK 65536		/* number of elements to malloc at a time */
 
-unsigned long *hashval = NULL;		/* hash values processed so far */
+long *hashval = NULL;		/* hash values processed so far */
 long hashcnt = 0;		/* number of hash values in use */
 long hashmax = 0;		/* malloced size of hashval */
 
