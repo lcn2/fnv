@@ -1,9 +1,9 @@
 /*
- * h64 - 64 bit Fowler/Noll/Vo hash code
+ * h_64 - 64 bit Fowler/Noll/Vo hash code
  *
- * @(#) $Revision: 3.2 $
- * @(#) $Id: h64.c,v 3.2 1999/10/23 11:58:55 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/lib/libfnv/RCS/h64.c,v $
+ * @(#) $Revision: 3.3 $
+ * @(#) $Id: h_64.c,v 3.3 1999/10/23 13:14:40 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src/cmd/fnv/RCS/h_64.c,v $
  *
  * See:
  *	http://reality.sgi.com/chongo/tech/comp/fnv/index.html

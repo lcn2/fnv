@@ -1,9 +1,9 @@
 /*
- * fnv64 - 64 bit Fowler/Noll/Vo hash of a string or rile
+ * fnv_64 - 64 bit Fowler/Noll/Vo hash of a string or rile
  *
- * @(#) $Revision: 3.2 $
- * @(#) $Id: fnv64.c,v 3.2 1999/10/23 11:58:55 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/lib/libfnv/RCS/fnv64.c,v $
+ * @(#) $Revision: 3.3 $
+ * @(#) $Id: fnv_64.c,v 3.3 1999/10/23 13:14:40 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv_64.c,v $
  *
  * usage:
  *	fnv64 [-s arg] [arg ...]

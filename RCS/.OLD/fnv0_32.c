@@ -1,9 +1,9 @@
 /*
- * fnv32 - 32 bit Fowler/Noll/Vo hash of a string or rile
+ * fnv_32 - 32 bit Fowler/Noll/Vo hash of a string or rile
  *
- * @(#) $Revision: 3.2 $
- * @(#) $Id: fnv32.c,v 3.2 1999/10/23 11:58:55 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/lib/libfnv/RCS/fnv32.c,v $
+ * @(#) $Revision: 3.3 $
+ * @(#) $Id: fnv_32.c,v 3.3 1999/10/23 13:14:40 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv_32.c,v $
  *
  * usage:
  *	fnv32 [-s arg] [arg ...]
