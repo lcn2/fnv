@@ -1,9 +1,9 @@
 /*
  * fnv - Fowler/Noll/Vo hash code
  *
- * @(#) $Revision: 2.2 $
- * @(#) $Id: h64.c,v 2.2 1999/10/19 06:15:45 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/lib/libfnv/RCS/h64.c,v $
+ * @(#) $Revision: 2.1 $
+ * @(#) $Id: fnv.h,v 2.1 1999/10/23 08:17:19 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src/lib/libfnv/RCS/fnv.h,v $
  *
  * See:
  *	http://reality.sgi.com/chongo/tech/comp/fnv/index.html
@@ -43,7 +43,7 @@
 /*
  * 32 bit hash value
  */
-typedef unsigned long hash32;
+typedef unsigned long fnv32;
 
 
 /*
@@ -56,22 +56,24 @@ typedef unsigned long hash32;
  * 64 bit hash value
  */
 #if defined(HAVE_64BIT_LONG_LONG)
-typedef unsigned long long hash64;
+typedef unsigned long long fnv64;
 #else
-struct s_hash64 {
+struct s_fnv64 {
     unsigned long w32[2];
 };
-typedef struct s_hash64 hash64;
+typedef struct s_fnv64 fnv64;
 #endif
 
 
 /*
  * external functions
  */
-extern hash32 hash32_buf(char *buf, int len, hash32 *hval);
-extern hash32 hash32_str(char *buf, hash32 *hval);
-extern hash64 hash64_buf(char *buf, int len, hash64 *hval);
-extern hash64 hash64_str(char *buf, hash64 *hval);
+extern fnv32 fnv32_buf(char *buf, int len, fnv32 *hval);
+extern fnv32 fnv32_str(char *buf, fnv32 *hval);
+extern fnv32 fnv32_fd(int fd, fnv32 *hval);
+extern fnv64 fnv64_buf(char *buf, int len, fnv64 *hval);
+extern fnv64 fnv64_str(char *buf, fnv64 *hval);
+extern fnv64 fnv64_fd(int fd, fnv64 *hval);
 
 
 #endif /* __FNV_H__ */

@@ -1,8 +1,8 @@
 /*
- * hash64 - 64 bit Fowler/Noll/Vo64 hash code
+ * h64 - 64 bit Fowler/Noll/Vo64 hash code
  *
- * @(#) $Revision: 2.2 $
- * @(#) $Id: h64.c,v 2.2 1999/10/19 06:15:45 chongo Exp chongo $
+ * @(#) $Revision: 2.3 $
+ * @(#) $Id: h64.c,v 2.3 1999/10/23 08:14:29 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/lib/libfnv/RCS/h64.c,v $
  *
  * See:
@@ -38,6 +38,8 @@
 
 #include "fnv.h"
 
+#define BUF_SIZE (32*1024)	/* number of bytes to hash at a time */
+
 
 /*
  * hash_buf - perform a 64 bit Fowler/Noll/Vo hash on a buffer
@@ -57,25 +59,24 @@
  *	 the new hash value as well as returning the new hash value.
  *
  * Example:
- *	hash64 hash_value;
+ *	fnv64 hash_value;
  *
- *	hash_value = hash64_buf(buf, len, NULL);
+ *	hash_value = fnv64_buf(buf, len, NULL);
  *
  *	    The 'hash_value' becomes the FNV hash of the 'buf' buffer.
  *
- *	(void) hash64_buf(buf2, len2, &hash_value);
+ *	(void) fnv64_buf(buf2, len2, &hash_value);
  *
  *	    The 'hash_value' becomes the hash of buf concatinated with buf2.
  */
-hash64
-hash64_buf(char *buf, int len, hash64 *hval)
+fnv64
+fnv64_buf(char *buf, int len, fnv64 *hval)
 {
-#if defined(HAVE_64BIT_LONG_LONG)
-    unsigned long long val;	/* current hash value */
-#else
+#if !defined(HAVE_64BIT_LONG_LONG)
     unsigned long val[4];	/* hash value in base 2^16 */
     unsigned long tmp[4];	/* tmp 64 bit value */
 #endif
+    fnv64 ret;			/* 64 bit return value */
     char *buf_end = buf+len;	/* beyond end of hash area */
 
     /*
@@ -95,7 +96,7 @@ hash64_buf(char *buf, int len, hash64 *hval)
      * See:
      *		http://reality.sgi.com/chongo/tech/comp/fnv/index.html
      *
-     * for the most up to date copy of this code and the FNV hash home page.
+     * !for the most up to date copy of this code and the FNV hash home page.
      *
      */
 #if defined(HAVE_64BIT_LONG_LONG)
@@ -103,7 +104,7 @@ hash64_buf(char *buf, int len, hash64 *hval)
     /* 
      * setup the initial hash value 
      */
-    val = (hval ? *hval : (hash64)0);
+    ret = (hval ? *hval : (fnv64)0);
 
     /* 
      * hash each octet of the buffer 
@@ -111,15 +112,15 @@ hash64_buf(char *buf, int len, hash64 *hval)
     while (buf < buf_end) {
 
 	/* multiply by 1099511628211ULL mod 2^64 using 64 bit longs */
-	val *= (hash64)1099511628211ULL;
+	ret *= (fnv64)1099511628211ULL;
 
 	/* xor the bottom with the current octet */
-	val ^= (hash64)(*buf++);
+	ret ^= (fnv64)(*buf++);
     }
 
     /* save the hash if we were given a non-NULL initial hash value */
     if (hval) {
-	*hval = val;
+	*hval = ret;
     }
 
 #else
@@ -168,23 +169,25 @@ hash64_buf(char *buf, int len, hash64 *hval)
 	/*
 	 * Doing a val[3] &= 0xffff; is not really needed since it simply
 	 * removes multiples of 2^64.  We can discard these excess bits
-	 * outside of the loop when we convert to hash64.
+	 * outside of the loop when we convert to fnv64.
 	 */
 
 	/* xor the bottom with the current octet */
 	val[0] ^= (unsigned long)(*buf++);
     }
 
-    /* convert to hash64 */
-    if (hval) {
-	hval->w32[1] = ((val[3]<<16)&0xffff) + val[2];
-	hval->w32[0] = val[1]<<16 + val[0];
-    }
+    /* convert to fnv64 */
+    ret->w32[1] = ((val[3]<<16)&0xffff) + val[2];
+    ret->w32[0] = val[1]<<16 + val[0];
 
+    /* save the hash if we were given a non-NULL initial hash value */
+    if (hval) {
+	*hval = ret;
+    }
 #endif
 
-    /* our hash value */
-    return *hval;
+    /* return our new hash value */
+    return ret;
 }
 
 
@@ -205,25 +208,24 @@ hash64_buf(char *buf, int len, hash64 *hval)
  *	 the new hash value as well as returning the new hash value.
  *
  * Example:
- *	hash64 hash_value;
+ *	fnv64 hash_value;
  *
- *	hash_value = hash64_str(buf, len, NULL);
+ *	hash_value = fnv64_str(buf, len, NULL);
  *
  *	    The 'hash_value' becomes the FNV hash of the 'buf' buffer.
  *
- *	(void) hash64_str(buf2, len2, &hash_value);
+ *	(void) fnv64_str(buf2, len2, &hash_value);
  *
  *	    The 'hash_value' becomes the hash of buf concatinated with buf2.
  */
-hash64
-hash64_str(char *str, hash64 *hval)
+fnv64
+fnv64_str(char *str, fnv64 *hval)
 {
-#if defined(HAVE_64BIT_LONG_LONG)
-    unsigned long long val;	/* current hash value */
-#else
+#if !defined(HAVE_64BIT_LONG_LONG)
     unsigned long val[4];	/* hash value in base 2^16 */
     unsigned long tmp[4];	/* tmp 64 bit value */
 #endif
+    fnv64 ret;			/* 64 bit return value */
 
     /*
      * Fowler/Noll/Vo hash - hash each character in the string
@@ -250,7 +252,7 @@ hash64_str(char *str, hash64 *hval)
     /* 
      * setup the initial hash value 
      */
-    val = (hval ? *hval : (hash64)0);
+    ret = (hval ? *hval : (fnv64)0);
 
     /* 
      * hash each octet of the buffer 
@@ -258,15 +260,15 @@ hash64_str(char *str, hash64 *hval)
     while (*str) {
 
 	/* multiply by 1099511628211ULL mod 2^64 using 64 bit longs */
-	val *= (hash64)1099511628211ULL;
+	ret *= (fnv64)1099511628211ULL;
 
 	/* xor the bottom with the current octet */
-	val ^= (hash64)(*str++);
+	ret ^= (fnv64)(*str++);
     }
 
     /* save the hash if we were given a non-NULL initial hash value */
     if (hval) {
-	*hval = val;
+	*hval = ret;
     }
 
 #else
@@ -315,21 +317,67 @@ hash64_str(char *str, hash64 *hval)
 	/*
 	 * Doing a val[3] &= 0xffff; is not really needed since it simply
 	 * removes multiples of 2^64.  We can discard these excess bits
-	 * outside of the loop when we convert to hash64.
+	 * outside of the loop when we convert to fnv64.
 	 */
 
 	/* xor the bottom with the current octet */
 	val[0] ^= (unsigned long)(*str++);
     }
 
-    /* convert to hash64 */
-    if (hval) {
-	hval->w32[1] = ((val[3]<<16)&0xffff) + val[2];
-	hval->w32[0] = val[1]<<16 + val[0];
-    }
+    /* convert to fnv64 */
+    ret->w32[1] = ((val[3]<<16)&0xffff) + val[2];
+    ret->w32[0] = val[1]<<16 + val[0];
 
+    /* save the hash if we were given a non-NULL initial hash value */
+    if (hval) {
+	*hval = ret;
+    }
 #endif
 
-    /* our hash value */
-    return *hval;
+    /* return our new hash value */
+    return ret;
+}
+
+
+/*
+ * fnv64_fd - FNV hash an open filename
+ *
+ * usage:
+ *      fd	- open file descriptor to hash
+ *      hash    - hash value to modify or NULL => just return hash value
+ *
+ * return:
+ *      64 bit hash as a static hash type
+ */
+fnv64
+fnv64_fd(int fd, fnv64 *hval)
+{
+    char buf[BUF_SIZE+1];	/* read buffer */
+    int readcnt;		/* number of characters written */
+    fnv64 val;			/* current hash value */
+
+    /*
+     * hash until EOF
+     */
+#if defined(HAVE_64BIT_LONG_LONG)
+    val = (hval ? *hval : (fnv64)0);
+#else
+    if (hval) {
+	val = *hval;
+    } else {
+	val->w32[0] = 0;
+	val->w32[1] = 0;
+    }
+#endif
+    while ((readcnt = read(fd, buf, BUF_SIZE)) > 0) {
+	(void) fnv64_buf(buf, readcnt, &val);
+    }
+
+    /* save the hash if we were given a non-NULL initial hash value */
+    if (hval) {
+	*hval = val;
+    }
+
+    /* return our new hash value */
+    return val;
 }

@@ -1,8 +1,8 @@
 /*
- * hash32 - 32 bit Fowler/Noll/Vo hash code
+ * h32 - 32 bit Fowler/Noll/Vo hash code
  *
- * @(#) $Revision: 2.10 $
- * @(#) $Id: h32.c,v 2.10 1999/10/19 06:15:45 chongo Exp chongo $
+ * @(#) $Revision: 2.11 $
+ * @(#) $Id: h32.c,v 2.11 1999/10/23 08:14:29 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/lib/libfnv/RCS/h32.c,v $
  *
  * See:
@@ -38,6 +38,8 @@
 
 #include "fnv.h"
 
+#define BUF_SIZE (32*1024)	/* number of bytes to hash at a time */
+
 
 /*
  * hash_buf - perform a 32 bit Fowler/Noll/Vo hash on a buffer
@@ -57,20 +59,20 @@
  *	 the new hash value as well as returning the new hash value.
  *
  * Example:
- *	hash32 hash_value;
+ *	fnv32 hash_value;
  *
- *	hash_value = hash32_buf(buf, len, NULL);
+ *	hash_value = fnv32_buf(buf, len, NULL);
  *
  *	    The 'hash_value' becomes the FNV hash of the 'buf' buffer.
  *
- *	(void) hash32_buf(buf2, len2, &hash_value);
+ *	(void) fnv32_buf(buf2, len2, &hash_value);
  *
  *	    The 'hash_value' becomes the hash of buf concatinated with buf2.
  */
-hash32
-hash32_buf(char *buf, int len, hash32 *hval)
+fnv32
+fnv32_buf(char *buf, int len, fnv32 *hval)
 {
-    hash32 val;			/* current hash value */
+    fnv32 val;			/* current hash value */
     char *buf_end = buf+len;	/* beyond end of hash area */
 
     /*
@@ -90,14 +92,14 @@ hash32_buf(char *buf, int len, hash32 *hval)
      *
      * for the most up to date copy of this code and the FNV hash home page.
      */
-    val = (hval ? *hval : (hash32)0);
+    val = (hval ? *hval : (fnv32)0);
     while (buf < buf_end) {
 
 	/* multiply by 16777619 mod 2^32 using 32 bit longs */
-	val *= (hash32)16777619;
+	val *= (fnv32)16777619;
 
 	/* xor the bottom with the current octet */
-	val ^= (hash32)(*buf++);
+	val ^= (fnv32)(*buf++);
     }
 
     /* save the hash if we were given a non-NULL initial hash value */
@@ -105,8 +107,8 @@ hash32_buf(char *buf, int len, hash32 *hval)
 	*hval = val;
     }
 
-    /* our hash value */
-    return *hval;
+    /* return our new hash value */
+    return val;
 }
 
 
@@ -127,22 +129,22 @@ hash32_buf(char *buf, int len, hash32 *hval)
  *	 the new hash value as well as returning the new hash value.
  *
  * Example:
- *	hash32 hash_value;
+ *	fnv32 hash_value;
  *
- *	hash_value = hash32_str("the first string", NULL);
+ *	hash_value = fnv32_str("the first string", NULL);
  *
  *	    The 'hash_value' becomes the FNV hash of "the first string"
  *	    not counting the final NUL byte.
  *
- *	(void) hash32_str("2nd string", &hash_value);
+ *	(void) fnv32_str("2nd string", &hash_value);
  *
  *	    The 'hash_value' becomes the hash of "the first string2nd string"
  *	    not counting the final NUL byte.
  */
-hash32
-hash32_str(char *str, hash32 *hval)
+fnv32
+fnv32_str(char *str, fnv32 *hval)
 {
-    hash32 val;			/* current hash value */
+    fnv32 val;			/* current hash value */
 
     /*
      * Fowler/Noll/Vo hash - hash each character in the string
@@ -161,14 +163,14 @@ hash32_str(char *str, hash32 *hval)
      *
      * for the most up to date copy of this code and the FNV hash home page.
      */
-    val = (hval ? *hval : (hash32)0);
+    val = (hval ? *hval : (fnv32)0);
     while (*str) {
 
 	/* multiply by 16777619 mod 2^32 using 32 bit longs */
-	val *= (hash32)16777619;
+	val *= (fnv32)16777619;
 
 	/* xor the bottom with the current octet */
-	val ^= (hash32)(*str++);
+	val ^= (fnv32)(*str++);
     }
 
     /* save the hash if we were given a non-NULL initial hash value */
@@ -176,6 +178,41 @@ hash32_str(char *str, hash32 *hval)
 	*hval = val;
     }
 
-    /* our hash value */
-    return *hval;
+    /* return our new hash value */
+    return val;
+}
+
+
+/*
+ * fnv32_fd - FNV hash an open filename
+ *
+ * usage:
+ *      fd	- open file descriptor to hash
+ *      hash    - hash value to modify or NULL => just return hash value
+ *
+ * return:
+ *      32 bit hash as a static hash type
+ */
+fnv32
+fnv32_fd(int fd, fnv32 *hval)
+{
+    char buf[BUF_SIZE+1];	/* read buffer */
+    int readcnt;		/* number of characters written */
+    fnv32 val;			/* current hash value */
+
+    /*
+     * hash until EOF
+     */
+    val = (hval ? *hval : (fnv32)0);
+    while ((readcnt = read(fd, buf, BUF_SIZE)) > 0) {
+	(void) fnv32_buf(buf, readcnt, &val);
+    }
+
+    /* save the hash if we were given a non-NULL initial hash value */
+    if (hval) {
+	*hval = val;
+    }
+
+    /* return our new hash value */
+    return val;
 }
