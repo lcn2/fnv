@@ -1,10 +1,15 @@
-/* $Id: h32.c,v 2.7 1998/11/01 01:00:42 chongo Exp chongo $  */
+/* $Id: h32.c,v 2.8 1999/09/26 00:03:43 chongo Exp chongo $  */
 /*
  * hash32 - 32 bit Fowler/Noll/Vo hash code
  *
- * @(#) $Revision$
- * @(#) $Id$
- * @(#) $Source$
+ * @(#) $Revision: 2.8 $
+ * @(#) $Id: h32.c,v 2.8 1999/09/26 00:03:43 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src/cmd/fnvhash/RCS/h32.c,v $
+ *
+ * See:
+ *	http://reality.sgi.com/chongo/fnv/index.html
+ *
+ * for the most up to date copy of this code and the FNV hash home page.
  *
  * Copyright (C) 1997 Landon Curt Noll, all rights reserved.
  *
@@ -25,21 +30,18 @@
  * USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
- */
-
-
-/*
- * See:
- *	http://reality.sgi.com/chongo/src/fnv/
  *
- * for the most up to date copy of this code.
+ * chongo <Landon Curt Noll> /\oo/\
+ * chongo_fnv@prime.engr.sgi.com
+ *
+ * Share and Enjoy!
  */
 
 
 /*
  * 32 bit hash value
  */
-typedef unsigned long hash;
+typedef unsigned long hash32;
 
 
 /*
@@ -53,8 +55,8 @@ typedef unsigned long hash;
  * retuns:
  *	32 bit hash as a static hash type
  */
-hash
-hash_buf(char *buf, int len, hash *hval)
+hash32
+hash32_buf(char *buf, int len, hash32 *hval)
 {
     unsigned long val;		/* current hash value */
     char *buf_end = buf+len;	/* beyond end of hash area */
@@ -72,6 +74,11 @@ hash_buf(char *buf, int len, hash *hval)
      *
      * The 32 hash was able to process 234936 words from the web2 dictionary
      * without any 32 bit collisions using a constant of 16777619 = 0x1000193.
+     *
+     * See:
+     *		http://reality.sgi.com/chongo/fnv/index.html
+     *
+     * for the most up to date copy of this code and the FNV hash home page.
      */
     for (val = 0; buf < buf_end; ++buf) {
 
