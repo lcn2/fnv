@@ -3,14 +3,19 @@
  * hasheval - evaluate a hash system
  *
  * usage:
- *	hasheval mult < text
+ *	hasheval [mult] < text
  *
- *	mult	the Fowler/Noll/Vo hash multiplier   
+ *	mult	the Fowler/Noll/Vo hash multiplier if FOWLER_NOLL_VO defined
  *
- * Try a mutliplier of 16777619 with /usr/share/dict/web2.
+ * Hash defines:
+ *
+ *	FOWLER_NOLL_VO	  X <- ((X * 16777619) xor b[i]) mod 2^32
+ *	FOWLER_VO1	  X <- (X * 987654321L + 123456879L + b[i]) mod 2^32
+ *	FOWLER_VO2	  X <- (X * 0x63c63cd9 + 0x9c39c33d + b[i]) mod 2^32
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <ctype.h>
 
 #define CHUNK 65536		/* number of elements to malloc at a time */
@@ -19,7 +24,12 @@ unsigned long *hashval = NULL;		/* hash values processed so far */
 long hashcnt = 0;		/* number of hash values in use */
 long hashmax = 0;		/* malloced size of hashval */
 
+#if defined(FOWLER_NOLL_VO)
 long mult;			/* Vo/Fowler/Noll multiplier */
+#endif /* FOWLER_NOLL_VO */
+
+char alphabet[] = 
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'&-.";
 
 extern void *malloc();
 extern void *realloc();
@@ -38,39 +48,47 @@ main(argc, argv)
      /*
       * parse args 
       */
-    if (argc != 2) {
-	fprintf(stderr, "usage: %s mult < web\n", argv[0]);
+#if defined(FOWLER_NOLL_VO)
+    if (argc == 2) {
+	mult = atol(argv[1]);
+    } else {
+	mult = 16777619;
     }
-    mult = atol(argv[1]);
+#endif /* FOWLER_NOLL_VO */
 
      /*
       * process words on stdin
       */
     while (fgets(buf, BUFSIZ, stdin)) {
-	char *p;
-	char *q;
+	char *p;		/* start of word */
+	char *q;		/* beyond end of word */
+	char c;			/* char beyond end of word */
+	int len;		/* length of word */
 
 	/* firewall */
 	buf[BUFSIZ] = '\0';
 
 	/* process each word */
-	for (p=buf, q=p; *p; ++q) {
-	    char c;
+	for (p=buf; *p; p += strcspn(p, alphabet)) {
 
-	    /* non-alphanul terminates word */
-	    if (*q == '\0' || !isascii(*q) || !isalnum(*q)) {
-		
+	    /* process the current word */
+	    len = strspn(p, alphabet);
+	    if (len > 0) {
+
 		/* terminate word */
+		q = p + len;
 		c = *q;
 		*q = '\0';
 
 		/* hash this word string */
+#if defined(DEBUG)
+		printf("str: %s\n", p);
+#endif
 		hash_str(p);
 
-		/* find start of next word, if it exists */
-		for (p=q; *p && (!isascii(*p) || !isalnum(*p)); ++p) {
-		}
-		q = p;
+		/* un-terminate word */
+		*q = c;
+		p = q;
 	    }
 	}
     }
@@ -89,12 +107,19 @@ main(argc, argv)
     }
 #if defined(DEBUG)
     printf("%d: 0x%08x\n", hashcnt-1, hashval[hashcnt-1]);
-    printf("hashed %d words with %d collision(s)\n", hashcnt, collide);
 #endif
-    if (collide <= 2) {
-	printf("Vo/Fowler/Noll for %d hashed %d words with %d collision(s)\n", 
-	    mult, hashcnt, collide);
-    }
+#if defined(FOWLER_NOLL_VO)
+    printf("Fowler/Noll/Vo hashed %d words with %d collision(s)\n", 
+	hashcnt, collide);
+#elif defined(FOWLER_VO1)
+    printf("Fowler/Vo I hashed %d words with %d collision(s)\n", 
+	hashcnt, collide);
+#elif defined(FOWLER_VO2)
+    printf("Fowler/Vo II hashed %d words with %d collision(s)\n", 
+	hashcnt, collide);
+#else
+    :%$&*&$%: did not define a hash :%$&*&$%:
+#endif
     exit(0);
 }
 
@@ -133,6 +158,7 @@ hash_str(str)
 {
     register unsigned long val;		/* current hash value */
     register unsigned long c;		/* the current string character */
+    char *ostr = str;
 
     /*
      * Fowler/Noll hash - hash each character in the string
@@ -152,13 +178,22 @@ hash_str(str)
 	val = ((val<<3) ^ (val>>2) ^ 1) + c;
 	val = (val<0) ? ~val : val;
 #endif
-#if 0
-	/* K. Phong Vo and Glenn Fowler hash */
+#if defined(FOWLER_VO1)
+	/* Fowler/Vo hash I */
+	/* X <- (X * 987654321L + 123456879L + b[i]) mod 2^32 */
 	val = val * 987654321L + 123456879L + c;
 #endif
+#if defined(FOWLER_NOLL_VO)
 	/* Fowler/Noll/Vo hash */
+	/* X <- ((X * 16777619) xor b[i]) mod 2^32 */
 	val *= mult;
 	val ^= c;
+#endif
+#if defined(FOWLER_VO2)
+	/* Fowler/Vo hash II */
+	/* X <- (X * 0x63c63cd9 + 0x9c39c33d + b[i]) mod 2^32 */
+	val = val * 0x63c63cd9 + 0x9c39c33d + c;
+#endif
     }
 
     /*
