@@ -1,9 +1,9 @@
 /*
  * fnv32 - 32 bit Fowler/Noll/Vo hash of a buffer or string
  *
- * @(#) $Revision: 3.12 $
- * @(#) $Id: fnv_32.c,v 3.12 1999/10/29 00:42:35 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv_32.c,v $
+ * @(#) $Revision: 1.1 $
+ * @(#) $Id: fnv32.c,v 1.1 1999/10/29 07:35:40 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv32.c,v $
  *
  ***
  *
@@ -74,9 +74,11 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <string.h>
 #include "fnv.h"
 
 #define WIDTH 32	/* bit width of hash */
