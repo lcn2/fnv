@@ -6,9 +6,11 @@
  *	hasheval [mult] < text
  *
  *	mult	the Fowler/Noll/Vo hash multiplier if FOWLER_NOLL_VO defined
+ *	mult	the Fowler/Noll/Vo64 hash multiplier if FOWLER_NOLL_VO64 defined
  *
  * Hash defines:
  *
+ *	FOWLER_NOLL_VO64  X <- ((X * 1099511628211) xor b[i]) mod 2^64
  *	FOWLER_NOLL_VO	  X <- ((X * 16777619) xor b[i]) mod 2^32
  *	FOWLER_VO1	  X <- (X * 987654321L + 123456879L + b[i]) mod 2^32
  *	FOWLER_VO2	  X <- (X * 0x63c63cd9 + 0x9c39c33d + b[i]) mod 2^32
@@ -18,26 +20,25 @@
 #include <memory.h>
 #include <ctype.h>
 
-#define CHUNK 65536		/* number of elements to malloc at a time */
+#define CHUNK 262144		/* number of elements to malloc at a time */
 
-long *hashval = NULL;		/* hash values processed so far */
+#if defined(FOWLER_NOLL_VO64)
+#define HASH_SIZE 64			/* bit size fo hash */
+typedef unsigned long long hash;
+#else
+#define HASH_SIZE 32			/* bit size fo hash */
+typedef unsigned long hash;
+#endif
+
+hash *hashval = NULL;	/* hash values processed so far */
 long hashcnt = 0;		/* number of hash values in use */
 long hashmax = 0;		/* malloced size of hashval */
 
-#if defined(FOWLER_NOLL_VO)
-long mult;			/* Vo/Fowler/Noll multiplier */
-#endif /* FOWLER_NOLL_VO */
-
-char alphabet[] = 
-    "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-
-#if 0
-extern void *malloc();
-extern void *realloc();
-#endif
+hash mult;			/* Fowler/Noll/Vo multiplier */
 
 int hash_cmp();		/* compare two hash values */
 void hash_str();	/* add hash of string to the hashval table */
+
 
 main(argc, argv)
     int argc;		/* arg count */
@@ -50,49 +51,31 @@ main(argc, argv)
      /*
       * parse args 
       */
-#if defined(FOWLER_NOLL_VO)
+#if HASH_SIZE == 32
     if (argc == 2) {
 	mult = atol(argv[1]);
     } else {
 	mult = 16777619;
     }
-#endif /* FOWLER_NOLL_VO */
+#else
+    if (argc == 2) {
+	mult = atoll(argv[1]);
+    } else {
+	mult = 1099511628211ULL;
+    }
+#endif
 
      /*
       * process words on stdin
       */
     while (fgets(buf, BUFSIZ, stdin)) {
-	char *p;		/* start of word */
-	char *q;		/* beyond end of word */
-	char c;			/* char beyond end of word */
-	int len;		/* length of word */
 
-	/* firewall */
+	/* process each line */
 	buf[BUFSIZ] = '\0';
-
-	/* process each word */
-	for (p=buf; *p; p += strcspn(p, alphabet)) {
-
-	    /* process the current word */
-	    len = strspn(p, alphabet);
-	    if (len > 0) {
-
-		/* terminate word */
-		q = p + len;
-		c = *q;
-		*q = '\0';
-
-		/* hash this word string */
 #if defined(DEBUG)
-		printf("str: %s\n", p);
+	printf("str: %s\n", buf);
 #endif
-		hash_str(p);
-
-		/* un-terminate word */
-		*q = c;
-		p = q;
-	    }
-	}
+	hash_str(buf);
     }
 
     /*
@@ -101,17 +84,21 @@ main(argc, argv)
     qsort((char *)hashval, hashcnt, sizeof(hashval[0]), hash_cmp);
     for (i=1, collide=0; i < hashcnt; ++i) {
 #if defined(DEBUG)
+#if HASH_SIZE == 32
 	printf("%d: 0x%08x\n", i-1, hashval[i-1]);
+#else
+	printf("%d: 0x%016llx\n", i-1, hashval[i-1]);
+#endif
 #endif
 	if (hashval[i-1] == hashval[i]) {
 	    ++collide;
 	}
     }
-#if defined(DEBUG)
-    printf("%d: 0x%08x\n", hashcnt-1, hashval[hashcnt-1]);
-#endif
 #if defined(FOWLER_NOLL_VO)
     printf("Fowler/Noll/Vo %d hashed %d words with %d collision(s)\n", 
+	mult, hashcnt, collide);
+#elif defined(FOWLER_NOLL_VO64)
+    printf("Fowler/Noll/Vo64 %lld hashed %d words with %d collision(s)\n", 
 	mult, hashcnt, collide);
 #elif defined(FOWLER_VO1)
     printf("Fowler/Vo I hashed %d words with %d collision(s)\n", 
@@ -124,6 +111,7 @@ main(argc, argv)
 #endif
     exit(0);
 }
+
 
 /*
  * hash_cmp - compate two hash values for qsort
@@ -139,11 +127,12 @@ main(argc, argv)
  */
 int
 hash_cmp(h1, h2)
-    unsigned long *h1;		/* first hash value */
-    unsigned long *h2;		/* second hash value */
+    hash *h1;	/* first hash value */
+    hash *h2;	/* second hash value */
 {
     return ((*h1 < *h2) ? -1 : ((*h1 == *h2) ? 0 : 1));
 }
+
 
 /* 
  * hash_str - add hash of string to the hashval table 
@@ -158,8 +147,8 @@ void
 hash_str(str)
     register char *str;		/* the string to hash */
 {
-    register unsigned long val;		/* current hash value */
-    register unsigned long c;		/* the current string character */
+    hash val;		/* current hash value */
+    hash c;		/* the current string character */
     char *ostr = str;
 
     /*
@@ -185,9 +174,9 @@ hash_str(str)
 	/* X <- (X * 987654321L + 123456879L + b[i]) mod 2^32 */
 	val = val * 987654321L + 123456879L + c;
 #endif
-#if defined(FOWLER_NOLL_VO)
-	/* Fowler/Noll/Vo hash */
-	/* X <- ((X * 16777619) xor b[i]) mod 2^32 */
+#if defined(FOWLER_NOLL_VO) || defined(FOWLER_NOLL_VO64)
+	/* Fowler/Noll/Vo or Fowler/Noll/Vo64 hash */
+	/* X <- ((X * magic_prime) xor b[i]) mod 2^x */
 	val *= mult;
 	val ^= c;
 #endif
@@ -203,10 +192,10 @@ hash_str(str)
      */
     if (hashval == NULL) {
 	hashmax = CHUNK;
-	hashval = (long *)malloc(sizeof(hashval[0]) * hashmax);
+	hashval = (hash *)malloc(sizeof(hashval[0]) * hashmax);
     } else if (hashcnt >= hashmax) {
 	hashmax += CHUNK;
-	hashval = (long *)realloc(hashval, sizeof(hashval[0]) * hashmax);
+	hashval = (hash *)realloc(hashval, sizeof(hashval[0]) * hashmax);
     }
 
     /*
