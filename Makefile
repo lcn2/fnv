@@ -2,8 +2,8 @@
 #
 # hash - makefile for FNV hash tools
 #
-# @(#) $Revision: 3.17 $
-# @(#) $Id: Makefile,v 3.17 2001/05/30 15:06:25 chongo Exp chongo $
+# @(#) $Revision: 3.18 $
+# @(#) $Id: Makefile,v 3.18 2001/05/30 15:09:43 chongo Exp chongo $
 # @(#) $Source: /usr/local/src/cmd/fnv/RCS/Makefile,v $
 #
 # See:
@@ -168,7 +168,7 @@ install: all
 	${INSTALL} -m 0644 ${LIBS} ${DESTLIB}
 	${RANLIB} ${DESTLIB}/libfnv.a
 	${INSTALL} -m 0644 ${HSRC} ${DESTINC}
-	# NOTE: Lines with WWW in them are removed from the shipped Makefile
+	@# NOTE: Lines with WWW in them are removed from the shipped Makefile
 	-@if [ -d ${WWW} ]; then \
 	    echo "rm -f Makefile.ship";			: WWW; \
 	    rm -f Makefile.ship;			: WWW; \
@@ -176,15 +176,15 @@ install: all
 	    ${EGREP} -v WWW Makefile > Makefile.ship; 	: WWW; \
 	    echo "rm -f Makefile.save";			: WWW; \
 	    rm -f Makefile.save;			: WWW; \
-	    echo "ln Makefile Makefile.save";			: WWW; \
+	    echo "ln Makefile Makefile.save";		: WWW; \
 	    ln Makefile Makefile.save;			: WWW; \
-	    echo "cp -f Makefile.ship Makefile";		: WWW; \
+	    echo "cp -f Makefile.ship Makefile";	: WWW; \
 	    cp -f Makefile.ship Makefile;		: WWW; \
 	    echo "${TAR} -cf - ${ALL} | ${GZIP_BIN} --best > fnv_hash.tar.gz";: WWW; \
 	    ${TAR} -cf - ${ALL} | ${GZIP_BIN} --best > fnv_hash.tar.gz;: WWW; \
 	    echo "${INSTALL} -m 0644 fnv_hash.tar.gz ${ALL} ${WWW}"; \
 	    ${INSTALL} -m 0644 fnv_hash.tar.gz ${ALL} ${WWW}; \
-	    echo "mv -f Makefile.save Makefile";		: WWW; \
+	    echo "mv -f Makefile.save Makefile";	: WWW; \
 	    mv -f Makefile.save Makefile;		: WWW; \
 	    echo "rm -f fnv_hash.tar.gz Makefile.ship";	: WWW; \
 	    rm -f fnv_hash.tar.gz Makefile.ship;	: WWW; \
