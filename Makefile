@@ -2,8 +2,8 @@
 #
 # hash - makefile for hash tools
 #
-# @(#) $Revision: 3.10 $
-# @(#) $Id: Makefile,v 3.10 1999/10/24 11:19:50 chongo Exp chongo $
+# @(#) $Revision: 3.11 $
+# @(#) $Id: Makefile,v 3.11 1999/10/24 12:44:35 chongo Exp chongo $
 # @(#) $Source: /usr/local/src/cmd/fnv/RCS/Makefile,v $
 #
 # See:
@@ -11,7 +11,7 @@
 #
 # for the most up to date copy of this code and the FNV hash home page.
 #
-# Copyright (c) 1997 by Landon Curt Noll.  All Rights Reserved.
+# Copyright (c) 1999 by Landon Curt Noll.  All Rights Reserved.
 #
 # Permission to use, copy, modify, and distribute this software and
 # its documentation for any purpose and without fee is hereby granted,
@@ -63,31 +63,31 @@ WWW= /usr/local/ns-home/docs/chongo/src/fnv
 
 # what to build
 #
-SRC= h0_32.c h0_64.c \
+SRC=	h0_32.c h0_64.c \
 	h1_32.c h1_64.c \
 	h2_32.c h2_64.c \
 	fnv0_32.c fnv0_64.c \
 	fnv1_32.c fnv1_64.c \
 	fnv2_32.c fnv2_64.c \
 	have_ulong64.c
-HSRC= fnv0.h fnv1.h fnv2.h \
-    longlong.h
-ALL= ${SRC} \
+HSRC=	fnv0.h fnv1.h fnv2.h \
+	longlong.h
+ALL=	${SRC} ${HSRC} \
 	README_fnv0 README_fnv1 README_fnv2 \
 	Makefile
-PROGS= fnv0_32 fnv0_64 \
-    fnv1_32 fnv1_64 \
-    fnv2_32 fnv2_64 \
-    fnv032 fnv064 \
-    fnv132 fnv164 \
-    fnv232 fnv264
-LIBS= libfnv.a
-LIBOBJ= h0_32.o h0_64.o \
+PROGS=	fnv0_32 fnv0_64 \
+	fnv1_32 fnv1_64 \
+	fnv2_32 fnv2_64 \
+	fnv032 fnv064 \
+	fnv132 fnv164 \
+	fnv232 fnv264
+LIBS=	libfnv.a
+LIBOBJ=	h0_32.o h0_64.o \
 	h1_32.o h1_64.o \
 	h2_32.o h2_64.o
 OTHEROBJ= fnv0_32.o fnv0_64.o \
-	  fnv1_32.o fnv1_64.o \
-	  fnv2_32.o fnv2_64.o
+	fnv1_32.o fnv1_64.o \
+	fnv2_32.o fnv2_64.o
 TARGETS= ${LIBOBJ} ${LIBS} ${PROGS}
 
 # default rule
