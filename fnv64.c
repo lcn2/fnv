@@ -1,9 +1,9 @@
 /*
  * fnv_64 - 64 bit Fowler/Noll/Vo hash of a buffer or string
  *
- * @(#) $Revision: 1.2 $
- * @(#) $Id: fnv64.c,v 1.2 1999/10/29 18:06:14 chongo Exp chongo $
- * @(#) $Source: /usr/local/src.lehmer/cmd/fnv/RCS/fnv64.c,v $
+ * @(#) $Revision: 1.3 $
+ * @(#) $Id: fnv64.c,v 1.3 1999/11/07 14:04:35 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv64.c,v $
  *
  ***
  *
@@ -38,7 +38,7 @@
  *
  * In a subsequent ballot round:
  *
- *      Landon Curt Noll (http://reality.sgi.com/chongo/)
+ *      Landon Curt Noll (http://www.isthe.com/chongo/)
  *
  * improved on their algorithm.  Some people tried this hash
  * and found that it worked rather well.  In an EMail message
@@ -48,7 +48,7 @@
  * collision rate. The FNV speed allows one to quickly hash lots
  * of data while maintaining a reasonable collision rate.  See:
  *
- *      http://reality.sgi.com/chongo/tech/comp/fnv/
+ *      http://www.isthe.com/chongo/tech/comp/fnv/index.html
  *
  * for more details as well as other forms of the FNV hash.
  *
@@ -66,8 +66,7 @@
  *
  * By:
  *	chongo <Landon Curt Noll> /\oo/\
- *	http://reality.sgi.com/chongo/
- *	EMail: chongo_fnv at prime dot engr dot sgi dot com
+ *      http://www.isthe.com/chongo/
  *
  * Share and Enjoy!	:-)
  */

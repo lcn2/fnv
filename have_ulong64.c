@@ -27,8 +27,7 @@
  *
  * By:
  *	chongo <Landon Curt Noll> /\oo/\
- *	http://reality.sgi.com/chongo/
- *	EMail: chongo_fnv at prime dot engr dot sgi dot com
+ *      http://www.isthe.com/chongo/
  *
  * Share and Enjoy!	:-)
  */
