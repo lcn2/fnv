@@ -109,8 +109,8 @@ main(argc, argv)
     printf("%d: 0x%08x\n", hashcnt-1, hashval[hashcnt-1]);
 #endif
 #if defined(FOWLER_NOLL_VO)
-    printf("Fowler/Noll/Vo hashed %d words with %d collision(s)\n", 
-	hashcnt, collide);
+    printf("Fowler/Noll/Vo %d hashed %d words with %d collision(s)\n", 
+	mult, hashcnt, collide);
 #elif defined(FOWLER_VO1)
     printf("Fowler/Vo I hashed %d words with %d collision(s)\n", 
 	hashcnt, collide);
