@@ -1,8 +1,8 @@
 /*
  * hash_32 - 32 bit Fowler/Noll/Vo hash code
  *
- * @(#) $Revision: 1.1 $
- * @(#) $Id: hash_32.c,v 1.1 1999/10/29 07:35:40 chongo Exp chongo $
+ * @(#) $Revision: 1.2 $
+ * @(#) $Id: hash_32.c,v 1.2 1999/10/29 17:59:15 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/hash_32.c,v $
  *
  ***
@@ -130,7 +130,7 @@ fnv_32_buf(void *buf, size_t len, Fnv32_t hval)
 Fnv32_t
 fnv_32_str(char *str, Fnv32_t hval)
 {
-    unsigned char *s = (unsigned char)str;	/* unsigned string */
+    unsigned char *s = (unsigned char *)str;	/* unsigned string */
 
     /*
      * FNV-1 hash each octet in the buffer

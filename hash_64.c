@@ -1,8 +1,8 @@
 /*
  * hash_64 - 64 bit Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 1.2 $
- * @(#) $Id: hash_64.c,v 1.2 1999/10/29 08:30:31 chongo Exp chongo $
+ * @(#) $Revision: 1.3 $
+ * @(#) $Id: hash_64.c,v 1.3 1999/10/29 17:59:15 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/hash_64.c,v $
  *
  ***
@@ -218,7 +218,7 @@ fnv_64_buf(void *buf, size_t len, Fnv64_t hval)
 Fnv64_t
 fnv_64_str(char *str, Fnv64_t hval)
 {
-    unsigned char *s = (unsigned char)str;	/* unsigned string */
+    unsigned char *s = (unsigned char *)str;	/* unsigned string */
 
 #if defined(HAVE_64BIT_LONG_LONG)
 
