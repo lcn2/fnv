@@ -1,18 +1,18 @@
-/* $Id: h64.c,v 1.7 1998/02/21 04:22:01 chongo Exp chongo $  */
+/* $Id: h64.c,v 1.8 1998/05/02 03:09:16 chongo Exp chongo $  */
 /*
  * hash64 - 64 bit Fowler/Noll/Vo64 hash code
  *
  * Copyright (C) 1997 Landon Curt Noll, all rights reserved.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software and
  * its documentation for any purpose is hereby granted, provided that
  * the above copyright, this permission notice, and the disclaimer
  * below appear in all of the following:
- * 
+ *
  *         * supporting documentation
- *         * source copies 
+ *         * source copies
  *         * source works derived from this source
- * 
+ *
  * THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
  * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
  * EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY SPECIAL, INDIRECT OR
@@ -25,9 +25,9 @@
 
 /*
  * See:
- *	http://reality.sgi.com/csp/ioccc/noll/src/fnv/	
+ *	http://reality.sgi.com/csp/ioccc/noll/src/fnv/
  *
- * for the most up to date copy if this code.
+ * for the most up to date copy of this code.
  */
 
 
@@ -102,8 +102,8 @@ hash_buf(char *buf, int len, hash64 *hval)
     /* hash each octet of the buffer */
     for (val[0]=val[1]=val[2]=val[3]=0; buf < buf_end; ++buf) {
 
-	/* 
-	 * multiply by 1099511628211 mod 2^64 using 32 bit longs 
+	/*
+	 * multiply by 1099511628211 mod 2^64 using 32 bit longs
 	 *
 	 * Using 1099511628211, we have the following digits base 2^16:
 	 *
@@ -124,7 +124,7 @@ hash_buf(char *buf, int len, hash64 *hval)
 	val[1] = tmp[1] & 0xffff;
 	val[3] += (tmp[2] >> 16);
 	val[2] = tmp[2] & 0xffff;
-	/* 
+	/*
 	 * Doing a val[3] &= 0xffff; is not really needed since it simply
 	 * removes multiples of 2^64.  We can discard these excess bits
 	 * outside of the loop when we convert to hash64.
@@ -139,7 +139,7 @@ hash_buf(char *buf, int len, hash64 *hval)
     hval->w32[0] = val[1]<<16 + val[0];
 
 #endif
-    
+
     /* our hash value */
     return *hval;
 }
