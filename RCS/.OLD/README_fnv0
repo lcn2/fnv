@@ -1,0 +1,56 @@
+Here are sample codes for the Fowler/Noll/Vo hash:
+
+	h32.c	32 bit (Fowler/Noll/Vo)
+	h64.c	64 bit (Fowler/Noll/Vo64)
+
+Both these files implement a function called hash_buf.  Here is the
+interface to the 32 bit version:
+
+	typedef unsigned long hash;
+	hash hash_buf(char *buf, int len, hash *hval)
+
+It is you simple pointer, length returning a 32 bit value hash.
+
+The 64 bit version in identical:
+
+	/*
+	 * 64 bit hash value
+	 */
+	#if defined(HAVE_64BIT_LONG_LONG)
+	typedef unsigned long long hash64;
+	#else
+	struct s_hash64 {
+	    unsigned long w32[2];
+	};
+	typedef struct s_hash64 hash64;
+	#endif
+
+	hash64 hash_buf(char *buf, int len, hash64 *hval)
+
+However if you system does have a 64 bit 'long long' data type, you should
+define -DHAVE_64BIT_LONG_LONG.  If you have a 64 bit 'long' then define
+-DHAVE_64BIT_LONG_LONG and change the hash64 typedef to:
+
+	typedef unsigned long hash64;	/* for systems with 64 bit longs */
+
+otherwise if you only have a 32 bit long (with no long long) then
+you should not define it (i.e., -UHAVE_64BIT_LONG_LONG).
+
+These functions implement the algorithm and contain the magic
+primes for very good hashing.
+
+chongo <share and enjoy> /\oo/\
+
+=-=
+p.s. There is also a hash demo that you can look at:
+
+	hash.c 	hash demo with 32 bit hash built in
+	hash.h 	hash demo with 32 bit hash built in
+
+It is just some simple bucket chaining hash code that shows how well
+the hash algorithm does on data.  Compile hash.c with -DSTANDALONE
+and -DMEM_ONLY for a memory only based test.  It is nothing special, 
+just something that uses a hashing algorithm.
+
+If you want to try the 64 bit hash in the demo, replace the for loop
+found in hash_str() and hash_stric() with the algorithm found in h64.c.
