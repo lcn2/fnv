@@ -39,7 +39,7 @@ CC= cc
 AR= ar
 GREP= grep
 TAR= tar
-GZIP_BINARY= gzip
+GZIP_BIN= gzip
 MAKE= make
 INSTALL= install
 
@@ -106,30 +106,23 @@ longlong.h: have_ulong64.c Makefile
 	-@rm -f have_ulong64 have_ulong64.o ll_tmp
 	@echo 'longlong.h formed'
 
-# NOTE: Lines with WWW in them are removed from the shipped Makefile
-Makefile.ship: Makefile	# WWW
-	rm -f $@	# WWW
-	${GREP} -v WWW Makefile > Makefile.ship
-fnv_hash.tar.gz: ${ALL}
-	${MAKE} Makefile.ship		# WWW
-	rm -f Makefile.save		# WWW
-	ln Makefile Makefile.save	# WWW
-	cp -f Makefile.ship Makefile	# WWW
-	rm -f $@
-	${TAR} -cvf - ${ALL} | ${GZIP_BINARY} --best > fnv_hash.tar.gz
-	mv -f Makefile.save Makefile	# WWW
-
 # utilities
 #
 install: libfnv.a
 	${INSTALL} -m 0644 libfnv.a ${DESTLIB}
 	${RANLIB} ${DESTLIB}/libfnv.a
+	# NOTE: Lines with WWW in them are removed from the shipped Makefile
 	if [ -d ${WWW} ]; then \
-	    echo "	${MAKE} fnv_hash.tar.gz"	# WWW; \
-	    ${MAKE} fnv_hash.tar.gz	# WWW; \
-	    echo "	${INSTALL} -m 0644 fnv_hash.tar.gz ${ALL}" ${WWW}; \
+	    rm -f Makefile.ship			# WWW; \
+	    ${GREP} -v WWW Makefile > Makefile.ship 	# WWW; \
+	    rm -f Makefile.save			# WWW; \
+	    ln Makefile Makefile.save		# WWW; \
+	    cp -f Makefile.ship Makefile	# WWW; \
+	    ${TAR} -cf - ${ALL} | ${GZIP_BIN} --best > fnv_hash.tar.gz # WWW; \
 	    ${INSTALL} -m 0644 fnv_hash.tar.gz ${ALL} ${WWW}; \
-	fi				# WWW
+	    mv -f Makefile.save Makefile	# WWW; \
+	    rm -f fnv_hash.tar.gz Makefile.ship	# WWW; \
+	fi					# WWW
 
 clean:
 	-rm -f h32.o h64.o have_ulong64 have_ulong64.o ll_tmp longlong.h
