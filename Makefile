@@ -2,8 +2,8 @@
 #
 # hash - makefile for FNV hash tools
 #
-# @(#) $Revision: 3.12 $
-# @(#) $Id: Makefile,v 3.12 1999/10/24 12:49:42 chongo Exp chongo $
+# @(#) $Revision: 3.13 $
+# @(#) $Id: Makefile,v 3.13 1999/10/29 07:50:53 chongo Exp chongo $
 # @(#) $Source: /usr/local/src/cmd/fnv/RCS/Makefile,v $
 #
 # See:
@@ -66,7 +66,7 @@ HSRC=	fnv.h \
 	longlong.h
 ALL=	${SRC} ${HSRC} \
 	README Makefile
-PROGS=	fnv032 fnv064 fnv0_32 fnv0_64 fnv132 fnv164 fnv_132 fnv_164
+PROGS=	fnv032 fnv064 fnv0_32 fnv0_64 fnv132 fnv164 fnv1_32 fnv1_64
 LIBS=	libfnv.a
 LIBOBJ=	hash_32.o hash_64.o
 OTHEROBJ= fnv32.o fnv64.o
@@ -117,11 +117,11 @@ fnv164: fnv064
 	-rm -f $@
 	-cp -f $? $@
 
-fnv_132: fnv032
+fnv1_32: fnv032
 	-rm -f $@
 	-cp -f $? $@
 
-fnv_164: fnv064
+fnv1_64: fnv064
 	-rm -f $@
 	-cp -f $? $@
 
