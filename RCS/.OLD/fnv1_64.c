@@ -2,7 +2,7 @@
  * fnv1_64 - 64 bit Fowler/Noll/Vo hash of a string or rile
  *
  * @(#) $Revision: 3.6 $
- * @(#) $Id: fnv1_64.c,v 3.6 1999/10/24 01:08:54 chongo Exp chongo $
+ * @(#) $Id: fnv1_64.c,v 3.6 1999/10/24 01:53:49 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv1_64.c,v $
  *
  * usage:
@@ -176,8 +176,7 @@ main(int argc, char *argv[])
 	/* hash any other strings */
 	for (i=optind+1; i < argc; ++i) {
 	    if (m_flag) {
-		hval = fnv1_64_str(argv[i], NULL);
-		print_fnv(hval, bmask, v_flag, argv[i]);
+		print_fnv(fnv1_64_str(argv[i], NULL), bmask, v_flag, argv[i]);
 	    } else {
 		fnv1_64_str(argv[i], &hval);
 	    }
@@ -197,7 +196,7 @@ main(int argc, char *argv[])
 	    /* case: process only stdin */
 	    hval = fnv1_64_fd(0, NULL);
 	    if (m_flag) {
-		print_fnv(hval, bmask, v_flag, "-");
+		print_fnv(hval, bmask, v_flag, "(stdin)");
 	    }
 
 	} else {
@@ -210,10 +209,9 @@ main(int argc, char *argv[])
 		exit(4);
 	    }
 	    if (m_flag) {
-		hval = fnv1_64_fd(fd, NULL);
-		print_fnv(hval, bmask, v_flag, argv[optind]);
+		print_fnv(fnv1_64_fd(fd, NULL), bmask, v_flag, argv[optind]);
 	    } else {
-		(void) fnv1_64_fd(fd, &hval);
+		hval = fnv1_64_fd(fd, NULL);
 	    }
 	    close(fd);
 	}
@@ -231,8 +229,7 @@ main(int argc, char *argv[])
 		exit(4);
 	    }
 	    if (m_flag) {
-		hval = fnv1_64_fd(fd, NULL);
-		print_fnv(hval, bmask, v_flag, argv[i]);
+		print_fnv(fnv1_64_fd(fd, NULL), bmask, v_flag, argv[i]);
 	    } else {
 		(void) fnv1_64_fd(fd, &hval);
 	    }
