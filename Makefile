@@ -2,8 +2,8 @@
 #
 # hash - makefile for hash tools
 #
-# @(#) $Revision: 3.5 $
-# @(#) $Id: Makefile,v 3.5 1999/10/23 13:14:40 chongo Exp chongo $
+# @(#) $Revision: 3.6 $
+# @(#) $Id: Makefile,v 3.6 1999/10/24 00:05:01 chongo Exp chongo $
 # @(#) $Source: /usr/local/src/cmd/fnv/RCS/Makefile,v $
 #
 # See:
@@ -162,7 +162,7 @@ longlong.h: have_ulong64.c Makefile
 
 # utilities
 #
-install: libfnv.a
+install: all
 	-@if [ -d "${DESTBIN}" ]; then \
 	    echo "	mkdir -p ${DESTBIN}"; \
 	    mkdir -p ${DESTBIN}; \
