@@ -2,8 +2,8 @@
 #
 # hash - makefile for hash tools
 #
-# @(#) $Revision: 3.6 $
-# @(#) $Id: Makefile,v 3.6 1999/10/24 00:05:01 chongo Exp chongo $
+# @(#) $Revision: 3.7 $
+# @(#) $Id: Makefile,v 3.7 1999/10/24 00:06:04 chongo Exp chongo $
 # @(#) $Source: /usr/local/src/cmd/fnv/RCS/Makefile,v $
 #
 # See:
@@ -220,6 +220,7 @@ check: all
 	-@echo line 1 > ll_tmp
 	-@echo line 2 >> ll_tmp
 	-@echo line 3 >> ll_tmp
+	@echo '	echo "line 1\\nline 2\\nline 3" > ll_tmp'
 	@echo "	fnv_32 < ll_tmp == 0xb8cbeb33"
 	-@./fnv_32 < ll_tmp | ${EGREP} -v 0xb8cbeb33; /bin/true
 	@echo "	fnv_64 < ll_tmp == 0x79dcad190c3291b3"
@@ -232,7 +233,7 @@ check: all
 	-@./fnv_32 ll_tmp ll_tmp | ${EGREP} -v 0x08ae22e5; /bin/true
 	@echo "	fnv_64 ll_tmp ll_tmp == 0x10a587a0ff68f305"
 	-@./fnv_64 ll_tmp ll_tmp | ${EGREP} -v 0x10a587a0ff68f305; /bin/true
-	-@dd if=/dev/zero bs=1024k count=4 of=ll_tmp2 >/dev/null 2>&1
+	-dd if=/dev/zero bs=1024k count=4 of=ll_tmp2 >/dev/null 2>&1
 	@echo "	fnv_32 ll_tmp ll_tmp2 == 0x23cbeb33"
 	-@./fnv_32 ll_tmp ll_tmp2 | ${EGREP} -v 0x23cbeb33; /bin/true
 	@echo "	fnv_64 ll_tmp ll_tmp2 == 0xcafae19b7f3291b3"
