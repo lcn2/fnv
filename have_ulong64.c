@@ -4,10 +4,10 @@
  * usage:
  *	have_ulong64 > longlong.h
  *
- * Not all systems have a 'long long type' so this may not compile on 
+ * Not all systems have a 'long long type' so this may not compile on
  * your system.
  *
- * This prog outputs several defines:
+ * This prog outputs the define:
  *
  *	HAVE_64BIT_LONG_LONG
  *		defined ==> we have a 64 bit unsigned long long
@@ -37,10 +37,6 @@
  * chongo was here	/\../\
  */
 
-#include <stdio.h>
-
-#define MOVELEN 3
-
 /*
  * have the compiler try its hand with unsigned and signed long longs
  */
@@ -56,7 +52,6 @@ main(void)
 	 */
 	if (val == 4294967297ULL && sizeof(val) == 8) {
 		printf("#define HAVE_64BIT_LONG_LONG\t/* yes */\n");
-		printf("#define LONGLONG_BITS %d\n", sizeof(val)*8);
 	}
 
 	/* exit(0); */

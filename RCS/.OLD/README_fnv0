@@ -1,8 +1,12 @@
+Fowler/Noll/Vo hash
+
 See:
+	http://reality.sgi.com/chongo/fnv/index.html
 
-	http://reality.sgi.com/chongo/src/fnv/
+for the most up to date copy of this code and the FV hash home page.
 
-for the most up to date copy of this code.
+These functions implement the algorithm and contain the magic
+primes for very good hashing.
 
 =-=
 
@@ -14,8 +18,8 @@ Here are sample codes for the Fowler/Noll/Vo hash:
 Both these files implement a function called hash_buf.  Here is the
 interface to the 32 bit version:
 
-	typedef unsigned long hash;
-	hash hash_buf(char *buf, int len, hash *hval)
+	typedef unsigned long hash32;
+	hash hash32_buf(char *buf, int len, hash32 *hval)
 
 It is you simple pointer, length returning a 32 bit value hash.
 
@@ -33,32 +37,13 @@ The 64 bit version in identical:
 	typedef struct s_hash64 hash64;
 	#endif
 
-	hash64 hash_buf(char *buf, int len, hash64 *hval)
+	hash64 hash32_buf(char *buf, int len, hash64 *hval)
 
 However if you system does have a 64 bit 'long long' data type, you should
-define -DHAVE_64BIT_LONG_LONG.  If you have a 64 bit 'long' then define
--DHAVE_64BIT_LONG_LONG and change the hash64 typedef to:
+define -DHAVE_64BIT_LONG_LONG.  The Makefile should build a longlong.h
+for you which will have HAVE_64BIT_LONG_LONG define or undefined.
 
-	typedef unsigned long hash64;	/* for systems with 64 bit longs */
+chongo <Landon Curt Noll> /\oo/\
+chongo_fnv@prime.engr.sgi.com
 
-otherwise if you only have a 32 bit long (with no long long) then
-you should not define it (i.e., -UHAVE_64BIT_LONG_LONG).
-
-These functions implement the algorithm and contain the magic
-primes for very good hashing.
-
-chongo <share and enjoy> /\oo/\
-
-=-=
-p.s. There is also a hash demo that you can look at:
-
-	hash.c 	hash demo with 32 bit hash built in
-	hash.h 	hash demo with 32 bit hash built in
-
-It is just some simple bucket chaining hash code that shows how well
-the hash algorithm does on data.  Compile hash.c with -DSTANDALONE
-and -DMEM_ONLY for a memory only based test.  It is nothing special, 
-just something that uses a hashing algorithm.
-
-If you want to try the 64 bit hash in the demo, replace the for loop
-found in hash_str() and hash_stric() with the algorithm found in h64.c.
+Share and Enjoy!

@@ -1,9 +1,14 @@
 /*
  * hash64 - 64 bit Fowler/Noll/Vo64 hash code
  *
- * @(#) $Revision$
- * @(#) $Id$
- * @(#) $Source$
+ * @(#) $Revision: 1.11 $
+ * @(#) $Id: h64.c,v 1.11 1999/09/26 00:03:43 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src/cmd/fnvhash/RCS/h64.c,v $
+ *
+ * See:
+ *	http://reality.sgi.com/chongo/fnv/index.html
+ *
+ * for the most up to date copy of this code and the FNV hash home page.
  *
  * Copyright (C) 1997 Landon Curt Noll, all rights reserved.
  *
@@ -24,15 +29,14 @@
  * USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
- */
-
-
-/*
- * See:
- *	http://reality.sgi.com/chongo/src/fnv/
  *
- * for the most up to date copy of this code.
+ * chongo <Landon Curt Noll> /\oo/\
+ * chongo_fnv@prime.engr.sgi.com
+ *
+ * Share and Enjoy!
  */
+
+#include "longlong.h"
 
 
 /*
@@ -60,7 +64,7 @@ typedef struct s_hash64 hash64;
  *	64 bit hash as a static hash64 structure
  */
 hash64
-hash_buf(char *buf, int len, hash64 *hval)
+hash64_buf(char *buf, int len, hash64 *hval)
 {
 #if defined(HAVE_64BIT_LONG_LONG)
     unsigned long long val;	/* current hash value */
@@ -86,6 +90,12 @@ hash_buf(char *buf, int len, hash64 *hval)
      * without any 32 bit collisions using a constant of 16777619 = 0x1000193.
      *
      * The 64 bit hases uses 1099511628211 = 0x100000001b3 instead.
+     *
+     * See:
+     *		http://reality.sgi.com/chongo/fnv/index.html
+     *
+     * for the most up to date copy of this code and the FNV hash home page.
+     *
      */
 #if defined(HAVE_64BIT_LONG_LONG)
     /* hash each octet of the buffer */
