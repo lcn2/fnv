@@ -125,14 +125,18 @@ hash_buf(char *buf, int len, hash64 *hval)
 	val[1] = tmp[1] & 0xffff;
 	val[3] += (tmp[2] >> 16);
 	val[2] = tmp[2] & 0xffff;
-	val[3] &= 0xffff;
+	/* 
+	 * Doing a val[3] &= 0xffff; is not really needed since it simply
+	 * removes multiples of 2^64.  We can discard these excess bits
+	 * outside of the loop when we convert to hash64.
+	 */
 
 	/* xor the bottom with the current octet */
 	val[0] ^= (unsigned long)(*buf);
     }
 
     /* convert to hash64 */
-    hval->w32[1] = val[3]<<16 + val[2];
+    hval->w32[1] = ((val[3]<<16)&0xffff) + val[2];
     hval->w32[0] = val[1]<<16 + val[0];
 
 #endif
