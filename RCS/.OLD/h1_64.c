@@ -1,18 +1,18 @@
 /*
- * h1_64 - 64 bit Fowler/Noll/Vo-1 hash code
+ * h0_64 - 64 bit Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 3.9 $
- * @(#) $Id: h1_64.c,v 3.9 1999/10/27 04:45:14 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/cmd/fnv/RCS/h1_64.c,v $
- *
- ***
- *
- * This is the FNV-1 algorithm with a non-0 offset basis which is very
- * similar to the historic FNV-0 algorithm and identical in speed.
+ * @(#) $Revision: 3.10 $
+ * @(#) $Id: h0_64.c,v 3.10 1999/10/29 00:42:35 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src/cmd/fnv/RCS/h0_64.c,v $
  *
  ***
  *
- * Fowler/Noll/Vo-1 hash
+ * This is the original historic FNV algorithm with a 0 offset basis.
+ * It is recommended that FNV-1 (with a non-0 offset basis) be used instead.
+ *
+ ***
+ *
+ * Fowler/Noll/Vo-0 hash
  *
  * The basis of this hash algorithm was taken from an idea sent
  * as reviewer comments to the IEEE POSIX P1003.2 committee by:
@@ -38,17 +38,7 @@
  *
  ***
  *
- * Copyright (C) 1999 Landon Curt Noll, all rights reserved.
- *
- * Permission to use, copy, modify, and distribute this software and
- * its documentation for any purpose and without fee is hereby granted,
- * provided that the above copyright, this permission notice and text
- * this comment, and the disclaimer below appear in all of the following:
- *
- *       supporting documentation
- *       source copies
- *       source works derived from this source
- *       binaries derived from this source or from derived source
+ * Please do not copyright this code.  This code is in the public domain.
  *
  * LANDON CURT NOLL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
  * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO
@@ -58,54 +48,34 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  *
- * chongo <Landon Curt Noll> /\oo/\
- * http://reality.sgi.com/chongo
- * EMail: chongo_fnv at prime dot engr dot sgi dot com
+ * By:
+ *	chongo <Landon Curt Noll> /\oo/\
+ *	http://reality.sgi.com/chongo
+ *	EMail: chongo_fnv at prime dot engr dot sgi dot com
  *
  * Share and Enjoy!	:-)
  */
 
+#include <stdlib.h>
 #include "fnv1.h"
-
-#define BUF_SIZE (32*1024)	/* number of bytes to hash at a time */
 
 
 /*
- * We start the hash at a non-zero value at the beginning so that
- * hashing blocks of data with all 0 bits do not map onto the same
- * 0 hash value.  The virgin value that we use below is the hash value
- * that we would get from following 32 ASCII characters:
- *
- *		chongo <Landon Curt Noll> /\../\
- *
- * Note that the \'s above are not back-slashing escape characters.
- * They are literal ASCII  backslash 0x5c characters.
- *
- * The effect of this virgin initial value is the same as starting
- * with 0 and pre-pending those 32 characters onto the data being
- * hashed.
- *
- * Yes, even with this non-zero virgin value there is a set of data
- * that will result in a zero hash value.  Worse, appending any
- * about of zero bytes will continue to produce a zero hash value.
- * But that would happen with any initial value so long as the
- * hash of the initial was the `inverse' of the virgin prefix string.
- *
- * But then again for any hash function, there exists sets of data
- * which that the hash of every member is the same value.  That is
- * life with many to few mapping functions.  All we do here is to
- * prevent sets whose members consist of 0 or more bytes of 0's from
- * being such an awkward set.
- *
- * And yes, someone can figure out what the magic 'inverse' of the
- * 32 ASCII character are ... but this hash function is NOT intended
- * to be a cryptographic hash function, just a fast and reasonably
- * good hash function.
+ * FNV-1 defines the initial basis to be non-0
+ */
+#if !defined(HAVE_64BIT_LONG_LONG)
+const Fnv64_t fnv_64_init = { 0x84222325, 0xcbf29ce4 };
+#endif
+
+
+/* 
+ * 64 bit magic FNV-1 prime 
  */
 #if defined(HAVE_64BIT_LONG_LONG)
-static fnv64 virgin = 0xcbf29ce484222325ULL;
+#define FNV_64_PRIME ((Fnv64_t)0x100000001b3ULL)	/* 64 bit FNV-1 prime */
 #else
-static fnv64 virgin = { 0x84222325, 0xcbf29ce4 };
+#define FNV_64_PRIME_LOW ((unsigned long)0x1b3)	/* lower bits of FNV prime */
+#define FNV_64_PRIME_SHIFT (8)		/* top FNV prime shift above 2^32 */
 #endif
 
 
@@ -115,106 +85,70 @@ static fnv64 virgin = { 0x84222325, 0xcbf29ce4 };
  * input:
  *	buf	- start of buffer to hash
  *	len	- length of buffer in octets
- *	hval	- hash value to modify or NULL => just return hash value
+ *	hval	- previous hash value or 0 if first call
  *
  * returns:
  *	64 bit hash as a static hash type
- *	*hval is also set to the returned hash value if it was non-NULL
- *
- * NOTE: If hval is NULL, this routine starts with a 0 hash value and
- * 	 returns the hash value.  If hval is non-NULL, that what it points
- *	 to as used as the previous hash value and on completion becomes
- *	 the new hash value as well as returning the new hash value.
- *
- * Example:
- *	fnv64 hash_value;
- *
- *	hash_value = fnv1_64_buf(buf, len, NULL);
- *
- *	    The 'hash_value' becomes the FNV hash of the 'buf' buffer.
- *
- *	(void) fnv1_64_buf(buf2, len2, &hash_value);
- *
- *	    The 'hash_value' becomes the hash of buf concatenated with buf2.
  */
-fnv64
-fnv1_64_buf(char *buf, int len, fnv64 *hval)
+Fnv64_t
+fnv1_64_buf(void *buf, size_t len, Fnv64_t hval)
 {
-#if !defined(HAVE_64BIT_LONG_LONG)
-    unsigned long val[4];	/* hash value in base 2^16 */
-    unsigned long tmp[4];	/* tmp 64 bit value */
-#endif
-    fnv64 ret;			/* 64 bit return value */
-    char *buf_end = buf+len;	/* beyond end of hash area */
-
-    /*
-     * FNV-1 hash each octet in the buffer
-     */
 #if defined(HAVE_64BIT_LONG_LONG)
 
-    /*
-     * load or initialize hash value
-     */
-    ret = (hval ? *hval : virgin);
-
-    /*
-     * hash each octet of the buffer
-     */
-    while (buf < buf_end) {
-
-	/* multiply by 1099511628211ULL mod 2^64 using 64 bit longs */
-	ret *= (fnv64)1099511628211ULL;
-
-	/* xor the bottom with the current octet */
-	ret ^= (fnv64)(*buf++);
-    }
-
-    /* save the hash if we were given a non-NULL initial hash value */
-    if (hval) {
-	*hval = ret;
-    }
-
-#else
-
-    /*
-     * setup the initial hash value
-     */
-    if (hval) {
-	val[0] = hval->w32[0];
-	val[1] = (val[0] >> 16);
-	val[0] &= 0xffff;
-	val[2] = hval->w32[1];
-	val[3] = (val[2] >> 16);
-	val[2] &= 0xffff;
-    } else {
-	val[0] = virgin.w32[0];
-	val[1] = (val[0] >> 16);
-	val[0] &= 0xffff;
-	val[2] = virgin.w32[1];
-	val[3] = (val[2] >> 16);
-	val[2] &= 0xffff;
-    }
+    unsigned char *bp = (unsigned char *)buf;	/* start of buffer */
+    unsigned char *be = bp + len;		/* beyond end of buffer */
 
     /*
      * FNV-1 hash each octet of the buffer
      */
-    while (buf < buf_end) {
+    while (bp < be) {
+
+	/* multiply by the 64 bit FNV magic prime mod 2^64 */
+	hval *= FNV_64_PRIME;
+
+	/* xor the bottom with the current octet */
+	hval ^= (Fnv64_t)*bp++;
+    }
+
+#else /* HAVE_64BIT_LONG_LONG */
+
+    unsigned long val[4];			/* hash value in base 2^16 */
+    unsigned long tmp[4];			/* tmp 64 bit value */
+
+    /*
+     * Convert Fnv64_t hval into a base 2^16 array
+     */
+    val[0] = hval->w32[0];
+    val[1] = (val[0] >> 16);
+    val[0] &= 0xffff;
+    val[2] = hval->w32[1];
+    val[3] = (val[2] >> 16);
+    val[2] &= 0xffff;
+
+    /*
+     * FNV-1 hash each octet of the buffer
+     */
+    while (bp < be) {
 
 	/*
-	 * multiply by 1099511628211 mod 2^64 using 32 bit longs
+	 * multiply by the 64 bit FNV magic prime mod 2^64
 	 *
-	 * Using 1099511628211, we have the following digits base 2^16:
+	 * Using 0x100000001b3 we have the following digits base 2^16:
 	 *
 	 *	0x0	0x100	0x0	0x1b3
+	 *
+	 * which is the same as:
+	 *
+	 *	0x0	1<<FNV_64_PRIME_SHIFT	0x0	FNV_64_PRIME_LOW
 	 */
 	/* multiply by the lowest order digit base 2^16 */
-	tmp[0] = val[0] * 0x1b3;
-	tmp[1] = val[1] * 0x1b3;
-	tmp[2] = val[2] * 0x1b3;
-	tmp[3] = val[3] * 0x1b3;
+	tmp[0] = val[0] * FNV_64_PRIME_LOW;
+	tmp[1] = val[1] * FNV_64_PRIME_LOW;
+	tmp[2] = val[2] * FNV_64_PRIME_LOW;
+	tmp[3] = val[3] * FNV_64_PRIME_LOW;
 	/* multiply by the other non-zero digit */
-	tmp[2] += val[0] << 8;		/* tmp[2] += val[0] * 0x100 */
-	tmp[3] += val[1] << 8;		/* tmp[1] += val[1] * 0x100 */
+	tmp[2] += val[0] << FNV_64_PRIME_SHIFT;	/* tmp[2] += val[0] * 0x100 */
+	tmp[3] += val[1] << FNV_64_PRIME_SHIFT;	/* tmp[1] += val[1] * 0x100 */
 	/* proapage carries */
 	tmp[1] += (tmp[0] >> 16);
 	val[0] = tmp[0] & 0xffff;
@@ -225,25 +159,23 @@ fnv1_64_buf(char *buf, int len, fnv64 *hval)
 	/*
 	 * Doing a val[3] &= 0xffff; is not really needed since it simply
 	 * removes multiples of 2^64.  We can discard these excess bits
-	 * outside of the loop when we convert to fnv64.
+	 * outside of the loop when we convert to Fnv64_t.
 	 */
 
 	/* xor the bottom with the current octet */
-	val[0] ^= (unsigned long)(*buf++);
+	val[0] ^= (unsigned long)*bp++;
     }
 
-    /* convert to fnv64 */
-    ret.w32[1] = ((val[3]<<16) | val[2]);
-    ret.w32[0] = ((val[1]<<16) | val[0]);
+    /*
+     * Convert base 2^16 array back into an Fnv64_t
+     */
+    hval.w32[1] = ((val[3]<<16) | val[2]);
+    hval.w32[0] = ((val[1]<<16) | val[0]);
 
-    /* save the hash if we were given a non-NULL initial hash value */
-    if (hval) {
-	*hval = ret;
-    }
-#endif
+#endif /* HAVE_64BIT_LONG_LONG */
 
     /* return our new hash value */
-    return ret;
+    return hval;
 }
 
 
@@ -252,105 +184,67 @@ fnv1_64_buf(char *buf, int len, fnv64 *hval)
  *
  * input:
  *	buf	- start of buffer to hash
- *	hval	- hash value to modify or NULL => just return hash value
+ *	hval	- previous hash value or 0 if first call
  *
  * returns:
  *	64 bit hash as a static hash type
- *	*hval is also set to the returned hash value if it was non-NULL
- *
- * NOTE: If hval is NULL, this routine starts with a 0 hash value and
- * 	 returns the hash value.  If hval is non-NULL, that what it points
- *	 to as used as the previous hash value and on completion becomes
- *	 the new hash value as well as returning the new hash value.
- *
- * Example:
- *	fnv64 hash_value;
- *
- *	hash_value = fnv1_64_str(buf, len, NULL);
- *
- *	    The 'hash_value' becomes the FNV hash of the 'buf' buffer.
- *
- *	(void) fnv1_64_str(buf2, len2, &hash_value);
- *
- *	    The 'hash_value' becomes the hash of buf concatenated with buf2.
  */
-fnv64
-fnv1_64_str(char *str, fnv64 *hval)
+Fnv64_t
+fnv1_64_str(char *str, Fnv64_t hval)
 {
-#if !defined(HAVE_64BIT_LONG_LONG)
-    unsigned long val[4];	/* hash value in base 2^16 */
-    unsigned long tmp[4];	/* tmp 64 bit value */
-#endif
-    fnv64 ret;			/* 64 bit return value */
-
-    /*
-     * FNV-1 hash each octet in the buffer
-     */
 #if defined(HAVE_64BIT_LONG_LONG)
 
     /*
-     * load or initialize hash value
-     */
-    ret = (hval ? *hval : virgin);
-
-    /*
-     * hash each octet of the buffer
+     * FNV-1 hash each octet of the string
      */
     while (*str) {
 
-	/* multiply by 1099511628211ULL mod 2^64 using 64 bit longs */
-	ret *= (fnv64)1099511628211ULL;
+	/* multiply by the 64 bit FNV magic prime mod 2^64 */
+	hval *= FNV_64_PRIME;
 
 	/* xor the bottom with the current octet */
-	ret ^= (fnv64)(*str++);
+	hval ^= (Fnv64_t)*str++;
     }
 
-    /* save the hash if we were given a non-NULL initial hash value */
-    if (hval) {
-	*hval = ret;
-    }
+#else /* !HAVE_64BIT_LONG_LONG */
 
-#else
+    unsigned long val[4];	/* hash value in base 2^16 */
+    unsigned long tmp[4];	/* tmp 64 bit value */
 
     /*
-     * setup the initial hash value
+     * Convert Fnv64_t hval into a base 2^16 array
      */
-    if (hval) {
-	val[0] = hval->w32[0];
-	val[1] = (val[0] >> 16);
-	val[0] &= 0xffff;
-	val[2] = hval->w32[1];
-	val[3] = (val[2] >> 16);
-	val[2] &= 0xffff;
-    } else {
-	val[0] = virgin.w32[0];
-	val[1] = (val[0] >> 16);
-	val[0] &= 0xffff;
-	val[2] = virgin.w32[1];
-	val[3] = (val[2] >> 16);
-	val[2] &= 0xffff;
-    }
+    val[0] = hval->w32[0];
+    val[1] = (val[0] >> 16);
+    val[0] &= 0xffff;
+    val[2] = hval->w32[1];
+    val[3] = (val[2] >> 16);
+    val[2] &= 0xffff;
 
     /*
-     * hash each octet of the buffer
+     * FNV-1 hash each octet of the string
      */
     while (*str) {
 
 	/*
-	 * multiply by 1099511628211 mod 2^64 using 32 bit longs
+	 * multiply by the 64 bit FNV magic prime mod 2^64
 	 *
 	 * Using 1099511628211, we have the following digits base 2^16:
 	 *
 	 *	0x0	0x100	0x0	0x1b3
+	 *
+	 * which is the same as:
+	 *
+	 *	0x0	1<<FNV_64_PRIME_SHIFT	0x0	FNV_64_PRIME_LOW
 	 */
 	/* multiply by the lowest order digit base 2^16 */
-	tmp[0] = val[0] * 0x1b3;
-	tmp[1] = val[1] * 0x1b3;
-	tmp[2] = val[2] * 0x1b3;
-	tmp[3] = val[3] * 0x1b3;
+	tmp[0] = val[0] * FNV_64_PRIME_LOW;
+	tmp[1] = val[1] * FNV_64_PRIME_LOW;
+	tmp[2] = val[2] * FNV_64_PRIME_LOW;
+	tmp[3] = val[3] * FNV_64_PRIME_LOW;
 	/* multiply by the other non-zero digit */
-	tmp[2] += val[0] << 8;		/* tmp[2] += val[0] * 0x100 */
-	tmp[3] += val[1] << 8;		/* tmp[1] += val[1] * 0x100 */
+	tmp[2] += val[0] << FNV_64_PRIME_SHIFT;	/* tmp[2] += val[0] * 0x100 */
+	tmp[3] += val[1] << FNV_64_PRIME_SHIFT;	/* tmp[1] += val[1] * 0x100 */
 	/* proapage carries */
 	tmp[1] += (tmp[0] >> 16);
 	val[0] = tmp[0] & 0xffff;
@@ -361,62 +255,21 @@ fnv1_64_str(char *str, fnv64 *hval)
 	/*
 	 * Doing a val[3] &= 0xffff; is not really needed since it simply
 	 * removes multiples of 2^64.  We can discard these excess bits
-	 * outside of the loop when we convert to fnv64.
+	 * outside of the loop when we convert to Fnv64_t.
 	 */
 
 	/* xor the bottom with the current octet */
 	val[0] ^= (unsigned long)(*str++);
     }
 
-    /* convert to fnv64 */
-    ret.w32[1] = ((val[3]<<16) | val[2]);
-    ret.w32[0] = ((val[1]<<16) | val[0]);
+    /*
+     * Convert base 2^16 array back into an Fnv64_t
+     */
+    hval.w32[1] = ((val[3]<<16) | val[2]);
+    hval.w32[0] = ((val[1]<<16) | val[0]);
 
-    /* save the hash if we were given a non-NULL initial hash value */
-    if (hval) {
-	*hval = ret;
-    }
-#endif
+#endif /* !HAVE_64BIT_LONG_LONG */
 
     /* return our new hash value */
-    return ret;
-}
-
-
-/*
- * fnv1_64_fd - FNV hash an open filename
- *
- * usage:
- *      fd	- open file descriptor to hash
- *      hash    - hash value to modify or NULL => just return hash value
- *
- * return:
- *      64 bit hash as a static hash type
- */
-fnv64
-fnv1_64_fd(int fd, fnv64 *hval)
-{
-    char buf[BUF_SIZE+1];	/* read buffer */
-    int readcnt;		/* number of characters written */
-    fnv64 val;			/* current hash value */
-
-    /*
-     * load or initialize hash value
-     */
-    val = (hval ? *hval : virgin);
-
-    /*
-     * hash until EOF
-     */
-    while ((readcnt = read(fd, buf, BUF_SIZE)) > 0) {
-	(void) fnv1_64_buf(buf, readcnt, &val);
-    }
-
-    /* save the hash if we were given a non-NULL initial hash value */
-    if (hval) {
-	*hval = val;
-    }
-
-    /* return our new hash value */
-    return val;
+    return hval;
 }

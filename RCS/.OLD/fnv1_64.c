@@ -1,14 +1,14 @@
 /*
- * fnv1_64 - 64 bit Fowler/Noll/Vo-1 hash of a string or rile
+ * fnv1_64 - 64 bit Fowler/Noll/Vo-0 hash of a string or rile
  *
- * @(#) $Revision: 3.9 $
- * @(#) $Id: fnv1_64.c,v 3.9 1999/10/27 01:53:29 chongo Exp chongo $
+ * @(#) $Revision: 3.12 $
+ * @(#) $Id: fnv1_64.c,v 3.12 1999/10/29 00:42:35 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv1_64.c,v $
  *
  ***
  *
- * This is the FNV-1 algorithm with a non-0 offset basis which is very
- * similar to the historic FNV-0 algorithm and identical in speed.
+ * This is the original historic FNV algorithm with a 0 offset basis.
+ * It is recommended that FNV-1 (with a non-0 offset basis) be used instead.
  *
  * usage:
  *	fnv164 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
@@ -22,7 +22,7 @@
  *
  ***
  *
- * Fowler/Noll/Vo-1 hash
+ * Fowler/Noll/Vo-0 hash
  *
  * The basis of this hash algorithm was taken from an idea sent
  * as reviewer comments to the IEEE POSIX P1003.2 committee by:
@@ -48,17 +48,7 @@
  *
  ***
  *
- * Copyright (C) 1999 Landon Curt Noll, all rights reserved.
- *
- * Permission to use, copy, modify, and distribute this software and
- * its documentation for any purpose and without fee is hereby granted,
- * provided that the above copyright, this permission notice and text
- * this comment, and the disclaimer below appear in all of the following:
- *
- *       supporting documentation
- *       source copies
- *       source works derived from this source
- *       binaries derived from this source or from derived source
+ * Please do not copyright this code.  This code is in the public domain.
  *
  * LANDON CURT NOLL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
  * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO
@@ -68,9 +58,10 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  *
- * chongo <Landon Curt Noll> /\oo/\
- * http://reality.sgi.com/chongo
- * EMail: chongo_fnv at prime dot engr dot sgi dot com
+ * By:
+ *	chongo <Landon Curt Noll> /\oo/\
+ *	http://reality.sgi.com/chongo
+ *	EMail: chongo_fnv at prime dot engr dot sgi dot com
  *
  * Share and Enjoy!	:-)
  */
@@ -84,6 +75,8 @@
 #include "longlong.h"
 
 #define WIDTH 64	/* bit width of hash */
+
+#define BUF_SIZE (32*1024)	/* number of bytes to hash at a time */
 
 static char *usage = "usage: %s [-b bcnt] [-s arg] [arg ...]\n";
 static char *program;	/* our name */
@@ -99,7 +92,7 @@ static char *program;	/* our name */
  *	arg	  string or filename arg
  */
 static void
-print_fnv(fnv64 hval, fnv64 mask, int verbose, char *arg)
+print_fnv(Fnv64_t hval, Fnv64_t mask, int verbose, char *arg)
 {
 #if defined(HAVE_64BIT_LONG_LONG)
     if (verbose) {
@@ -125,13 +118,14 @@ print_fnv(fnv64 hval, fnv64 mask, int verbose, char *arg)
 int
 main(int argc, char *argv[])
 {
-    char buf[BUFSIZ+1];	/* read buffer */
-    fnv64 hval;		/* current hash value */
+    char buf[BUF_SIZE+1];	/* read buffer */
+    int readcnt;		/* number of characters written */
+    Fnv64_t hval;		/* current hash value */
     int s_flag = 0;	/* 1 => -s was given, hash args as strings */
     int m_flag = 0;	/* 1 => print multiple hashes, one per arg */
     int v_flag = 0;	/* 1 => verbose hash print */
     int b_flag = WIDTH;	/* -b flag value */
-    fnv64 bmask;	/* mask to apply to output */
+    Fnv64_t bmask;	/* mask to apply to output */
     extern int optind;	/* argv index of the next argument to be processed */
     int fd;		/* open file to process */
     int i;
@@ -173,9 +167,9 @@ main(int argc, char *argv[])
     }
 #if defined(HAVE_64BIT_LONG_LONG)
     if (b_flag == WIDTH) {
-	bmask = (fnv64)0xffffffffffffffffULL;
+	bmask = (Fnv64_t)0xffffffffffffffffULL;
     } else {
-	bmask = (fnv64)((1ULL << b_flag) - 1ULL);
+	bmask = (Fnv64_t)((1ULL << b_flag) - 1ULL);
     }
 #else
     if (b_flag == WIDTH) {
@@ -190,23 +184,21 @@ main(int argc, char *argv[])
     }
 #endif
 
+    /* 
+     * start with the FNV-0 initial basis
+     */
+    hval = FNV_64_INIT;
+
     /*
      * string hashing
      */
     if (s_flag) {
 
-	/* hash the 1st string */
-	hval = fnv1_64_str(argv[optind], NULL);
-	if (m_flag) {
-	    print_fnv(hval, bmask, v_flag, argv[optind]);
-	}
-
 	/* hash any other strings */
-	for (i=optind+1; i < argc; ++i) {
+	for (i=optind; i < argc; ++i) {
+	    hval = fnv1_64_str(argv[i], hval);
 	    if (m_flag) {
-		print_fnv(fnv1_64_str(argv[i], NULL), bmask, v_flag, argv[i]);
-	    } else {
-		fnv1_64_str(argv[i], &hval);
+		print_fnv(hval, bmask, v_flag, argv[i]);
 	    }
 	}
 
@@ -217,51 +209,42 @@ main(int argc, char *argv[])
     } else {
 
 	/*
-	 * process the first file
+	 * case: process only stdin
 	 */
 	if (optind >= argc) {
 
 	    /* case: process only stdin */
-	    hval = fnv1_64_fd(0, NULL);
+	    hval = fnv1_64_fd(0, hval);
 	    if (m_flag) {
 		print_fnv(hval, bmask, v_flag, "(stdin)");
 	    }
 
 	} else {
 
-	    /* case: open, hash and close the 1st file */
-	    fd = open(argv[optind], O_RDONLY);
-	    if (fd < 0) {
-		fprintf(stderr, "%s: unable to open file: %s\n",
-			program, argv[optind]);
-		exit(4);
-	    }
-	    if (m_flag) {
-		print_fnv(fnv1_64_fd(fd, NULL), bmask, v_flag, argv[optind]);
-	    } else {
-		hval = fnv1_64_fd(fd, NULL);
-	    }
-	    close(fd);
-	}
+	    /*
+	     * process any other files
+	     */
+	    for (i=optind; i < argc; ++i) {
 
-	/*
-	 * process any other files
-	 */
-	for (i=optind+1; i < argc; ++i) {
+		/* open the file */
+		fd = open(argv[i], O_RDONLY);
+		if (fd < 0) {
+		    fprintf(stderr, "%s: unable to open file: %s\n",
+			    program, argv[i]);
+		    exit(4);
+		}
 
-	    /* open, hash and close the next file */
-	    fd = open(argv[i], O_RDONLY);
-	    if (fd < 0) {
-		fprintf(stderr, "%s: unable to open file: %s\n",
-			program, argv[i]);
-		exit(4);
+		/*  hash the file */
+		while ((readcnt = read(fd, buf, BUF_SIZE)) > 0) {
+		    hval = fnv1_64_buf(buf, readcnt, hval);
+		}
+
+		/* finish processing the file */
+		if (m_flag) {
+		    print_fnv(hval, bmask, v_flag, argv[i]);
+		}
+		close(fd);
 	    }
-	    if (m_flag) {
-		print_fnv(fnv1_64_fd(fd, NULL), bmask, v_flag, argv[i]);
-	    } else {
-		(void) fnv1_64_fd(fd, &hval);
-	    }
-	    close(fd);
 	}
     }
 

@@ -1,8 +1,8 @@
 /*
  * h0_32 - 32 bit Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 3.9 $
- * @(#) $Id: h0_32.c,v 3.9 1999/10/27 05:36:12 chongo Exp chongo $
+ * @(#) $Revision: 3.10 $
+ * @(#) $Id: h0_32.c,v 3.10 1999/10/29 00:42:35 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/h0_32.c,v $
  *
  ***
@@ -58,15 +58,6 @@
 
 #include <stdlib.h>
 #include "fnv0.h"
-
-
-/*
- * FNV-0 defines the initial basis to be 0
- *
- * This is the original historic FNV algorithm with a 0 offset basis.
- * It is recommended that FNV-1, with a non-0 offset basis be used instead.
- */
-const Fnv32_t fnv_32_init = (Fnv32_t)0;
 
 
 /* 

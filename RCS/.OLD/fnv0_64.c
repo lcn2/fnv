@@ -1,8 +1,8 @@
 /*
  * fnv0_64 - 64 bit Fowler/Noll/Vo-0 hash of a string or rile
  *
- * @(#) $Revision: 3.11 $
- * @(#) $Id: fnv0_64.c,v 3.11 1999/10/27 05:36:12 chongo Exp chongo $
+ * @(#) $Revision: 3.12 $
+ * @(#) $Id: fnv0_64.c,v 3.12 1999/10/29 00:42:35 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv0_64.c,v $
  *
  ***
@@ -183,6 +183,11 @@ main(int argc, char *argv[])
 	bmask.w32[1] = 0UL;
     }
 #endif
+
+    /* 
+     * start with the FNV-0 initial basis
+     */
+    hval = FNV_64_INIT;
 
     /*
      * string hashing

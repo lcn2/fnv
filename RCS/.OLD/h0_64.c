@@ -1,8 +1,8 @@
 /*
  * h0_64 - 64 bit Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 3.9 $
- * @(#) $Id: h0_64.c,v 3.9 1999/10/27 05:36:12 chongo Exp chongo $
+ * @(#) $Revision: 3.10 $
+ * @(#) $Id: h0_64.c,v 3.10 1999/10/29 00:42:35 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/h0_64.c,v $
  *
  ***
@@ -63,10 +63,8 @@
 /*
  * FNV-0 defines the initial basis to be 0
  */
-#if defined(HAVE_64BIT_LONG_LONG)
-const Fnv64_t fnv_64_init = (Fnv64_t)0;
-#else
-const Fnv64_t fnv_64_init = { 0x84222325, 0xcbf29ce4 };
+#if !defined(HAVE_64BIT_LONG_LONG)
+const Fnv64_t fnv_64_init = { 0, 0 };
 #endif
 
 
@@ -105,7 +103,7 @@ fnv0_64_buf(void *buf, size_t len, Fnv64_t hval)
      */
     while (bp < be) {
 
-	/* multiply by 1099511628211ULL mod 2^64 */
+	/* multiply by the 64 bit FNV magic prime mod 2^64 */
 	hval *= FNV_64_PRIME;
 
 	/* xor the bottom with the current octet */
@@ -133,7 +131,7 @@ fnv0_64_buf(void *buf, size_t len, Fnv64_t hval)
     while (bp < be) {
 
 	/*
-	 * multiply by 0x100000001b3 mod 2^64 using 32 bit longs
+	 * multiply by the 64 bit FNV magic prime mod 2^64
 	 *
 	 * Using 0x100000001b3 we have the following digits base 2^16:
 	 *
@@ -201,7 +199,7 @@ fnv0_64_str(char *str, Fnv64_t hval)
      */
     while (*str) {
 
-	/* multiply by 1099511628211ULL mod 2^64 */
+	/* multiply by the 64 bit FNV magic prime mod 2^64 */
 	hval *= FNV_64_PRIME;
 
 	/* xor the bottom with the current octet */
@@ -229,7 +227,7 @@ fnv0_64_str(char *str, Fnv64_t hval)
     while (*str) {
 
 	/*
-	 * multiply by 1099511628211 mod 2^64 using 32 bit longs
+	 * multiply by the 64 bit FNV magic prime mod 2^64
 	 *
 	 * Using 1099511628211, we have the following digits base 2^16:
 	 *

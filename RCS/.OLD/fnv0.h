@@ -1,8 +1,8 @@
 /*
  * fnv0 - Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 3.5 $
- * @(#) $Id: fnv0.h,v 3.5 1999/10/27 05:36:12 chongo Exp chongo $
+ * @(#) $Revision: 3.6 $
+ * @(#) $Id: fnv0.h,v 3.6 1999/10/29 00:42:35 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv0.h,v $
  *
  ***
@@ -61,10 +61,28 @@
 
 
 /*
- * 32 bit hash value
+ * 32 bit FNV-0 hash type
  */
 typedef unsigned long Fnv32_t;
-extern const Fnv32_t fnv_32_init;		/* 32 bit FNV-0 initial basis */
+
+
+/* 
+ * 32 bit FNV-0 non-0 initial basis
+ */
+#define FNV0_32_INIT ((Fnv32_t)0)
+
+
+/*
+ * 32 bit FNV-1 non-0 initial basis
+ *
+ * The FNV-1 initial basis is the FNV-0 hash of the following 32 octets:
+ *
+ *              chongo <Landon Curt Noll> /\../\
+ *
+ * Note that the \'s above are not back-slashing escape characters.
+ * They are literal ASCII  backslash 0x5c characters.
+ */
+#define FNV_32_INIT ((Fnv32_t)0x811c9dc5)
 
 
 /*
@@ -74,30 +92,42 @@ extern const Fnv32_t fnv_32_init;		/* 32 bit FNV-0 initial basis */
 
 
 /*
- * 64 bit hash value
+ * 64 bit FNV-0 hash
  */
 #if defined(HAVE_64BIT_LONG_LONG)
-
 typedef unsigned long long Fnv64_t;
-
 #else
-
-struct s_Fnv64 {
+typedef struct {
     unsigned long w32[2];
-};
-typedef struct s_Fnv64 Fnv64_t;
+} Fnv64_t;
+#endif /* HAVE_64BIT_LONG_LONG */
 
+
+/*
+ * 64 bit FNV-1 non-0 initial basis
+ *
+ * The FNV-1 initial basis is the FNV-0 hash of the following 32 octets:
+ *
+ *              chongo <Landon Curt Noll> /\../\
+ *
+ * Note that the \'s above are not back-slashing escape characters.
+ * They are literal ASCII  backslash 0x5c characters.
+ */
+#if defined(HAVE_64BIT_LONG_LONG)
+#define FNV_64_INIT ((Fnv64_t)0xcbf29ce484222325ULL)
+#else
+extern const Fnv64_t fnv_64_init;
+#define FNV_64_INIT (fnv_64_init)
 #endif
-extern const Fnv64_t fnv_64_init;		/* 64 bit FNV-0 initial basis */
 
 
 /*
  * external functions
  */
-extern Fnv32_t fnv0_32_buf(void *buf, size_t len, Fnv32_t hval);
-extern Fnv32_t fnv0_32_str(char *buf, Fnv32_t hval);
-extern Fnv64_t fnv0_64_buf(void *buf, size_t len, Fnv64_t hval);
-extern Fnv64_t fnv0_64_str(char *buf, Fnv64_t hval);
+extern Fnv32_t fnv_32_buf(void *buf, size_t len, Fnv32_t hval);
+extern Fnv32_t fnv_32_str(char *buf, Fnv32_t hval);
+extern Fnv64_t fnv_64_buf(void *buf, size_t len, Fnv64_t hval);
+extern Fnv64_t fnv_64_str(char *buf, Fnv64_t hval);
 
 
 #endif /* __FNV0_H__ */

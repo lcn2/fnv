@@ -1,18 +1,18 @@
 /*
- * fnv1 - Fowler/Noll/Vo-1 hash code
+ * fnv1 - Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 3.4 $
- * @(#) $Id: fnv1.h,v 3.4 1999/10/27 01:53:29 chongo Exp chongo $
+ * @(#) $Revision: 3.6 $
+ * @(#) $Id: fnv1.h,v 3.6 1999/10/29 00:42:35 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv1.h,v $
  *
  ***
  *
- * This is the FNV-1 algorithm with a non-0 offset basis which is very
- * similar to the historic FNV-0 algorithm and identical in speed.
+ * This is the original historic FNV-1 algorithm with a 0 offset basis.
+ * It is recommended that FNV-1 (with a non-0 offset basis) be used instead.
  *
  ***
  *
- * Fowler/Noll/Vo-1 hash
+ * Fowler/Noll/Vo-0 hash
  *
  * The basis of this hash algorithm was taken from an idea sent
  * as reviewer comments to the IEEE POSIX P1003.2 committee by:
@@ -38,17 +38,7 @@
  *
  ***
  *
- * Copyright (C) 1999 Landon Curt Noll, all rights reserved.
- *
- * Permission to use, copy, modify, and distribute this software and
- * its documentation for any purpose and without fee is hereby granted,
- * provided that the above copyright, this permission notice and text
- * this comment, and the disclaimer below appear in all of the following:
- *
- *       supporting documentation
- *       source copies
- *       source works derived from this source
- *       binaries derived from this source or from derived source
+ * Please do not copyright this code.  This code is in the public domain.
  *
  * LANDON CURT NOLL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
  * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO
@@ -58,9 +48,10 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  *
- * chongo <Landon Curt Noll> /\oo/\
- * http://reality.sgi.com/chongo
- * EMail: chongo_fnv at prime dot engr dot sgi dot com
+ * By:
+ *	chongo <Landon Curt Noll> /\oo/\
+ *	http://reality.sgi.com/chongo
+ *	EMail: chongo_fnv at prime dot engr dot sgi dot com
  *
  * Share and Enjoy!	:-)
  */
@@ -70,39 +61,67 @@
 
 
 /*
- * 32 bit hash value
+ * 32 bit FNV-1 hash type
  */
-typedef unsigned long fnv32;
+typedef unsigned long Fnv32_t;
 
 
 /*
- * determine how 64 bit unsigned values are represented
+ * 32 bit FNV-1 non-0 initial basis
+ *
+ * The FNV-1 initial basis is the FNV-0 hash of the following 32 octets:
+ *
+ *              chongo <Landon Curt Noll> /\../\
+ *
+ * Note that the \'s above are not back-slashing escape characters.
+ * They are literal ASCII  backslash 0x5c characters.
+ */
+#define FNV_32_INIT ((Fnv32_t)0x811c9dc5)
+
+
+/*
+ * determine how 64 bit unsigned values are constructed
  */
 #include "longlong.h"
 
 
 /*
- * 64 bit hash value
+ * 64 bit FNV-1 hash type
  */
 #if defined(HAVE_64BIT_LONG_LONG)
-typedef unsigned long long fnv64;
+typedef unsigned long long Fnv64_t;
 #else
-struct s_fnv64 {
+typedef struct {
     unsigned long w32[2];
-};
-typedef struct s_fnv64 fnv64;
+} Fnv64_t;
+#endif
+
+
+/*
+ * 32 bit FNV-1 non-0 initial basis
+ *
+ * The FNV-1 initial basis is the FNV-0 hash of the following 32 octets:
+ *
+ *              chongo <Landon Curt Noll> /\../\
+ *
+ * Note that the \'s above are not back-slashing escape characters.
+ * They are literal ASCII  backslash 0x5c characters.
+ */
+#if defined(HAVE_64BIT_LONG_LONG)
+#define FNV_64_INIT ((Fnv64_t)0xcbf29ce484222325ULL)
+#else
+extern const Fnv64_t fnv_64_init;
+#define FNV_64_INIT (fnv_64_init)
 #endif
 
 
 /*
  * external functions
  */
-extern fnv32 fnv1_32_buf(char *buf, int len, fnv32 *hval);
-extern fnv32 fnv1_32_str(char *buf, fnv32 *hval);
-extern fnv32 fnv1_32_fd(int fd, fnv32 *hval);
-extern fnv64 fnv1_64_buf(char *buf, int len, fnv64 *hval);
-extern fnv64 fnv1_64_str(char *buf, fnv64 *hval);
-extern fnv64 fnv1_64_fd(int fd, fnv64 *hval);
+extern Fnv32_t fnv1_32_buf(void *buf, size_t len, Fnv32_t hval);
+extern Fnv32_t fnv1_32_str(char *buf, Fnv32_t hval);
+extern Fnv64_t fnv1_64_buf(void *buf, size_t len, Fnv64_t hval);
+extern Fnv64_t fnv1_64_str(char *buf, Fnv64_t hval);
 
 
 #endif /* __FNV1_H__ */
