@@ -2,8 +2,8 @@
 #
 # hash - makefile for hash tools
 #
-# @(#) $Revision: 3.2 $
-# @(#) $Id: Makefile,v 3.2 1999/10/23 11:58:55 chongo Exp chongo $
+# @(#) $Revision: 3.3 $
+# @(#) $Id: Makefile,v 3.3 1999/10/23 12:06:09 chongo Exp chongo $
 # @(#) $Source: /usr/local/src/lib/libfnv/RCS/Makefile,v $
 #
 # See:
@@ -146,16 +146,16 @@ install: libfnv.a
 	${INSTALL} -m 0644 ${HSRC} ${DESTINC}
 	# NOTE: Lines with WWW in them are removed from the shipped Makefile
 	-if [ -d ${WWW} ]; then \
-	    rm -f Makefile.ship			# WWW; \
-	    ${EGREP} -v WWW Makefile > Makefile.ship 	# WWW; \
-	    rm -f Makefile.save			# WWW; \
-	    ln Makefile Makefile.save		# WWW; \
-	    cp -f Makefile.ship Makefile	# WWW; \
-	    ${TAR} -cf - ${ALL} | ${GZIP_BIN} --best > fnv_hash.tar.gz # WWW; \
+	    rm -f Makefile.ship;			: WWW; \
+	    ${EGREP} -v WWW Makefile > Makefile.ship; 	: WWW; \
+	    rm -f Makefile.save;			: WWW; \
+	    ln Makefile Makefile.save;			: WWW; \
+	    cp -f Makefile.ship Makefile;		: WWW; \
+	    ${TAR} -cf - ${ALL} | ${GZIP_BIN} --best > fnv_hash.tar.gz;: WWW; \
 	    ${INSTALL} -m 0644 fnv_hash.tar.gz ${ALL} ${WWW}; \
-	    mv -f Makefile.save Makefile	# WWW; \
-	    rm -f fnv_hash.tar.gz Makefile.ship	# WWW; \
-	fi					# WWW
+	    mv -f Makefile.save Makefile;		: WWW; \
+	    rm -f fnv_hash.tar.gz Makefile.ship;	: WWW; \
+	fi;						: WWW
 
 clean:
 	-rm -f have_ulong64 have_ulong64.o ll_tmp ll_tmp2 longlong.h
