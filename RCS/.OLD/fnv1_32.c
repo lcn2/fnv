@@ -1,18 +1,18 @@
 /*
  * fnv1_32 - 32 bit Fowler/Noll/Vo-1 hash of a string or rile
  *
- * @(#) $Revision: 3.4 $
- * @(#) $Id: fnv1_32.c,v 3.4 1999/10/24 00:54:47 chongo Exp chongo $
+ * @(#) $Revision: 3.5 $
+ * @(#) $Id: fnv1_32.c,v 3.5 1999/10/24 01:08:54 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv1_32.c,v $
  *
  * usage:
- *	fnv132 [-b bcnt] [-m] [-s arg] [-v] [arg ...]
- *	fnv1_32 [-b bcnt] [-m] [-s arg] [-v] [arg ...]
+ *	fnv132 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
+ *	fnv1_32 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
  *
  *	-b bcnt	  mask off all but the lower bcnt bits (default: 32)
  *	-m	  multiple hashes, one per line for each arg
  *	-s	  hash arg as a string (ignoring terminating NUL bytes)
- *	-v	  verbose mode, print arg after hash
+ *	-v	  verbose mode, print arg after hash (implies -m)
  *	arg	  string (if -s was given) or filename (default stdin)
  *
  * See:
@@ -59,16 +59,43 @@
 
 #define WIDTH 32	/* bit width of hash */
 
-static char *usage = "usage: %s [-b bcnt] [-s arg] [arg ...]\n";
+static char *usage = "usage: %s [-b bcnt] [-m [-v]] [-s arg] [arg ...]\n";
 static char *program;	/* our name */
 
 
+/*
+ * print_fnv - print an FNV hash
+ *
+ * given:
+ *	hval	  the hash value to print
+ *	mask	  lower bit mask
+ *	verbose	  1 => print arg with hash
+ *	arg	  string or filename arg
+ */
+static void
+print_fnv(fnv32 hval, fnv32 mask, int verbose, char *arg)
+{
+    if (verbose) {
+	printf("0x%08lx %s\n", hval & mask, arg);
+    } else {
+	printf("0x%08lx\n", hval & mask);
+    }
+}
+
+
+/*
+ * main - the main function
+ *
+ * see usage above for details.
+ */
 int
 main(int argc, char *argv[])
 {
     char buf[BUFSIZ+1];	/* read buffer */
     fnv32 hval;		/* current hash value */
     int s_flag = 0;	/* 1 => -s was given, hash args as strings */
+    int m_flag = 0;	/* 1 => print multiple hashes, one per arg */
+    int v_flag = 0;	/* 1 => verbose hash print */
     int b_flag = WIDTH;	/* -b flag value */
     fnv32 bmask;	/* mask to apply to output */
     extern int optind;	/* argv index of the next argument to be processed */
@@ -80,13 +107,20 @@ main(int argc, char *argv[])
      * parse args
      */
     program = argv[0];
-    while ((i = getopt(argc, argv, "b:s")) != -1) {
+    while ((i = getopt(argc, argv, "b:msv")) != -1) {
 	switch (i) {
 	case 'b':	/* bcnt bit mask count */
 	    b_flag = atoi(optarg);
 	    break;
+	case 'm':	/* print multiple hashes, one per arg */
+	    m_flag = 1;
+	    break;
 	case 's':	/* hash args as strings */
 	    s_flag = 1;
+	    break;
+	case 'v':	/* verbose hash print */
+	    m_flag = 1;
+	    v_flag = 1;
 	    break;
 	default:
 	    fprintf(stderr, usage, program);
@@ -117,10 +151,18 @@ main(int argc, char *argv[])
 
 	/* hash the 1st string */
 	hval = fnv1_32_str(argv[optind], NULL);
+	if (m_flag) {
+	    print_fnv(hval, bmask, v_flag, argv[optind]);
+	}
 
 	/* hash any other strings */
 	for (i=optind+1; i < argc; ++i) {
-	    fnv1_32_str(argv[i], &hval);
+	    if (m_flag) {
+		hval = fnv1_32_str(argv[i], NULL);
+		print_fnv(hval, bmask, v_flag, argv[i]);
+	    } else {
+		fnv1_32_str(argv[i], &hval);
+	    }
 	}
 
 
@@ -136,6 +178,9 @@ main(int argc, char *argv[])
 
 	    /* case: process only stdin */
 	    hval = fnv1_32_fd(0, NULL);
+	    if (m_flag) {
+		print_fnv(hval, bmask, v_flag, "-");
+	    }
 
 	} else {
 
@@ -146,7 +191,12 @@ main(int argc, char *argv[])
 			program, argv[optind]);
 		exit(4);
 	    }
-	    hval = fnv1_32_fd(fd, NULL);
+	    if (m_flag) {
+		hval = fnv1_32_fd(fd, NULL);
+		print_fnv(hval, bmask, v_flag, argv[optind]);
+	    } else {
+		(void) fnv1_32_fd(fd, &hval);
+	    }
 	    close(fd);
 	}
 
@@ -162,7 +212,12 @@ main(int argc, char *argv[])
 			program, argv[i]);
 		exit(4);
 	    }
-	    (void) fnv1_32_fd(fd, &hval);
+	    if (m_flag) {
+		hval = fnv1_32_fd(fd, NULL);
+		print_fnv(hval, bmask, v_flag, argv[i]);
+	    } else {
+		(void) fnv1_32_fd(fd, &hval);
+	    }
 	    close(fd);
 	}
     }
@@ -170,6 +225,8 @@ main(int argc, char *argv[])
     /*
      * report hash and exit
      */
-    printf("0x%08lx\n", hval & bmask);
+    if (!m_flag) {
+	print_fnv(hval, bmask, v_flag, "");
+    }
     return 0;	/* exit(0); */
 }
