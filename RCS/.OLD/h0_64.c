@@ -22,7 +22,7 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-static *copyright="@(#) $Date$ : Fowler/Noll/Vo64 hash: Copyright (C) 1997 Landon Curt Noll, all rights reserved. Used in InterNetNews by permission.";
+char *fnv64_copyright="@(#) $Revision$ $Date$ : Fowler/Noll/Vo64 hash: Copyright (C) 1997 Landon Curt Noll, all rights reserved. Used in InterNetNews by permission.";
 
 
 /*
