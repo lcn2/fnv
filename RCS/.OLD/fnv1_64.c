@@ -1,8 +1,8 @@
 /*
  * fnv1_64 - 64 bit Fowler/Noll/Vo-1 hash of a string or rile
  *
- * @(#) $Revision: 3.1 $
- * @(#) $Id: fnv1_64.c,v 3.1 1999/10/23 12:59:15 chongo Exp chongo $
+ * @(#) $Revision: 3.2 $
+ * @(#) $Id: fnv1_64.c,v 3.2 1999/10/23 13:14:40 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/lib/libfnv/RCS/fnv1_64.c,v $
  *
  * usage:
@@ -16,6 +16,9 @@
  *	http://reality.sgi.com/chongo/tech/comp/fnv/index.html
  *
  * for the most up to date copy of this code and the FNV hash home page.
+ *
+ * NOTE: The FNV-1 hash function has not been fully tested and may be subject
+ *       to change in the near future. - XXX
  *
  * Copyright (C) 1999 Landon Curt Noll, all rights reserved.
  *
