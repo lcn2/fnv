@@ -1,8 +1,8 @@
 /*
  * hash_64 - 64 bit Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 1.6 $
- * @(#) $Id: hash_64.c,v 1.6 2001/05/30 15:01:06 chongo Exp chongo $
+ * @(#) $Revision: 1.7 $
+ * @(#) $Id: hash_64.c,v 1.7 2001/05/30 15:34:30 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/hash_64.c,v $
  *
  ***
@@ -123,7 +123,12 @@ fnv_64_buf(void *buf, size_t len, Fnv64_t hval)
     while (bp < be) {
 
 	/* multiply by the 64 bit FNV magic prime mod 2^64 */
+#if defined(NO_FNV_GCC_OPTIMIZATION)
 	hval *= FNV_64_PRIME;
+#else
+	hval += (hval << 1) + (hval << 4) + (hval << 5) +
+		(hval << 7) + (hval << 8) + (hval << 40);
+#endif
 
 	/* xor the bottom with the current octet */
 	hval ^= (Fnv64_t)*bp++;
@@ -227,7 +232,12 @@ fnv_64_str(char *str, Fnv64_t hval)
     while (*s) {
 
 	/* multiply by the 64 bit FNV magic prime mod 2^64 */
+#if defined(NO_FNV_GCC_OPTIMIZATION)
 	hval *= FNV_64_PRIME;
+#else
+	hval += (hval << 1) + (hval << 4) + (hval << 5) +
+		(hval << 7) + (hval << 8) + (hval << 40);
+#endif
 
 	/* xor the bottom with the current octet */
 	hval ^= (Fnv64_t)*s++;
