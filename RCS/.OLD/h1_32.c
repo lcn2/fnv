@@ -1,4 +1,4 @@
-/* $Id$  */
+/* $Id: h32.c,v 2.4 1998/02/21 04:22:01 chongo Exp chongo $  */
 /*
  * hash32 - 32 bit Fowler/Noll/Vo hash code
  *
@@ -21,7 +21,14 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-char *fnv_copyright="@(#) $Revision$ $Date$ : Fowler/Noll/Vo hash: Copyright (C) 1997 Landon Curt Noll, all rights reserved. Used in InterNetNews by permission.";
+
+
+/*
+ * See:
+ *	http://reality.sgi.com/csp/ioccc/noll/src/fnv/	
+ *
+ * for the most up to date copy if this code.
+ */
 
 
 /*

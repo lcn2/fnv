@@ -1,4 +1,4 @@
-/* $Id$  */
+/* $Id: h64.c,v 1.7 1998/02/21 04:22:01 chongo Exp chongo $  */
 /*
  * hash64 - 64 bit Fowler/Noll/Vo64 hash code
  *
@@ -21,7 +21,14 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-char *fnv64_copyright="@(#) $Revision$ $Date$ : Fowler/Noll/Vo64 hash: Copyright (C) 1997 Landon Curt Noll, all rights reserved. Used in InterNetNews by permission.";
+
+
+/*
+ * See:
+ *	http://reality.sgi.com/csp/ioccc/noll/src/fnv/	
+ *
+ * for the most up to date copy if this code.
+ */
 
 
 /*
