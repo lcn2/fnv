@@ -3,17 +3,16 @@
  * hash32 - 32 bit Fowler/Noll/Vo hash code
  *
  * Copyright (C) 1997 Landon Curt Noll, all rights reserved.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software and
- * its documentation for any purpose and without fee is hereby granted,
- * provided that the above copyright, this permission notice, and the
- * disclaimer below appear in all of the following:
- * 
+ * its documentation for any purpose is hereby granted, provided that
+ * the above copyright, this permission notice, and the disclaimer
+ * below appear in all of the following:
+ *
  *         * supporting documentation
- *         * source copies 
+ *         * source copies
  *         * source works derived from this source
- *         * binaries derived from this source or from derived source
- * 
+ *
  * THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
  * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
  * EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY SPECIAL, INDIRECT OR
