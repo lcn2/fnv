@@ -1,19 +1,40 @@
 /*
  * fnv0 - Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 3.3 $
- * @(#) $Id: fnv0.h,v 3.3 1999/10/24 11:19:50 chongo Exp chongo $
+ * @(#) $Revision: 3.4 $
+ * @(#) $Id: fnv0.h,v 3.4 1999/10/27 01:53:29 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv0.h,v $
  *
  ***
  *
- * This is the original historic FNV0 algorithm with a 0 offset basis.
- * It is recommended that FNV0-1, with a non-0 offset basis be used instead.
+ * This is the original historic FNV-0 algorithm with a 0 offset basis.
+ * It is recommended that FNV-1 (with a non-0 offset basis) be used instead.
  *
- * See:
- *	http://reality.sgi.com/chongo/tech/comp/fnv/index.html
+ ***
  *
- * for the most up to date copy of this code and the FNV0 hash home page.
+ * Fowler/Noll/Vo-0 hash
+ *
+ * The basis of this hash algorithm was taken from an idea sent
+ * as reviewer comments to the IEEE POSIX P1003.2 committee by:
+ *
+ *      Phong Vo (http://www.research.att.com/info/kpv)
+ *      Glenn Fowler (http://www.research.att.com/~gsf/)
+ *
+ * In a subsequent ballot round:
+ *
+ *      Landon Curt Noll (http://reality.sgi.com/chongo)
+ *
+ * improved on their algorithm.  Some people tried this hash
+ * and found that it worked rather well.  In an EMail message
+ * to Landon, they named it the ``Fowler/Noll/Vo'' or FNV hash.
+ *
+ * FNV hashes are architected to be fast while maintaining a low
+ * collision rate. The FNV speed allows one to quickly hash lots
+ * of data while maintaining a reasonable collision rate.  See:
+ *
+ *      http://reality.sgi.com/chongo/tech/comp/fnv/
+ *
+ * for more details as well as other forms of the FNV hash.
  *
  ***
  *
