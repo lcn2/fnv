@@ -1,9 +1,9 @@
 /*
  * hash_64 - 64 bit Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 3.11 $
- * @(#) $Id: h1_64.c,v 3.11 1999/10/29 06:43:10 chongo Exp $
- * @(#) $Source: /usr/local/src/cmd/fnv/RCS/h1_64.c,v $
+ * @(#) $Revision: 1.1 $
+ * @(#) $Id: hash_64.c,v 1.1 1999/10/29 07:35:40 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src/cmd/fnv/RCS/hash_64.c,v $
  *
  ***
  *
@@ -168,7 +168,7 @@ fnv_64_buf(void *buf, size_t len, Fnv64_t hval)
 	tmp[3] = val[3] * FNV_64_PRIME_LOW;
 	/* multiply by the other non-zero digit */
 	tmp[2] += val[0] << FNV_64_PRIME_SHIFT;	/* tmp[2] += val[0] * 0x100 */
-	tmp[3] += val[1] << FNV_64_PRIME_SHIFT;	/* tmp[1] += val[1] * 0x100 */
+	tmp[3] += val[1] << FNV_64_PRIME_SHIFT;	/* tmp[3] += val[1] * 0x100 */
 	/* proapage carries */
 	tmp[1] += (tmp[0] >> 16);
 	val[0] = tmp[0] & 0xffff;
@@ -270,7 +270,7 @@ fnv_64_str(char *str, Fnv64_t hval)
 	tmp[3] = val[3] * FNV_64_PRIME_LOW;
 	/* multiply by the other non-zero digit */
 	tmp[2] += val[0] << FNV_64_PRIME_SHIFT;	/* tmp[2] += val[0] * 0x100 */
-	tmp[3] += val[1] << FNV_64_PRIME_SHIFT;	/* tmp[1] += val[1] * 0x100 */
+	tmp[3] += val[1] << FNV_64_PRIME_SHIFT;	/* tmp[3] += val[1] * 0x100 */
 	/* proapage carries */
 	tmp[1] += (tmp[0] >> 16);
 	val[0] = tmp[0] & 0xffff;
