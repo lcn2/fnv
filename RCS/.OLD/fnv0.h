@@ -1,14 +1,21 @@
 /*
- * fnv - Fowler/Noll/Vo hash code
+ * fnv0 - Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 3.1 $
- * @(#) $Id: fnv.h,v 3.1 1999/10/23 10:00:42 chongo Exp $
- * @(#) $Source: /usr/local/src/lib/libfnv/RCS/fnv.h,v $
+ * @(#) $Revision: 3.2 $
+ * @(#) $Id: fnv0.h,v 3.2 1999/10/23 13:14:40 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv0.h,v $
+ *
+ ***
+ *
+ * This is the original historic FNV0 algorithm with a 0 offset basis.
+ * It is recommended that FNV0-1, with a non-0 offset basis be used instead.
  *
  * See:
  *	http://reality.sgi.com/chongo/tech/comp/fnv/index.html
  *
- * for the most up to date copy of this code and the FNV hash home page.
+ * for the most up to date copy of this code and the FNV0 hash home page.
+ *
+ ***
  *
  * Copyright (C) 1999 Landon Curt Noll, all rights reserved.
  *
@@ -37,8 +44,8 @@
  * Share and Enjoy!	:-)
  */
 
-#if !defined(__FNV_H__)
-#define __FNV_H__
+#if !defined(__FNV0_H__)
+#define __FNV0_H__
 
 
 /*
@@ -69,19 +76,12 @@ typedef struct s_fnv64 fnv64;
 /*
  * external functions
  */
-extern fnv32 fnv_32_buf(char *buf, int len, fnv32 *hval);
-extern fnv32 fnv_32_str(char *buf, fnv32 *hval);
-extern fnv32 fnv_32_fd(int fd, fnv32 *hval);
-extern fnv64 fnv_64_buf(char *buf, int len, fnv64 *hval);
-extern fnv64 fnv_64_str(char *buf, fnv64 *hval);
-extern fnv64 fnv_64_fd(int fd, fnv64 *hval);
-
-extern fnv32 fnv1_32_buf(char *buf, int len, fnv32 *hval);
-extern fnv32 fnv1_32_str(char *buf, fnv32 *hval);
-extern fnv32 fnv1_32_fd(int fd, fnv32 *hval);
-extern fnv64 fnv1_64_buf(char *buf, int len, fnv64 *hval);
-extern fnv64 fnv1_64_str(char *buf, fnv64 *hval);
-extern fnv64 fnv1_64_fd(int fd, fnv64 *hval);
+extern fnv32 fnv0_32_buf(char *buf, int len, fnv32 *hval);
+extern fnv32 fnv0_32_str(char *buf, fnv32 *hval);
+extern fnv32 fnv0_32_fd(int fd, fnv32 *hval);
+extern fnv64 fnv0_64_buf(char *buf, int len, fnv64 *hval);
+extern fnv64 fnv0_64_str(char *buf, fnv64 *hval);
+extern fnv64 fnv0_64_fd(int fd, fnv64 *hval);
 
 
-#endif /* __FNV_H__ */
+#endif /* __FNV0_H__ */

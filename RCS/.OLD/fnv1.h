@@ -1,14 +1,21 @@
 /*
- * fnv - Fowler/Noll/Vo hash code
+ * fnv1 - Fowler/Noll/Vo-1 hash code
  *
- * @(#) $Revision: 3.1 $
- * @(#) $Id: fnv.h,v 3.1 1999/10/23 10:00:42 chongo Exp $
- * @(#) $Source: /usr/local/src/lib/libfnv/RCS/fnv.h,v $
+ * @(#) $Revision: 3.2 $
+ * @(#) $Id: fnv1.h,v 3.2 1999/10/23 13:14:40 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv1.h,v $
+ *
+ ***
+ *
+ * This is the FNV1-1 algorithm with a non-0 offset basis which is very
+ * similar to the historic FNV1-0 algorithm and identical in speed.
  *
  * See:
  *	http://reality.sgi.com/chongo/tech/comp/fnv/index.html
  *
- * for the most up to date copy of this code and the FNV hash home page.
+ * for the most up to date copy of this code and the FNV1 hash home page.
+ *
+ ***
  *
  * Copyright (C) 1999 Landon Curt Noll, all rights reserved.
  *
@@ -37,8 +44,8 @@
  * Share and Enjoy!	:-)
  */
 
-#if !defined(__FNV_H__)
-#define __FNV_H__
+#if !defined(__FNV1_H__)
+#define __FNV1_H__
 
 
 /*
@@ -69,13 +76,6 @@ typedef struct s_fnv64 fnv64;
 /*
  * external functions
  */
-extern fnv32 fnv_32_buf(char *buf, int len, fnv32 *hval);
-extern fnv32 fnv_32_str(char *buf, fnv32 *hval);
-extern fnv32 fnv_32_fd(int fd, fnv32 *hval);
-extern fnv64 fnv_64_buf(char *buf, int len, fnv64 *hval);
-extern fnv64 fnv_64_str(char *buf, fnv64 *hval);
-extern fnv64 fnv_64_fd(int fd, fnv64 *hval);
-
 extern fnv32 fnv1_32_buf(char *buf, int len, fnv32 *hval);
 extern fnv32 fnv1_32_str(char *buf, fnv32 *hval);
 extern fnv32 fnv1_32_fd(int fd, fnv32 *hval);
@@ -84,4 +84,4 @@ extern fnv64 fnv1_64_str(char *buf, fnv64 *hval);
 extern fnv64 fnv1_64_fd(int fd, fnv64 *hval);
 
 
-#endif /* __FNV_H__ */
+#endif /* __FNV1_H__ */

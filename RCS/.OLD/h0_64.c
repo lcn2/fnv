@@ -1,14 +1,21 @@
 /*
- * h_64 - 64 bit Fowler/Noll/Vo hash code
+ * h0_64 - 64 bit Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 3.4 $
- * @(#) $Id: h_64.c,v 3.4 1999/10/24 00:05:01 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/cmd/fnv/RCS/h_64.c,v $
+ * @(#) $Revision: 3.5 $
+ * @(#) $Id: h0_64.c,v 3.5 1999/10/24 00:23:45 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src/cmd/fnv/RCS/h0_64.c,v $
+ *
+ ***
+ *
+ * This is the original historic FNV algorithm with a 0 offset basis.
+ * It is recommended that FNV-1, with a non-0 offset basis be used instead.
  *
  * See:
  *	http://reality.sgi.com/chongo/tech/comp/fnv/index.html
  *
  * for the most up to date copy of this code and the FNV hash home page.
+ *
+ ***
  *
  * Copyright (C) 1999 Landon Curt Noll, all rights reserved.
  *
@@ -37,55 +44,19 @@
  * Share and Enjoy!	:-)
  */
 
-#include "fnv.h"
+#include "fnv0.h"
 
 #define BUF_SIZE (32*1024)	/* number of bytes to hash at a time */
 
 
 /*
- * We start the hash at a non-zero value at the beginning so that
- * hashing blocks of data with all 0 bits do not map onto the same
- * 0 hash value.  The virgin value that we use below is the hash value
- * that we would get from following 32 ASCII characters:
- *
- *		chongo <Landon Curt Noll> /\../\
- *
- * Note that the \'s above are not back-slashing escape characters.
- * They are literal ASCII  backslash 0x5c characters.
- *
- * The effect of this virgin initial value is the same as starting
- * with 0 and pre-pending those 32 characters onto the data being
- * hashed.
- *
- * Yes, even with this non-zero virgin value there is a set of data
- * that will result in a zero hash value.  Worse, appending any
- * about of zero bytes will continue to produce a zero hash value.
- * But that would happen with any initial value so long as the
- * hash of the initial was the `inverse' of the virgin prefix string.
- *
- * But then again for any hash function, there exists sets of data
- * which that the hash of every member is the same value.  That is
- * life with many to few mapping functions.  All we do here is to
- * prevent sets whose members consist of 0 or more bytes of 0's from
- * being such an awkward set.
- *
- * And yes, someone can figure out what the magic 'inverse' of the
- * 32 ASCII character are ... but this hash function is NOT intended
- * to be a cryptographic hash function, just a fast and reasonably
- * good hash function.
+ * This is the original historic FNV algorithm with a 0 offset basis.
+ * It is recommended that FNV-1, with a non-0 offset basis be used instead.
  */
-#if defined(ZERO_BASED)
-# if defined(HAVE_64BIT_LONG_LONG)
+#if defined(HAVE_64BIT_LONG_LONG)
 static fnv64 virgin = 0;
-# else
-static fnv64 virgin = { 0, 0 };
-# endif
 #else
-# if defined(HAVE_64BIT_LONG_LONG)
-static fnv64 virgin = 0xcbf29ce484222325;
-# else
-static fnv64 virgin = { 0x84222325, 0xcbf29ce4 };
-# endif
+static fnv64 virgin = { 0, 0 };
 #endif
 
 
@@ -109,16 +80,16 @@ static fnv64 virgin = { 0x84222325, 0xcbf29ce4 };
  * Example:
  *	fnv64 hash_value;
  *
- *	hash_value = fnv_64_buf(buf, len, NULL);
+ *	hash_value = fnv0_64_buf(buf, len, NULL);
  *
  *	    The 'hash_value' becomes the FNV hash of the 'buf' buffer.
  *
- *	(void) fnv_64_buf(buf2, len2, &hash_value);
+ *	(void) fnv0_64_buf(buf2, len2, &hash_value);
  *
  *	    The 'hash_value' becomes the hash of buf concatenated with buf2.
  */
 fnv64
-fnv_64_buf(char *buf, int len, fnv64 *hval)
+fnv0_64_buf(char *buf, int len, fnv64 *hval)
 {
 #if !defined(HAVE_64BIT_LONG_LONG)
     unsigned long val[4];	/* hash value in base 2^16 */
@@ -263,16 +234,16 @@ fnv_64_buf(char *buf, int len, fnv64 *hval)
  * Example:
  *	fnv64 hash_value;
  *
- *	hash_value = fnv_64_str(buf, len, NULL);
+ *	hash_value = fnv0_64_str(buf, len, NULL);
  *
  *	    The 'hash_value' becomes the FNV hash of the 'buf' buffer.
  *
- *	(void) fnv_64_str(buf2, len2, &hash_value);
+ *	(void) fnv0_64_str(buf2, len2, &hash_value);
  *
  *	    The 'hash_value' becomes the hash of buf concatenated with buf2.
  */
 fnv64
-fnv_64_str(char *str, fnv64 *hval)
+fnv0_64_str(char *str, fnv64 *hval)
 {
 #if !defined(HAVE_64BIT_LONG_LONG)
     unsigned long val[4];	/* hash value in base 2^16 */
@@ -398,7 +369,7 @@ fnv_64_str(char *str, fnv64 *hval)
 
 
 /*
- * fnv_64_fd - FNV hash an open filename
+ * fnv0_64_fd - FNV hash an open filename
  *
  * usage:
  *      fd	- open file descriptor to hash
@@ -408,7 +379,7 @@ fnv_64_str(char *str, fnv64 *hval)
  *      64 bit hash as a static hash type
  */
 fnv64
-fnv_64_fd(int fd, fnv64 *hval)
+fnv0_64_fd(int fd, fnv64 *hval)
 {
     char buf[BUF_SIZE+1];	/* read buffer */
     int readcnt;		/* number of characters written */
@@ -423,7 +394,7 @@ fnv_64_fd(int fd, fnv64 *hval)
      * hash until EOF
      */
     while ((readcnt = read(fd, buf, BUF_SIZE)) > 0) {
-	(void) fnv_64_buf(buf, readcnt, &val);
+	(void) fnv0_64_buf(buf, readcnt, &val);
     }
 
     /* save the hash if we were given a non-NULL initial hash value */

@@ -1,9 +1,14 @@
 /*
  * fnv1_32 - 32 bit Fowler/Noll/Vo-1 hash of a string or rile
  *
- * @(#) $Revision: 3.6 $
- * @(#) $Id: fnv1_32.c,v 3.6 1999/10/24 01:53:49 chongo Exp chongo $
+ * @(#) $Revision: 3.7 $
+ * @(#) $Id: fnv1_32.c,v 3.7 1999/10/24 02:07:58 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv1_32.c,v $
+ *
+ ***
+ *
+ * This is the FNV-1 algorithm with a non-0 offset basis which is very
+ * similar to the historic FNV-0 algorithm and identical in speed.
  *
  * usage:
  *	fnv132 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
@@ -20,8 +25,7 @@
  *
  * for the most up to date copy of this code and the FNV hash home page.
  *
- * NOTE: The FNV-1 hash function has not been fully tested and may be subject
- *       to change in the near future. - XXX
+ ***
  *
  * Copyright (C) 1999 Landon Curt Noll, all rights reserved.
  *
@@ -55,7 +59,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include "fnv.h"
+#include "fnv1.h"
 
 #define WIDTH 32	/* bit width of hash */
 

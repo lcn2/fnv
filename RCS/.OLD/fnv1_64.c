@@ -1,12 +1,17 @@
 /*
- * fnv1_64 - 64 bit Fowler/Noll/Vo hash of a string or rile
+ * fnv1_64 - 64 bit Fowler/Noll/Vo-1 hash of a string or rile
  *
- * @(#) $Revision: 3.6 $
- * @(#) $Id: fnv1_64.c,v 3.6 1999/10/24 01:53:49 chongo Exp chongo $
+ * @(#) $Revision: 3.7 $
+ * @(#) $Id: fnv1_64.c,v 3.7 1999/10/24 02:07:58 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv1_64.c,v $
  *
+ ***
+ *
+ * This is the FNV-1 algorithm with a non-0 offset basis which is very
+ * similar to the historic FNV-0 algorithm and identical in speed.
+ *
  * usage:
- *	fnv64 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
+ *	fnv164 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
  *	fnv1_64 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
  *
  *	-b bcnt	  mask off all but the lower bcnt bits (default: 32)
@@ -19,6 +24,8 @@
  *	http://reality.sgi.com/chongo/tech/comp/fnv/index.html
  *
  * for the most up to date copy of this code and the FNV hash home page.
+ *
+ ***
  *
  * Copyright (C) 1999 Landon Curt Noll, all rights reserved.
  *
@@ -52,7 +59,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include "fnv.h"
+#include "fnv1.h"
 #include "longlong.h"
 
 #define WIDTH 64	/* bit width of hash */

@@ -1,14 +1,21 @@
 /*
- * h_32 - 32 bit Fowler/Noll/Vo hash code
+ * h1_32 - 32 bit Fowler/Noll/Vo-1 hash code
  *
- * @(#) $Revision: 3.4 $
- * @(#) $Id: h_32.c,v 3.4 1999/10/24 00:05:01 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/cmd/fnv/RCS/h_32.c,v $
+ * @(#) $Revision: 3.5 $
+ * @(#) $Id: h1_32.c,v 3.5 1999/10/24 00:23:45 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src/cmd/fnv/RCS/h1_32.c,v $
+ *
+ ***
+ *
+ * This is the FNV-1 algorithm with a non-0 offset basis which is very
+ * similar to the historic FNV-0 algorithm and identical in speed.
  *
  * See:
  *	http://reality.sgi.com/chongo/tech/comp/fnv/index.html
  *
  * for the most up to date copy of this code and the FNV hash home page.
+ *
+ ***
  *
  * Copyright (C) 1999 Landon Curt Noll, all rights reserved.
  *
@@ -37,7 +44,7 @@
  * Share and Enjoy!	:-)
  */
 
-#include "fnv.h"
+#include "fnv1.h"
 
 #define BUF_SIZE (32*1024)	/* number of bytes to hash at a time */
 
@@ -74,11 +81,7 @@
  * to be a cryptographic hash function, just a fast and reasonably
  * good hash function.
  */
-#if defined(ZERO_BASED)
-static fnv32 virgin = 0;
-#else
 static fnv32 virgin = 0x811c9dc5;
-#endif
 
 
 /*
@@ -101,16 +104,16 @@ static fnv32 virgin = 0x811c9dc5;
  * Example:
  *	fnv32 hash_value;
  *
- *	hash_value = fnv_32_buf(buf, len, NULL);
+ *	hash_value = fnv1_32_buf(buf, len, NULL);
  *
  *	    The 'hash_value' becomes the FNV hash of the 'buf' buffer.
  *
- *	(void) fnv_32_buf(buf2, len2, &hash_value);
+ *	(void) fnv1_32_buf(buf2, len2, &hash_value);
  *
  *	    The 'hash_value' becomes the hash of buf concatenated with buf2.
  */
 fnv32
-fnv_32_buf(char *buf, int len, fnv32 *hval)
+fnv1_32_buf(char *buf, int len, fnv32 *hval)
 {
     fnv32 val;			/* current hash value */
     char *buf_end = buf+len;	/* beyond end of hash area */
@@ -175,18 +178,18 @@ fnv_32_buf(char *buf, int len, fnv32 *hval)
  * Example:
  *	fnv32 hash_value;
  *
- *	hash_value = fnv_32_str("the first string", NULL);
+ *	hash_value = fnv1_32_str("the first string", NULL);
  *
  *	    The 'hash_value' becomes the FNV hash of "the first string"
  *	    not counting the final NUL byte.
  *
- *	(void) fnv_32_str("2nd string", &hash_value);
+ *	(void) fnv1_32_str("2nd string", &hash_value);
  *
  *	    The 'hash_value' becomes the hash of "the first string2nd string"
  *	    not counting the final NUL byte.
  */
 fnv32
-fnv_32_str(char *str, fnv32 *hval)
+fnv1_32_str(char *str, fnv32 *hval)
 {
     fnv32 val;			/* current hash value */
 
@@ -232,7 +235,7 @@ fnv_32_str(char *str, fnv32 *hval)
 
 
 /*
- * fnv_32_fd - FNV hash an open filename
+ * fnv1_32_fd - FNV hash an open filename
  *
  * usage:
  *      fd	- open file descriptor to hash
@@ -242,7 +245,7 @@ fnv_32_str(char *str, fnv32 *hval)
  *      32 bit hash as a static hash type
  */
 fnv32
-fnv_32_fd(int fd, fnv32 *hval)
+fnv1_32_fd(int fd, fnv32 *hval)
 {
     char buf[BUF_SIZE+1];	/* read buffer */
     int readcnt;		/* number of characters written */
@@ -257,7 +260,7 @@ fnv_32_fd(int fd, fnv32 *hval)
      * hash until EOF
      */
     while ((readcnt = read(fd, buf, BUF_SIZE)) > 0) {
-	(void) fnv_32_buf(buf, readcnt, &val);
+	(void) fnv1_32_buf(buf, readcnt, &val);
     }
 
     /* save the hash if we were given a non-NULL initial hash value */

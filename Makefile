@@ -2,8 +2,8 @@
 #
 # hash - makefile for hash tools
 #
-# @(#) $Revision: 3.8 $
-# @(#) $Id: Makefile,v 3.8 1999/10/24 02:07:17 chongo Exp chongo $
+# @(#) $Revision: 3.9 $
+# @(#) $Id: Makefile,v 3.9 1999/10/24 02:09:25 chongo Exp chongo $
 # @(#) $Source: /usr/local/src/cmd/fnv/RCS/Makefile,v $
 #
 # See:
@@ -63,11 +63,11 @@ WWW= /usr/local/ns-home/docs/chongo/src/fnv
 
 # what to build
 #
-SRC= h_32.c h_64.c h1_32.c h1_64.c have_ulong64.c \
-	fnv_32.c fnv_64.c fnv1_32.c fnv1_64.c
-HSRC= longlong.h fnv.h
-ALL= ${SRC} fnv.h Makefile README
-PROGS= fnv_32 fnv_64 fnv1_32 fnv1_64 fnv132 fnv164 fnv32 fnv64
+SRC= h0_32.c h0_64.c h1_32.c h1_64.c have_ulong64.c \
+	fnv0_32.c fnv0_64.c fnv1_32.c fnv1_64.c
+HSRC= longlong.h fnv0.h
+ALL= ${SRC} fnv0.h fnv1.h Makefile README_fnv0 README_fnv1
+PROGS= fnv0_32 fnv0_64 fnv1_32 fnv1_64 fnv032 fnv064 fnv132 fnv164
 LIBS= libfnv.a
 TARGETS= ${LIBS} ${PROGS}
 
@@ -77,60 +77,60 @@ all: ${TARGETS}
 
 # things to build
 #
-h_32.o: h_32.c longlong.h fnv.h
-	${CC} ${CFLAGS} h_32.c -c
+h0_32.o: h0_32.c longlong.h fnv0.h
+	${CC} ${CFLAGS} h0_32.c -c
 
-h_64.o: h_64.c longlong.h fnv.h
-	${CC} ${CFLAGS} h_64.c -c
+h0_64.o: h0_64.c longlong.h fnv0.h
+	${CC} ${CFLAGS} h0_64.c -c
 
-h1_32.o: h1_32.c longlong.h fnv.h
+h1_32.o: h1_32.c longlong.h fnv1.h
 	${CC} ${CFLAGS} h1_32.c -c
 
-h1_64.o: h1_64.c longlong.h fnv.h
+h1_64.o: h1_64.c longlong.h fnv1.h
 	${CC} ${CFLAGS} h1_64.c -c
 
-libfnv.a: h_32.o h_64.o h1_32.o h1_64.o
+libfnv.a: h0_32.o h0_64.o h1_32.o h1_64.o
 	rm -f $@
-	${AR} rv $@ h_32.o h_64.o h1_32.o h1_64.o
+	${AR} rv $@ h0_32.o h0_64.o h1_32.o h1_64.o
 	${RANLIB} $@
 
-fnv_32.o: fnv_32.c longlong.h fnv.h
-	${CC} ${CFLAGS} fnv_32.c -c
+fnv0_32.o: fnv0_32.c longlong.h fnv0.h
+	${CC} ${CFLAGS} fnv0_32.c -c
 
-fnv_32: fnv_32.o libfnv.a
-	${CC} fnv_32.o libfnv.a -o fnv_32
+fnv0_32: fnv0_32.o libfnv.a
+	${CC} fnv0_32.o libfnv.a -o fnv0_32
 
-fnv_64.o: fnv_64.c longlong.h fnv.h
-	${CC} ${CFLAGS} fnv_64.c -c
+fnv0_64.o: fnv0_64.c longlong.h fnv0.h
+	${CC} ${CFLAGS} fnv0_64.c -c
 
-fnv_64: fnv_64.o libfnv.a
-	${CC} fnv_64.o libfnv.a -o fnv_64
+fnv0_64: fnv0_64.o libfnv.a
+	${CC} fnv0_64.o libfnv.a -o fnv0_64
 
-fnv1_32.o: fnv1_32.c longlong.h fnv.h
+fnv1_32.o: fnv1_32.c longlong.h fnv1.h
 	${CC} ${CFLAGS} fnv1_32.c -c
 
 fnv1_32: fnv1_32.o libfnv.a
 	${CC} fnv1_32.o libfnv.a -o fnv1_32
 
-fnv1_64.o: fnv1_64.c longlong.h fnv.h
+fnv1_64.o: fnv1_64.c longlong.h fnv1.h
 	${CC} ${CFLAGS} fnv1_64.c -c
 
 fnv1_64: fnv1_64.o libfnv.a
 	${CC} fnv1_64.o libfnv.a -o fnv1_64
+
+fnv032: fnv0_32
+	-rm -f $@
+	-cp -f $? $@
+
+fnv064: fnv0_64
+	-rm -f $@
+	-cp -f $? $@
 
 fnv132: fnv1_32
 	-rm -f $@
 	-cp -f $? $@
 
 fnv164: fnv1_64
-	-rm -f $@
-	-cp -f $? $@
-
-fnv32: fnv_32
-	-rm -f $@
-	-cp -f $? $@
-
-fnv64: fnv_64
 	-rm -f $@
 	-cp -f $? $@
 
@@ -186,63 +186,121 @@ install: all
 	    rm -f Makefile.save;			: WWW; \
 	    ln Makefile Makefile.save;			: WWW; \
 	    cp -f Makefile.ship Makefile;		: WWW; \
-	    ${TAR} -cf - ${ALL} | ${GZIP_BIN} --best > fnv_hash.tar.gz;: WWW; \
-	    ${INSTALL} -m 0644 fnv_hash.tar.gz ${ALL} ${WWW}; \
+	    ${TAR} -cf - ${ALL} | ${GZIP_BIN} --best > fnv0_hash.tar.gz;: WWW; \
+	    ${INSTALL} -m 0644 fnv0_hash.tar.gz ${ALL} ${WWW}; \
 	    mv -f Makefile.save Makefile;		: WWW; \
-	    rm -f fnv_hash.tar.gz Makefile.ship;	: WWW; \
+	    rm -f fnv0_hash.tar.gz Makefile.ship;	: WWW; \
 	fi;						: WWW
 
 clean:
 	-rm -f have_ulong64 have_ulong64.o ll_tmp ll_tmp2 longlong.h
-	-rm -f h_32.o h_64.o fnv_32.o fnv_64.o 
+	-rm -f h0_32.o h0_64.o fnv0_32.o fnv0_64.o 
 	-rm -f h1_32.o h1_64.o fnv1_32.o fnv1_64.o
-	-rm -f fnv_hash.tar.gz Makefile.ship	# WWW
+	-rm -f fnv0_hash.tar.gz Makefile.ship	# WWW
 
 clobber: clean
 	-rm -f ${TARGETS}
 
 check: all
+	@echo
 	@echo "	These tests should not print an un-indented hash value:"
 	@echo
-	@echo "	fnv_32 -s hi == 0x6977223c"
-	-@./fnv_32 -s hi | ${EGREP} -v 0x6977223c; /bin/true
-	@echo "	fnv_32 -s hello == 0xb6fa7167"
-	-@./fnv_32 -s hello | ${EGREP} -v 0xb6fa7167; /bin/true
-	@echo "	fnv_32 -s curds and whey == 0x08ebf912"
-	-@./fnv_32 -s curds and whey | ${EGREP} -v 0x08ebf912; /bin/true
-	@echo "	fnv_64 -s hi == 0x08326007b4eb2b9c"
-	-@./fnv_64 -s hi | ${EGREP} -v 0x08326007b4eb2b9c; /bin/true
-	@echo "	fnv_64 -s hello == 0x7b495389bdbdd4c7"
-	-@./fnv_64 -s hello | ${EGREP} -v 0x7b495389bdbdd4c7; /bin/true
-	@echo "	fnv_64 -s curds and whey == 0x795ad7b2d9a7dc72"
-	-@./fnv_64 -s curds and whey | ${EGREP} -v 0x795ad7b2d9a7dc72; /bin/true
+	@echo "	fnv0_32 -s hi == 0x6800a3d1"
+	-@./fnv0_32 -s hi | ${EGREP} -v 0x6800a3d1; /bin/true
+	@echo "	fnv0_32 -s hello == 0xec6d6be8"
+	-@./fnv0_32 -s hello | ${EGREP} -v 0xec6d6be8; /bin/true
+	@echo "	fnv0_32 -s curds and whey == 0x4a83403b"
+	-@./fnv0_32 -s curds and whey | ${EGREP} -v 0x4a83403b; /bin/true
+	@echo "	fnv0_64 -s hi == 0x000068000000b0d1"
+	-@./fnv0_64 -s hi | ${EGREP} -v 0x000068000000b0d1; /bin/true
+	@echo "	fnv0_64 -s hello == 0x3fa86e63bc7d03c8"
+	-@./fnv0_64 -s hello | ${EGREP} -v 0x3fa86e63bc7d03c8; /bin/true
+	@echo "	fnv0_64 -s curds and whey == 0x09d2b4132bd1333b"
+	-@./fnv0_64 -s curds and whey | ${EGREP} -v 0x09d2b4132bd1333b;/bin/true
 	-@rm -f ll_tmp ll_tmp2
 	-@echo line 1 > ll_tmp
 	-@echo line 2 >> ll_tmp
 	-@echo line 3 >> ll_tmp
 	@echo '	echo "line 1\\nline 2\\nline 3" > ll_tmp'
-	@echo "	fnv_32 < ll_tmp == 0xb8cbeb33"
-	-@./fnv_32 < ll_tmp | ${EGREP} -v 0xb8cbeb33; /bin/true
-	@echo "	fnv_64 < ll_tmp == 0x79dcad190c3291b3"
-	-@./fnv_64 < ll_tmp | ${EGREP} -v 0x79dcad190c3291b3; /bin/true
-	@echo "	fnv_32 ll_tmp == 0xb8cbeb33"
-	-@./fnv_32 ll_tmp | ${EGREP} -v 0xb8cbeb33; /bin/true
-	@echo "	fnv_64 ll_tmp == 0x79dcad190c3291b3"
-	-@./fnv_64 ll_tmp | ${EGREP} -v 0x79dcad190c3291b3; /bin/true
-	@echo "	fnv_32 ll_tmp ll_tmp == 0x08ae22e5"
-	-@./fnv_32 ll_tmp ll_tmp | ${EGREP} -v 0x08ae22e5; /bin/true
-	@echo "	fnv_64 ll_tmp ll_tmp == 0x10a587a0ff68f305"
-	-@./fnv_64 ll_tmp ll_tmp | ${EGREP} -v 0x10a587a0ff68f305; /bin/true
 	@echo "	dd if=/dev/zero bs=1024k count=4 of=ll_tmp2 >/dev/null 2>&1"
 	-@dd if=/dev/zero bs=1024k count=4 of=ll_tmp2 >/dev/null 2>&1
-	@echo "	fnv_32 ll_tmp ll_tmp2 == 0x23cbeb33"
-	-@./fnv_32 ll_tmp ll_tmp2 | ${EGREP} -v 0x23cbeb33; /bin/true
-	@echo "	fnv_64 ll_tmp ll_tmp2 == 0xcafae19b7f3291b3"
-	-@./fnv_64 ll_tmp ll_tmp2 | ${EGREP} -v 0xcafae19b7f3291b3; /bin/true
-	@echo "	fnv_32 ll_tmp2 ll_tmp2 == 0x1b1c9dc5"
-	-@./fnv_32 ll_tmp2 ll_tmp2 | ${EGREP} -v 0x1b1c9dc5; /bin/true
-	@echo "	fnv_64 ll_tmp2 ll_tmp2 == 0x637a2df54e222325"
-	-@./fnv_64 ll_tmp2 ll_tmp2 | ${EGREP} -v 0x637a2df54e222325; /bin/true
-	-@rm -f ll_tmp ll_tmp2
+	@echo "	fnv0_32 < ll_tmp == 0x1fad81d0"
+	-@./fnv0_32 < ll_tmp | ${EGREP} -v 0x1fad81d0; /bin/true
+	@echo "	fnv0_64 < ll_tmp == 0xa8cf5b7784759250"
+	-@./fnv0_64 < ll_tmp | ${EGREP} -v 0xa8cf5b7784759250; /bin/true
+	@echo "	fnv0_32 < ll_tmp2 == 0x00000000"
+	-@./fnv0_32 < ll_tmp2 | ${EGREP} -v 0x00000000; /bin/true
+	@echo "	fnv0_64 < ll_tmp2 == 0x0000000000000000"
+	-@./fnv0_64 < ll_tmp2 | ${EGREP} -v 0x0000000000000000; /bin/true
+	@echo "	fnv0_32 ll_tmp == 0x1fad81d0"
+	-@./fnv0_32 ll_tmp | ${EGREP} -v 0x1fad81d0; /bin/true
+	@echo "	fnv0_64 ll_tmp == 0xa8cf5b7784759250"
+	-@./fnv0_64 ll_tmp | ${EGREP} -v 0xa8cf5b7784759250; /bin/true
+	@echo "	fnv0_32 ll_tmp2 == 0x00000000"
+	-@./fnv0_32 ll_tmp2 | ${EGREP} -v 0x00000000; /bin/true
+	@echo "	fnv0_64 ll_tmp2 == 0x0000000000000000"
+	-@./fnv0_64 ll_tmp2 | ${EGREP} -v 0x0000000000000000; /bin/true
+	@echo "	fnv0_32 ll_tmp ll_tmp == 0xc500fd20"
+	-@./fnv0_32 ll_tmp ll_tmp | ${EGREP} -v 0xc500fd20; /bin/true
+	@echo "	fnv0_64 ll_tmp ll_tmp == 0x3c8b9c3715fc1920"
+	-@./fnv0_64 ll_tmp ll_tmp | ${EGREP} -v 0x3c8b9c3715fc1920; /bin/true
+	@echo "	fnv0_32 ll_tmp ll_tmp2 == 0x6fad81d0"
+	-@./fnv0_32 ll_tmp ll_tmp2 | ${EGREP} -v 0x6fad81d0; /bin/true
+	@echo "	fnv0_64 ll_tmp ll_tmp2 == 0x29a78f5dd4759250"
+	-@./fnv0_64 ll_tmp ll_tmp2 | ${EGREP} -v 0x29a78f5dd4759250; /bin/true
+	@echo "	fnv0_32 ll_tmp2 ll_tmp == 0x1fad81d0"
+	-@./fnv0_32 ll_tmp2 ll_tmp | ${EGREP} -v 0x1fad81d0; /bin/true
+	@echo "	fnv0_64 ll_tmp2 ll_tmp == 0xa8cf5b7784759250"
+	-@./fnv0_64 ll_tmp2 ll_tmp | ${EGREP} -v 0xa8cf5b7784759250; /bin/true
+	@echo "	fnv0_32 ll_tmp2 ll_tmp2 == 0x00000000"
+	-@./fnv0_32 ll_tmp2 ll_tmp2 | ${EGREP} -v 0x00000000; /bin/true
+	@echo "	fnv0_64 ll_tmp2 ll_tmp2 == 0x0000000000000000"
+	-@./fnv0_64 ll_tmp2 ll_tmp2 | ${EGREP} -v 0x0000000000000000; /bin/true
 	@echo
+	@echo "	fnv1_32 -s hi == 0x6977223c"
+	-@./fnv1_32 -s hi | ${EGREP} -v 0x6977223c; /bin/true
+	@echo "	fnv1_32 -s hello == 0xb6fa7167"
+	-@./fnv1_32 -s hello | ${EGREP} -v 0xb6fa7167; /bin/true
+	@echo "	fnv1_32 -s curds and whey == 0x08ebf912"
+	-@./fnv1_32 -s curds and whey | ${EGREP} -v 0x08ebf912; /bin/true
+	@echo "	fnv1_64 -s hi == 0x08326007b4eb2b9c"
+	-@./fnv1_64 -s hi | ${EGREP} -v 0x08326007b4eb2b9c; /bin/true
+	@echo "	fnv1_64 -s hello == 0x7b495389bdbdd4c7"
+	-@./fnv1_64 -s hello | ${EGREP} -v 0x7b495389bdbdd4c7; /bin/true
+	@echo "	fnv1_64 -s curds and whey == 0x795ad7b2d9a7dc72"
+	-@./fnv1_64 -s curds and whey | ${EGREP} -v 0x795ad7b2d9a7dc72;/bin/true
+	@echo "	fnv1_32 < ll_tmp == 0xb8cbeb33"
+	-@./fnv1_32 < ll_tmp | ${EGREP} -v 0xb8cbeb33; /bin/true
+	@echo "	fnv1_64 < ll_tmp == 0x79dcad190c3291b3"
+	-@./fnv1_64 < ll_tmp | ${EGREP} -v 0x79dcad190c3291b3; /bin/true
+	@echo "	fnv1_32 < ll_tmp2 == 0xce1c9dc5"
+	-@./fnv1_32 < ll_tmp2 | ${EGREP} -v 0xce1c9dc5; /bin/true
+	@echo "	fnv1_64 < ll_tmp2 == 0xf8e3e56ce9222325"
+	-@./fnv1_64 < ll_tmp2 | ${EGREP} -v 0xf8e3e56ce9222325; /bin/true
+	@echo "	fnv1_32 ll_tmp == 0xb8cbeb33"
+	-@./fnv1_32 ll_tmp | ${EGREP} -v 0xb8cbeb33; /bin/true
+	@echo "	fnv1_64 ll_tmp == 0x79dcad190c3291b3"
+	-@./fnv1_64 ll_tmp | ${EGREP} -v 0x79dcad190c3291b3; /bin/true
+	@echo "	fnv1_32 ll_tmp2 == 0xce1c9dc5"
+	-@./fnv1_32 ll_tmp2 | ${EGREP} -v 0xce1c9dc5; /bin/true
+	@echo "	fnv1_64 ll_tmp2 == 0xf8e3e56ce9222325"
+	-@./fnv1_64 ll_tmp2 | ${EGREP} -v 0xf8e3e56ce9222325; /bin/true
+	@echo "	fnv1_32 ll_tmp ll_tmp == 0x08ae22e5"
+	-@./fnv1_32 ll_tmp ll_tmp | ${EGREP} -v 0x08ae22e5; /bin/true
+	@echo "	fnv1_64 ll_tmp ll_tmp == 0x10a587a0ff68f305"
+	-@./fnv1_64 ll_tmp ll_tmp | ${EGREP} -v 0x10a587a0ff68f305; /bin/true
+	@echo "	fnv1_32 ll_tmp ll_tmp2 == 0x23cbeb33"
+	-@./fnv1_32 ll_tmp ll_tmp2 | ${EGREP} -v 0x23cbeb33; /bin/true
+	@echo "	fnv1_64 ll_tmp ll_tmp2 == 0xcafae19b7f3291b3"
+	-@./fnv1_64 ll_tmp ll_tmp2 | ${EGREP} -v 0xcafae19b7f3291b3; /bin/true
+	@echo "	fnv1_32 ll_tmp2 ll_tmp == 0x1fcbeb33"
+	-@./fnv1_32 ll_tmp2 ll_tmp | ${EGREP} -v 0x1fcbeb33; /bin/true
+	@echo "	fnv1_64 ll_tmp2 ll_tmp == 0x06319755db3291b3"
+	-@./fnv1_64 ll_tmp2 ll_tmp | ${EGREP} -v 0x06319755db3291b3; /bin/true
+	@echo "	fnv1_32 ll_tmp2 ll_tmp2 == 0x1b1c9dc5"
+	-@./fnv1_32 ll_tmp2 ll_tmp2 | ${EGREP} -v 0x1b1c9dc5; /bin/true
+	@echo "	fnv1_64 ll_tmp2 ll_tmp2 == 0x637a2df54e222325"
+	-@./fnv1_64 ll_tmp2 ll_tmp2 | ${EGREP} -v 0x637a2df54e222325; /bin/true
+	@echo
+	-@rm -f ll_tmp ll_tmp2
 	@echo "	All done!"

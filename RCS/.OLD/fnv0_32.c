@@ -1,13 +1,18 @@
 /*
- * fnv_32 - 32 bit Fowler/Noll/Vo hash of a string or rile
+ * fnv0_32 - 32 bit Fowler/Noll/Vo-0 hash of a string or rile
  *
- * @(#) $Revision: 3.7 $
- * @(#) $Id: fnv_32.c,v 3.7 1999/10/24 01:53:49 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv_32.c,v $
+ * @(#) $Revision: 3.8 $
+ * @(#) $Id: fnv0_32.c,v 3.8 1999/10/24 02:07:58 chongo Exp chongo $
+ * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv0_32.c,v $
+ *
+ ***
+ *
+ * This is the original historic FNV algorithm with a 0 offset basis.
+ * It is recommended that FNV-1, with a non-0 offset basis be used instead.
  *
  * usage:
- *	fnv32 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
- *	fnv_32 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
+ *	fnv032 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
+ *	fnv0_32 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
  *
  *	-b bcnt	  mask off all but the lower bcnt bits (default: 32)
  *	-m	  multiple hashes, one per line for each arg
@@ -19,6 +24,8 @@
  *	http://reality.sgi.com/chongo/tech/comp/fnv/index.html
  *
  * for the most up to date copy of this code and the FNV hash home page.
+ *
+ ***
  *
  * Copyright (C) 1999 Landon Curt Noll, all rights reserved.
  *
@@ -52,7 +59,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include "fnv.h"
+#include "fnv0.h"
 
 #define WIDTH 32	/* bit width of hash */
 
@@ -147,7 +154,7 @@ main(int argc, char *argv[])
     if (s_flag) {
 
 	/* hash the 1st string */
-	hval = fnv_32_str(argv[optind], NULL);
+	hval = fnv0_32_str(argv[optind], NULL);
 	if (m_flag) {
 	    print_fnv(hval, bmask, v_flag, argv[optind]);
 	}
@@ -155,9 +162,9 @@ main(int argc, char *argv[])
 	/* hash any other strings */
 	for (i=optind+1; i < argc; ++i) {
 	    if (m_flag) {
-		print_fnv(fnv_32_str(argv[i], NULL), bmask, v_flag, argv[i]);
+		print_fnv(fnv0_32_str(argv[i], NULL), bmask, v_flag, argv[i]);
 	    } else {
-		fnv_32_str(argv[i], &hval);
+		fnv0_32_str(argv[i], &hval);
 	    }
 	}
 
@@ -173,7 +180,7 @@ main(int argc, char *argv[])
 	if (optind >= argc) {
 
 	    /* case: process only stdin */
-	    hval = fnv_32_fd(0, NULL);
+	    hval = fnv0_32_fd(0, NULL);
 	    if (m_flag) {
 		print_fnv(hval, bmask, v_flag, "(stdin)");
 	    }
@@ -188,9 +195,9 @@ main(int argc, char *argv[])
 		exit(4);
 	    }
 	    if (m_flag) {
-		print_fnv(fnv_32_fd(fd, NULL), bmask, v_flag, argv[optind]);
+		print_fnv(fnv0_32_fd(fd, NULL), bmask, v_flag, argv[optind]);
 	    } else {
-		hval = fnv_32_fd(fd, NULL);
+		hval = fnv0_32_fd(fd, NULL);
 	    }
 	    close(fd);
 	}
@@ -208,9 +215,9 @@ main(int argc, char *argv[])
 		exit(4);
 	    }
 	    if (m_flag) {
-		print_fnv(fnv_32_fd(fd, NULL), bmask, v_flag, argv[i]);
+		print_fnv(fnv0_32_fd(fd, NULL), bmask, v_flag, argv[i]);
 	    } else {
-		(void) fnv_32_fd(fd, &hval);
+		(void) fnv0_32_fd(fd, &hval);
 	    }
 	    close(fd);
 	}
