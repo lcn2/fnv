@@ -1,8 +1,8 @@
 /*
  * fnv - Fowler/Noll/Vo- hash code
  *
- * @(#) $Revision: 1.3 $
- * @(#) $Id: fnv.h,v 1.3 2001/05/30 15:01:06 chongo Exp chongo $
+ * @(#) $Revision: 1.4 $
+ * @(#) $Id: fnv.h,v 1.4 2001/05/30 15:34:30 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv.h,v $
  *
  ***
@@ -48,6 +48,12 @@
  * To use the recommended 64 bit FNV-1 hash, pass FNV1_64_INIT as the
  * Fnv64_t hashval argument to fnv_64_buf() or fnv_64_str().
  *
+ * To use the recommended 32 bit FNV-1a hash, pass FNV1_32A_INIT as the
+ * Fnv32_t hashval argument to fnv_32a_buf() or fnv_32a_str().
+ *
+ * To use the recommended 64 bit FNV-1a hash, pass FNV1_64A_INIT as the
+ * Fnv64_t hashval argument to fnv_64a_buf() or fnv_64a_str().
+ *
  ***
  *
  * Please do not copyright this code.  This code is in the public domain.
@@ -87,16 +93,19 @@ typedef unsigned long Fnv32_t;
 
 
 /*
- * 32 bit FNV-1 non-zero initial basis
+ * 32 bit FNV-1 and FNV-1a non-zero initial basis
  *
  * The FNV-1 initial basis is the FNV-0 hash of the following 32 octets:
  *
  *              chongo <Landon Curt Noll> /\../\
  *
- * Note that the \'s above are not back-slashing escape characters.
+ * NOTE: The \'s above are not back-slashing escape characters.
  * They are literal ASCII  backslash 0x5c characters.
+ *
+ * NOTE: The FNV-1a initial basis is the same value as FNV-1 by definition.
  */
 #define FNV1_32_INIT ((Fnv32_t)0x811c9dc5)
+#define FNV1_32A_INIT FNV1_32_INIT
 
 
 /*
@@ -138,14 +147,19 @@ extern const Fnv64_t fnv1_64_init;
  *
  *              chongo <Landon Curt Noll> /\../\
  *
- * Note that the \'s above are not back-slashing escape characters.
+ * NOTE: The \'s above are not back-slashing escape characters.
  * They are literal ASCII  backslash 0x5c characters.
+ *
+ * NOTE: The FNV-1a initial basis is the same value as FNV-1 by definition.
  */
 #if defined(HAVE_64BIT_LONG_LONG)
 #define FNV1_64_INIT ((Fnv64_t)0xcbf29ce484222325ULL)
+#define FNV1_64A_INIT FNV1_64_INIT
 #else
 extern const Fnv64_t fnv1_64_init;
+extern const Fnv64_t fnv1_64a_init;
 #define FNV1_64_INIT (fnv1_64_init)
+#define FNV1_64A_INIT FNV1_64_INIT
 #endif
 
 
@@ -156,6 +170,10 @@ extern Fnv32_t fnv_32_buf(void *buf, size_t len, Fnv32_t hashval);
 extern Fnv32_t fnv_32_str(char *buf, Fnv32_t hashval);
 extern Fnv64_t fnv_64_buf(void *buf, size_t len, Fnv64_t hashval);
 extern Fnv64_t fnv_64_str(char *buf, Fnv64_t hashval);
+extern Fnv32_t fnv_32a_buf(void *buf, size_t len, Fnv32_t hashval);
+extern Fnv32_t fnv_32a_str(char *buf, Fnv32_t hashval);
+extern Fnv64_t fnv_64a_buf(void *buf, size_t len, Fnv64_t hashval);
+extern Fnv64_t fnv_64a_str(char *buf, Fnv64_t hashval);
 
 
 #endif /* __FNV_H__ */
