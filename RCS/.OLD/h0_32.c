@@ -1,4 +1,4 @@
-/* $Id: h32.c,v 2.5 1998/05/02 03:09:16 chongo Exp chongo $  */
+/* $Id: h32.c,v 2.6 1998/05/02 03:12:10 chongo Exp chongo $  */
 /*
  * hash32 - 32 bit Fowler/Noll/Vo hash code
  *
@@ -25,7 +25,7 @@
 
 /*
  * See:
- *	http://reality.sgi.com/csp/ioccc/noll/src/fnv/
+ *	http://reality.sgi.com/chongo/src/fnv/
  *
  * for the most up to date copy of this code.
  */

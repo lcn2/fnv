@@ -1,4 +1,4 @@
-/* $Id: h64.c,v 1.8 1998/05/02 03:09:16 chongo Exp chongo $  */
+/* $Id: h64.c,v 1.9 1998/05/02 03:12:10 chongo Exp chongo $  */
 /*
  * hash64 - 64 bit Fowler/Noll/Vo64 hash code
  *
@@ -25,7 +25,7 @@
 
 /*
  * See:
- *	http://reality.sgi.com/csp/ioccc/noll/src/fnv/
+ *	http://reality.sgi.com/chongo/src/fnv/
  *
  * for the most up to date copy of this code.
  */
