@@ -1,8 +1,8 @@
 /*
  * fnv0 - Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 3.2 $
- * @(#) $Id: fnv0.h,v 3.2 1999/10/23 13:14:40 chongo Exp chongo $
+ * @(#) $Revision: 3.3 $
+ * @(#) $Id: fnv0.h,v 3.3 1999/10/24 11:19:50 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv0.h,v $
  *
  ***
@@ -39,7 +39,7 @@
  *
  * chongo <Landon Curt Noll> /\oo/\
  * http://reality.sgi.com/chongo
- * chongo_fnv@prime.engr.sgi.com
+ * EMail: chongo_fnv at prime dot engr dot sgi dot com
  *
  * Share and Enjoy!	:-)
  */

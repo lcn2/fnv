@@ -1,8 +1,8 @@
 /*
  * h1_64 - 64 bit Fowler/Noll/Vo-1 hash code
  *
- * @(#) $Revision: 3.6 $
- * @(#) $Id: h1_64.c,v 3.6 1999/10/24 11:19:50 chongo Exp chongo $
+ * @(#) $Revision: 3.7 $
+ * @(#) $Id: h1_64.c,v 3.7 1999/10/24 13:15:57 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/h1_64.c,v $
  *
  ***
@@ -39,7 +39,7 @@
  *
  * chongo <Landon Curt Noll> /\oo/\
  * http://reality.sgi.com/chongo
- * chongo_fnv@prime.engr.sgi.com
+ * EMail: chongo_fnv at prime dot engr dot sgi dot com
  *
  * Share and Enjoy!	:-)
  */

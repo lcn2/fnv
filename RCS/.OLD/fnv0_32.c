@@ -1,8 +1,8 @@
 /*
  * fnv0_32 - 32 bit Fowler/Noll/Vo-0 hash of a string or rile
  *
- * @(#) $Revision: 3.8 $
- * @(#) $Id: fnv0_32.c,v 3.8 1999/10/24 02:07:58 chongo Exp chongo $
+ * @(#) $Revision: 3.9 $
+ * @(#) $Id: fnv0_32.c,v 3.9 1999/10/24 11:19:50 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv0_32.c,v $
  *
  ***
@@ -49,7 +49,7 @@
  *
  * chongo <Landon Curt Noll> /\oo/\
  * http://reality.sgi.com/chongo
- * chongo_fnv@prime.engr.sgi.com
+ * EMail: chongo_fnv at prime dot engr dot sgi dot com
  *
  * Share and Enjoy!	:-)
  */
