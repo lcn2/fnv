@@ -3,10 +3,7 @@ Fowler/Noll/Vo hash
 See:
  	http://reality.sgi.com/chongo/tech/comp/fnv/index.html
 
-for the most up to date copy of this code and the FV hash home page.
-
-These functions implement the algorithm and contain the magic
-primes for very good hashing.
+for the most up to date copy of this code and the FNV hash home page.
 
 =-=
 
@@ -15,35 +12,45 @@ Here are sample codes for the Fowler/Noll/Vo hash:
 	h32.c	32 bit (Fowler/Noll/Vo)
 	h64.c	64 bit (Fowler/Noll/Vo64)
 
-Both these files implement a function called hash_buf.  Here is the
-interface to the 32 bit version:
+Both these files implement a function that FNV hashes either an collection
+of bytes or a NUL terminated string.
 
-	typedef unsigned long hash32;
-	hash hash32_buf(char *buf, int len, hash32 *hval)
+Here is the 32 bit FNV hash:
 
-It is you simple pointer, length returning a 32 bit value hash.
+	hash32 hash32_buf(char *buf, int len, hash32 *hval);
+	hash32 hash32_str(char *string, hash32 *hval);
+or:
+	hash32 hash32_buf(char *buf, int len, NULL);
+	hash32 hash32_str(char *string, NULL);
 
-The 64 bit version in identical:
+Here is the 64 bit FNV hash:
 
-	/*
-	 * 64 bit hash value
-	 */
-	#if defined(HAVE_64BIT_LONG_LONG)
-	typedef unsigned long long hash64;
-	#else
-	struct s_hash64 {
-	    unsigned long w32[2];
-	};
-	typedef struct s_hash64 hash64;
-	#endif
+	hash64 hash64_buf(char *buf, int len, hash64 *hval);
+	hash64 hash64_str(char *string, hash64 *hval);
+or:
+	hash64 hash64_buf(char *buf, int len, NULL);
+	hash64 hash64_str(char *string, NULL);
 
-	hash64 hash32_buf(char *buf, int len, hash64 *hval)
+If hval is NULL, then only the FNV hash of the first arg (buffer or string)
+will be returned.  If hval is non-NULL, then its value will be used as
+an initial FNV hash value and on return it will be updated with the
+returned value.  For example:
 
-However if you system does have a 64 bit 'long long' data type, you should
-define -DHAVE_64BIT_LONG_LONG.  The Makefile should build a longlong.h
-for you which will have HAVE_64BIT_LONG_LONG define or undefined.
+	hash64 hash_val;
+
+	hash_val = hash64_str("a string", NULL);
+	(void) hash64_str("more string", &hash_val);
+
+produces the same final hash value as:
+
+	hash_val = hash64_str("a stringmore string", NULL);
+
+NOTE: If you system has a 64 bit 'unsigned long long' data type, then
+hash64 will be an unsigned long long; otherwise hash64 will be a structure
+containing 2 unsigned long's.
 
 chongo <Landon Curt Noll> /\oo/\
+http://reality.sgi.com/chongo
 chongo_fnv@prime.engr.sgi.com
 
 Share and Enjoy!

@@ -2,9 +2,9 @@
 #
 # hash - makefile for hash tools
 #
-# @(#) $Revision: 2.5 $
-# @(#) $Id: Makefile,v 2.5 1999/10/18 22:00:16 chongo Exp chongo $
-# @(#) $Source: /usr/local/src/cmd/fnv/RCS/Makefile,v $
+# @(#) $Revision: 2.6 $
+# @(#) $Id: Makefile,v 2.6 1999/10/19 06:15:45 chongo Exp chongo $
+# @(#) $Source: /usr/local/src/lib/libfnv/RCS/Makefile,v $
 #
 # See:
 #	http://reality.sgi.com/chongo/tech/comp/fnv/index.html
@@ -54,13 +54,15 @@ RANLIB= :
 # where to install things
 #
 DESTLIB= /usr/local/lib
+INCDIR= /usr/local/include
 # NOTE: Lines with WWW in them are removed from the shipped Makefile
 WWW= /usr/local/ns-home/docs/chongo/src/fnv
 
 # what to build
 #
 SRC= h32.c h64.c have_ulong64.c
-ALL= ${SRC} Makefile README
+HSRC= longlong.h fnv.h
+ALL= ${SRC} fnv.h Makefile README
 TARGETS= libfnv.a
 
 # default rule
@@ -69,10 +71,10 @@ all: ${TARGETS}
 
 # things to build
 #
-h32.o: h32.c
+h32.o: h32.c longlong.h fnv.h
 	${CC} ${CFLAGS} h32.c -c
 
-h64.o: h64.c longlong.h
+h64.o: h64.c longlong.h fnv.h
 	${CC} ${CFLAGS} h64.c -c
 
 libfnv.a: h32.o h64.o
@@ -109,10 +111,19 @@ longlong.h: have_ulong64.c Makefile
 # utilities
 #
 install: libfnv.a
+	-@if [ -d "${DESTLIB}" ]; then \
+	    echo "	mkdir -p ${DESTLIB}"; \
+	    mkdir -p ${DESTLIB}; \
+	fi
+	-@if [ -d "${INCDIR}" ]; then \
+	    echo "	mkdir -p ${INCDIR}"; \
+	    mkdir -p ${INCDIR}; \
+	fi
 	${INSTALL} -m 0644 libfnv.a ${DESTLIB}
 	${RANLIB} ${DESTLIB}/libfnv.a
+	${INSTALL} -m 0644 ${HSRC} ${INCDIR}
 	# NOTE: Lines with WWW in them are removed from the shipped Makefile
-	if [ -d ${WWW} ]; then \
+	-if [ -d ${WWW} ]; then \
 	    rm -f Makefile.ship			# WWW; \
 	    ${GREP} -v WWW Makefile > Makefile.ship 	# WWW; \
 	    rm -f Makefile.save			# WWW; \
@@ -130,3 +141,9 @@ clean:
 
 clobber: clean
 	-rm -f ${TARGETS}
+
+
+# dependency
+#
+h32.o: fnv.h longlong.h
+h64.o: fnv.h longlong.h
