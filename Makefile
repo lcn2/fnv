@@ -2,8 +2,8 @@
 #
 # hash - makefile for hash tools
 #
-# @(#) $Revision: 3.9 $
-# @(#) $Id: Makefile,v 3.9 1999/10/24 02:09:25 chongo Exp chongo $
+# @(#) $Revision: 3.10 $
+# @(#) $Id: Makefile,v 3.10 1999/10/24 11:19:50 chongo Exp chongo $
 # @(#) $Source: /usr/local/src/cmd/fnv/RCS/Makefile,v $
 #
 # See:
@@ -63,13 +63,32 @@ WWW= /usr/local/ns-home/docs/chongo/src/fnv
 
 # what to build
 #
-SRC= h0_32.c h0_64.c h1_32.c h1_64.c have_ulong64.c \
-	fnv0_32.c fnv0_64.c fnv1_32.c fnv1_64.c
-HSRC= longlong.h fnv0.h
-ALL= ${SRC} fnv0.h fnv1.h Makefile README_fnv0 README_fnv1
-PROGS= fnv0_32 fnv0_64 fnv1_32 fnv1_64 fnv032 fnv064 fnv132 fnv164
+SRC= h0_32.c h0_64.c \
+	h1_32.c h1_64.c \
+	h2_32.c h2_64.c \
+	fnv0_32.c fnv0_64.c \
+	fnv1_32.c fnv1_64.c \
+	fnv2_32.c fnv2_64.c \
+	have_ulong64.c
+HSRC= fnv0.h fnv1.h fnv2.h \
+    longlong.h
+ALL= ${SRC} \
+	README_fnv0 README_fnv1 README_fnv2 \
+	Makefile
+PROGS= fnv0_32 fnv0_64 \
+    fnv1_32 fnv1_64 \
+    fnv2_32 fnv2_64 \
+    fnv032 fnv064 \
+    fnv132 fnv164 \
+    fnv232 fnv264
 LIBS= libfnv.a
-TARGETS= ${LIBS} ${PROGS}
+LIBOBJ= h0_32.o h0_64.o \
+	h1_32.o h1_64.o \
+	h2_32.o h2_64.o
+OTHEROBJ= fnv0_32.o fnv0_64.o \
+	  fnv1_32.o fnv1_64.o \
+	  fnv2_32.o fnv2_64.o
+TARGETS= ${LIBOBJ} ${LIBS} ${PROGS}
 
 # default rule
 #
@@ -89,9 +108,15 @@ h1_32.o: h1_32.c longlong.h fnv1.h
 h1_64.o: h1_64.c longlong.h fnv1.h
 	${CC} ${CFLAGS} h1_64.c -c
 
-libfnv.a: h0_32.o h0_64.o h1_32.o h1_64.o
+h2_32.o: h2_32.c longlong.h fnv2.h
+	${CC} ${CFLAGS} h2_32.c -c
+
+h2_64.o: h2_64.c longlong.h fnv2.h
+	${CC} ${CFLAGS} h2_64.c -c
+
+libfnv.a: ${LIBOBJ}
 	rm -f $@
-	${AR} rv $@ h0_32.o h0_64.o h1_32.o h1_64.o
+	${AR} rv $@ ${LIBOBJ}
 	${RANLIB} $@
 
 fnv0_32.o: fnv0_32.c longlong.h fnv0.h
@@ -118,6 +143,18 @@ fnv1_64.o: fnv1_64.c longlong.h fnv1.h
 fnv1_64: fnv1_64.o libfnv.a
 	${CC} fnv1_64.o libfnv.a -o fnv1_64
 
+fnv2_32.o: fnv2_32.c longlong.h fnv2.h
+	${CC} ${CFLAGS} fnv2_32.c -c
+
+fnv2_32: fnv2_32.o libfnv.a
+	${CC} fnv2_32.o libfnv.a -o fnv2_32
+
+fnv2_64.o: fnv2_64.c longlong.h fnv2.h
+	${CC} ${CFLAGS} fnv2_64.c -c
+
+fnv2_64: fnv2_64.o libfnv.a
+	${CC} fnv2_64.o libfnv.a -o fnv2_64
+
 fnv032: fnv0_32
 	-rm -f $@
 	-cp -f $? $@
@@ -131,6 +168,14 @@ fnv132: fnv1_32
 	-cp -f $? $@
 
 fnv164: fnv1_64
+	-rm -f $@
+	-cp -f $? $@
+
+fnv232: fnv2_32
+	-rm -f $@
+	-cp -f $? $@
+
+fnv264: fnv2_64
 	-rm -f $@
 	-cp -f $? $@
 
@@ -186,17 +231,17 @@ install: all
 	    rm -f Makefile.save;			: WWW; \
 	    ln Makefile Makefile.save;			: WWW; \
 	    cp -f Makefile.ship Makefile;		: WWW; \
-	    ${TAR} -cf - ${ALL} | ${GZIP_BIN} --best > fnv0_hash.tar.gz;: WWW; \
-	    ${INSTALL} -m 0644 fnv0_hash.tar.gz ${ALL} ${WWW}; \
+	    ${TAR} -cf - ${ALL} | ${GZIP_BIN} --best > fnv_hash.tar.gz;: WWW; \
+	    ${INSTALL} -m 0644 fnv_hash.tar.gz ${ALL} ${WWW}; \
 	    mv -f Makefile.save Makefile;		: WWW; \
-	    rm -f fnv0_hash.tar.gz Makefile.ship;	: WWW; \
+	    rm -f fnv_hash.tar.gz Makefile.ship;	: WWW; \
 	fi;						: WWW
 
 clean:
 	-rm -f have_ulong64 have_ulong64.o ll_tmp ll_tmp2 longlong.h
-	-rm -f h0_32.o h0_64.o fnv0_32.o fnv0_64.o 
-	-rm -f h1_32.o h1_64.o fnv1_32.o fnv1_64.o
-	-rm -f fnv0_hash.tar.gz Makefile.ship	# WWW
+	-rm -f ${LIBOBJ}
+	-rm -f ${OTHEROBJ}
+	-rm -f fnv_hash.tar.gz Makefile.ship	# WWW
 
 clobber: clean
 	-rm -f ${TARGETS}
