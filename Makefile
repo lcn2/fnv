@@ -2,8 +2,8 @@
 #
 # hash - makefile for FNV hash tools
 #
-# @(#) $Revision: 3.19 $
-# @(#) $Id: Makefile,v 3.19 2001/05/30 15:11:32 chongo Exp chongo $
+# @(#) $Revision: 3.20 $
+# @(#) $Id: Makefile,v 3.20 2002/09/09 18:14:50 chongo Exp chongo $
 # @(#) $Source: /usr/local/src/cmd/fnv/RCS/Makefile,v $
 #
 # See:
@@ -57,17 +57,18 @@ WWW= /web/isthe/chroot/html/chongo/src/fnv
 
 # what to build
 #
-SRC=	hash_32.c hash_64.c \
-	fnv32.c fnv64.c \
+SRC=	hash_32.c hash_32a.c hash_64.c hash_64a.c \
+	fnv32.c fnv32a.c fnv64.c fnv64a.c \
 	have_ulong64.c
 HSRC=	fnv.h \
 	longlong.h
 ALL=	${SRC} ${HSRC} \
 	README Makefile
-PROGS=	fnv032 fnv064 fnv0_32 fnv0_64 fnv132 fnv164 fnv1_32 fnv1_64
+PROGS=	fnv032 fnv064 fnv0_32 fnv0_64 fnv132 fnv164 fnv1_32 fnv1_64 \
+	fnv1a32 fnv1a64 fnv1a_32 fnv1a_64
 LIBS=	libfnv.a
-LIBOBJ=	hash_32.o hash_64.o
-OTHEROBJ= fnv32.o fnv64.o
+LIBOBJ=	hash_32.o hash_64.o hash_32a.o hash_64a.o
+OTHEROBJ= fnv32.o fnv64.o fnv32a.o fnv64a.o
 TARGETS= ${LIBOBJ} ${LIBS} ${PROGS}
 
 # default rule
@@ -82,6 +83,12 @@ hash_32.o: hash_32.c longlong.h fnv.h
 hash_64.o: hash_64.c longlong.h fnv.h
 	${CC} ${CFLAGS} hash_64.c -c
 
+hash_32a.o: hash_32a.c longlong.h fnv.h
+	${CC} ${CFLAGS} hash_32a.c -c
+
+hash_64a.o: hash_64a.c longlong.h fnv.h
+	${CC} ${CFLAGS} hash_64a.c -c
+
 libfnv.a: ${LIBOBJ}
 	rm -f $@
 	${AR} rv $@ ${LIBOBJ}
@@ -90,14 +97,26 @@ libfnv.a: ${LIBOBJ}
 fnv32.o: fnv32.c longlong.h fnv.h
 	${CC} ${CFLAGS} fnv32.c -c
 
+fnv32a.o: fnv32a.c longlong.h fnv.h
+	${CC} ${CFLAGS} fnv32a.c -c
+
 fnv032: fnv32.o libfnv.a
 	${CC} fnv32.o libfnv.a -o fnv032
+
+fnv1a32: fnv32a.o libfnv.a
+	${CC} fnv32a.o libfnv.a -o fnv1a32
 
 fnv64.o: fnv64.c longlong.h fnv.h
 	${CC} ${CFLAGS} fnv64.c -c
 
+fnv64a.o: fnv64a.c longlong.h fnv.h
+	${CC} ${CFLAGS} fnv64a.c -c
+
 fnv064: fnv64.o libfnv.a
 	${CC} fnv64.o libfnv.a -o fnv064
+
+fnv1a64: fnv64a.o libfnv.a
+	${CC} fnv64a.o libfnv.a -o fnv1a64
 
 fnv0_32: fnv032
 	-rm -f $@
@@ -120,6 +139,14 @@ fnv1_32: fnv032
 	-cp -f $? $@
 
 fnv1_64: fnv064
+	-rm -f $@
+	-cp -f $? $@
+
+fnv1a_32: fnv1a32
+	-rm -f $@
+	-cp -f $? $@
+
+fnv1a_64: fnv1a64
 	-rm -f $@
 	-cp -f $? $@
 
