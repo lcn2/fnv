@@ -2,8 +2,8 @@
 #
 # hash - makefile for FNV hash tools
 #
-# @(#) $Revision: 3.18 $
-# @(#) $Id: Makefile,v 3.18 2001/05/30 15:09:43 chongo Exp chongo $
+# @(#) $Revision: 3.19 $
+# @(#) $Id: Makefile,v 3.19 2001/05/30 15:11:32 chongo Exp chongo $
 # @(#) $Source: /usr/local/src/cmd/fnv/RCS/Makefile,v $
 #
 # See:
@@ -32,7 +32,7 @@
 SHELL= /bin/sh
 CFLAGS= -O3 -g3
 #CFLAGS= -O2 -g3
-CC= cc
+#CC= cc
 AR= ar
 TAR= tar
 EGREP= egrep
