@@ -1,9 +1,9 @@
 #!/bin/make
 #
-# hash - makefile for hash tools
+# hash - makefile for FNV hash tools
 #
-# @(#) $Revision: 3.11 $
-# @(#) $Id: Makefile,v 3.11 1999/10/24 12:44:35 chongo Exp chongo $
+# @(#) $Revision: 3.12 $
+# @(#) $Id: Makefile,v 3.12 1999/10/24 12:49:42 chongo Exp chongo $
 # @(#) $Source: /usr/local/src/cmd/fnv/RCS/Makefile,v $
 #
 # See:
@@ -11,17 +11,7 @@
 #
 # for the most up to date copy of this code and the FNV hash home page.
 #
-# Copyright (c) 1999 by Landon Curt Noll.  All Rights Reserved.
-#
-# Permission to use, copy, modify, and distribute this software and
-# its documentation for any purpose and without fee is hereby granted,
-# provided that the above copyright, this permission notice and text
-# this comment, and the disclaimer below appear in all of the following:
-#
-#       supporting documentation
-#       source copies
-#       source works derived from this source
-#       binaries derived from this source or from derived source
+# Please do not copyright this code.  This code is in the public domain.
 #
 # LANDON CURT NOLL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
 # INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO
@@ -30,14 +20,19 @@
 # USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 # OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 # PERFORMANCE OF THIS SOFTWARE.
+#
+# By:
+#	chongo <Landon Curt Noll> /\oo/\
+#	http://reality.sgi.com/chongo
+#	EMail: chongo_fnv at prime dot engr dot sgi dot com
+#
+# Share and Enjoy!	:-)
 
 # make tools
 #
 SHELL= /bin/sh
 #CFLAGS= -g3
 CFLAGS= -O2 -g3
-#CFLAGS= -g3 -DZERO_BASED
-#CFLAGS= -O2 -g3 -DZERO_BASED
 CC= cc
 AR= ar
 TAR= tar
@@ -63,31 +58,18 @@ WWW= /usr/local/ns-home/docs/chongo/src/fnv
 
 # what to build
 #
-SRC=	h0_32.c h0_64.c \
-	h1_32.c h1_64.c \
-	h2_32.c h2_64.c \
-	fnv0_32.c fnv0_64.c \
-	fnv1_32.c fnv1_64.c \
-	fnv2_32.c fnv2_64.c \
+SRC=	hash_32.c hash_64.c \
+	fnv32.c fnv64.c \
+	fnv32.c fnv64.c \
 	have_ulong64.c
-HSRC=	fnv0.h fnv1.h fnv2.h \
+HSRC=	fnv.h \
 	longlong.h
 ALL=	${SRC} ${HSRC} \
-	README_fnv0 README_fnv1 README_fnv2 \
-	Makefile
-PROGS=	fnv0_32 fnv0_64 \
-	fnv1_32 fnv1_64 \
-	fnv2_32 fnv2_64 \
-	fnv032 fnv064 \
-	fnv132 fnv164 \
-	fnv232 fnv264
+	README Makefile
+PROGS=	fnv032 fnv064 fnv0_32 fnv0_64 fnv132 fnv164 fnv_132 fnv_164
 LIBS=	libfnv.a
-LIBOBJ=	h0_32.o h0_64.o \
-	h1_32.o h1_64.o \
-	h2_32.o h2_64.o
-OTHEROBJ= fnv0_32.o fnv0_64.o \
-	fnv1_32.o fnv1_64.o \
-	fnv2_32.o fnv2_64.o
+LIBOBJ=	hash_32.o hash_64.o
+OTHEROBJ= fnv32.o fnv64.o
 TARGETS= ${LIBOBJ} ${LIBS} ${PROGS}
 
 # default rule
@@ -96,86 +78,50 @@ all: ${TARGETS}
 
 # things to build
 #
-h0_32.o: h0_32.c longlong.h fnv0.h
-	${CC} ${CFLAGS} h0_32.c -c
+hash_32.o: hash_32.c longlong.h fnv.h
+	${CC} ${CFLAGS} hash_32.c -c
 
-h0_64.o: h0_64.c longlong.h fnv0.h
-	${CC} ${CFLAGS} h0_64.c -c
-
-h1_32.o: h1_32.c longlong.h fnv1.h
-	${CC} ${CFLAGS} h1_32.c -c
-
-h1_64.o: h1_64.c longlong.h fnv1.h
-	${CC} ${CFLAGS} h1_64.c -c
-
-h2_32.o: h2_32.c longlong.h fnv2.h
-	${CC} ${CFLAGS} h2_32.c -c
-
-h2_64.o: h2_64.c longlong.h fnv2.h
-	${CC} ${CFLAGS} h2_64.c -c
+hash_64.o: hash_64.c longlong.h fnv.h
+	${CC} ${CFLAGS} hash_64.c -c
 
 libfnv.a: ${LIBOBJ}
 	rm -f $@
 	${AR} rv $@ ${LIBOBJ}
 	${RANLIB} $@
 
-fnv0_32.o: fnv0_32.c longlong.h fnv0.h
-	${CC} ${CFLAGS} fnv0_32.c -c
+fnv32.o: fnv32.c longlong.h fnv.h
+	${CC} ${CFLAGS} fnv32.c -c
 
-fnv0_32: fnv0_32.o libfnv.a
-	${CC} fnv0_32.o libfnv.a -o fnv0_32
+fnv032: fnv32.o libfnv.a
+	${CC} fnv32.o libfnv.a -o fnv032
 
-fnv0_64.o: fnv0_64.c longlong.h fnv0.h
-	${CC} ${CFLAGS} fnv0_64.c -c
+fnv64.o: fnv64.c longlong.h fnv.h
+	${CC} ${CFLAGS} fnv64.c -c
 
-fnv0_64: fnv0_64.o libfnv.a
-	${CC} fnv0_64.o libfnv.a -o fnv0_64
+fnv064: fnv64.o libfnv.a
+	${CC} fnv64.o libfnv.a -o fnv064
 
-fnv1_32.o: fnv1_32.c longlong.h fnv1.h
-	${CC} ${CFLAGS} fnv1_32.c -c
-
-fnv1_32: fnv1_32.o libfnv.a
-	${CC} fnv1_32.o libfnv.a -o fnv1_32
-
-fnv1_64.o: fnv1_64.c longlong.h fnv1.h
-	${CC} ${CFLAGS} fnv1_64.c -c
-
-fnv1_64: fnv1_64.o libfnv.a
-	${CC} fnv1_64.o libfnv.a -o fnv1_64
-
-fnv2_32.o: fnv2_32.c longlong.h fnv2.h
-	${CC} ${CFLAGS} fnv2_32.c -c
-
-fnv2_32: fnv2_32.o libfnv.a
-	${CC} fnv2_32.o libfnv.a -o fnv2_32
-
-fnv2_64.o: fnv2_64.c longlong.h fnv2.h
-	${CC} ${CFLAGS} fnv2_64.c -c
-
-fnv2_64: fnv2_64.o libfnv.a
-	${CC} fnv2_64.o libfnv.a -o fnv2_64
-
-fnv032: fnv0_32
+fnv0_32: fnv032
 	-rm -f $@
 	-cp -f $? $@
 
-fnv064: fnv0_64
+fnv0_64: fnv064
 	-rm -f $@
 	-cp -f $? $@
 
-fnv132: fnv1_32
+fnv132: fnv032
 	-rm -f $@
 	-cp -f $? $@
 
-fnv164: fnv1_64
+fnv164: fnv064
 	-rm -f $@
 	-cp -f $? $@
 
-fnv232: fnv2_32
+fnv_132: fnv032
 	-rm -f $@
 	-cp -f $? $@
 
-fnv264: fnv2_64
+fnv_164: fnv064
 	-rm -f $@
 	-cp -f $? $@
 
