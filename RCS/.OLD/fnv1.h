@@ -1,8 +1,8 @@
 /*
  * fnv - Fowler/Noll/Vo hash code
  *
- * @(#) $Revision: 2.1 $
- * @(#) $Id: fnv.h,v 2.1 1999/10/23 08:17:19 chongo Exp chongo $
+ * @(#) $Revision: 2.2 $
+ * @(#) $Id: fnv.h,v 2.2 1999/10/23 09:44:31 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/lib/libfnv/RCS/fnv.h,v $
  *
  * See:
@@ -31,6 +31,7 @@
  * PERFORMANCE OF THIS SOFTWARE.
  *
  * chongo <Landon Curt Noll> /\oo/\
+ * http://reality.sgi.com/chongo
  * chongo_fnv@prime.engr.sgi.com
  *
  * Share and Enjoy!

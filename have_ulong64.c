@@ -34,13 +34,13 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  *
- * chongo was here	/\../\
+ * chongo <was here>	/\../\
  */
 
 /*
  * have the compiler try its hand with unsigned and signed long longs
  */
-unsigned long long val = 4294967297ULL;
+unsigned long long val = 1099511628211ULL;
 
 int
 main(void)
@@ -50,7 +50,7 @@ main(void)
 	/*
 	 * ensure that the length of long long val is what we expect
 	 */
-	if (val == 4294967297ULL && sizeof(val) == 8) {
+	if (val == 1099511628211ULL && sizeof(val) == 8) {
 		printf("#define HAVE_64BIT_LONG_LONG\t/* yes */\n");
 	}
 
