@@ -122,12 +122,11 @@ fnv_hash.tar.gz: ${ALL}
 # utilities
 #
 install: libfnv.a
-	rm -f ${DESTLIB}/libfnv.a
 	${INSTALL} -m 0644 libfnv.a ${DESTLIB}
 	${RANLIB} ${DESTLIB}/libfnv.a
 	if [ -d ${WWW} ]; then \
 	    echo "	${MAKE} fnv_hash.tar.gz"	# WWW; \
-	    ${MAKE} fnv_hash.tar.gz		# WWW; \
+	    ${MAKE} fnv_hash.tar.gz	# WWW; \
 	    echo "	${INSTALL} -m 0644 fnv_hash.tar.gz ${ALL}" ${WWW}; \
 	    ${INSTALL} -m 0644 fnv_hash.tar.gz ${ALL} ${WWW}; \
 	fi				# WWW
