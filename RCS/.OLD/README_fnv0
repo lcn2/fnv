@@ -1,3 +1,11 @@
+See:
+
+	http://reality.sgi.com/chongo/src/fnv/
+
+for the most up to date copy of this code.
+
+=-=
+
 Here are sample codes for the Fowler/Noll/Vo hash:
 
 	h32.c	32 bit (Fowler/Noll/Vo)
