@@ -2,8 +2,8 @@
 #
 # hash - makefile for hash tools
 #
-# @(#) $Revision: 3.1 $
-# @(#) $Id: Makefile,v 3.1 1999/10/23 09:59:04 chongo Exp chongo $
+# @(#) $Revision: 3.2 $
+# @(#) $Id: Makefile,v 3.2 1999/10/23 11:58:55 chongo Exp chongo $
 # @(#) $Source: /usr/local/src/lib/libfnv/RCS/Makefile,v $
 #
 # See:
@@ -34,8 +34,8 @@
 # make tools
 #
 SHELL= /bin/sh
-CFLAGS= -g3
-#CFLAGS= -O2 -g3
+#CFLAGS= -g3
+CFLAGS= -O2 -g3
 #CFLAGS= -g3 -DZERO_BASED
 #CFLAGS= -O2 -g3 -DZERO_BASED
 CC= cc
