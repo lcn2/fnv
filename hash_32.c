@@ -1,8 +1,8 @@
 /*
  * hash_32 - 32 bit Fowler/Noll/Vo hash code
  *
- * @(#) $Revision: 1.8 $
- * @(#) $Id: hash_32.c,v 1.8 2003/10/03 20:38:13 chongo Exp chongo $
+ * @(#) $Revision: 1.9 $
+ * @(#) $Id: hash_32.c,v 1.9 2009/06/30 09:13:19 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/hash_32.c,v $
  *
  ***

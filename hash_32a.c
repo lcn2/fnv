@@ -1,8 +1,8 @@
 /*
  * hash_32 - 32 bit Fowler/Noll/Vo FNV-1a hash code
  *
- * @(#) $Revision: 1.1 $
- * @(#) $Id: hash_32a.c,v 1.1 2003/10/03 20:38:53 chongo Exp chongo $
+ * @(#) $Revision: 1.2 $
+ * @(#) $Id: hash_32a.c,v 1.2 2009/06/30 09:13:19 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/hash_32a.c,v $
  *
  ***
