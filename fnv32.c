@@ -1,30 +1,9 @@
 /*
  * fnv32 - 32 bit Fowler/Noll/Vo hash of a buffer or string
  *
- * @(#) $Revision: 1.4 $
- * @(#) $Id: fnv32.c,v 1.4 2001/05/30 15:01:06 chongo Exp chongo $
+ * @(#) $Revision: 1.5 $
+ * @(#) $Id: fnv32.c,v 1.5 2001/05/30 15:34:30 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv32.c,v $
- *
- ***
- *
- * usage:
- *	fnv032 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
- *	fnv0_32 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
- *
- *	fnv132 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
- *	fnv1_32 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
- *
- *	-b bcnt	  mask off all but the lower bcnt bits (default 32)
- *	-m	  multiple hashes, one per line for each arg
- *	-s	  hash arg as a string (ignoring terminating NUL bytes)
- *	-v	  verbose mode, print arg after hash (implies -m)
- *	arg	  string (if -s was given) or filename (default stdin)
- *
- * The fnv032 and fnv0_32 basenames perform the 32 bit FNV-0 historic hash.
- * The fnv132 and fnv1_32 basenames perform the 32 bit recommended FNV-1 hash.
- *
- * NOTE: The FNV-0 historic hash is not recommended.
- *	 One should use the FNV-1 hash instead.
  *
  ***
  *
@@ -78,33 +57,166 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
+#include "longlong.h"
 #include "fnv.h"
 
 #define WIDTH 32	/* bit width of hash */
 
 #define BUF_SIZE (32*1024)	/* number of bytes to hash at a time */
 
-static char *usage = "usage: %s [-b bcnt] [-m [-v]] [-s arg] [arg ...]\n";
+static char *usage =
+"usage: %s [-b bcnt] [-m [-v]] [-s arg] [-t code] [arg ...]\n"
+"\n"
+"\t-b bcnt\tmask off all but the lower bcnt bits (default 32)\n"
+"\t-m\tmultiple hashes, one per line for each arg\n"
+"\t-s\thash arg as a string (ignoring terminating NUL bytes)\n"
+"\t-t code\t  test hash code: (0 ==> generate test vectors\n"
+"\t\t\t\t  1 ==> validate against FNV test vectors)\n"
+"\t-v\tverbose mode, print arg after hash (implies -m)\n"
+"\targ\tstring (if -s was given) or filename (default stdin)\n"
+"\n"
+"\tNOTE: Programs that begin with fnv0 implement the FNV-0 hash.\n"
+"\t      The FNV-0 hash is historic FNV algorithm that is now deprecated.\n"
+"\n"
+"\tSee http://www.isthe.com/chongo/tech/comp/fnv/index.html for more info.\n";
 static char *program;	/* our name */
 
 
 /*
- * print_fnv - print an FNV hash
+ * test_fnv32 - test the FNV32 hash
  *
  * given:
- *	hval	  the hash value to print
- *	mask	  lower bit mask
- *	verbose	  1 => print arg with hash
- *	arg	  string or filename arg
+ *	hash_type	type of FNV hash to test
+ *	init_hval	initial hash value
+ *	mask	  	lower bit mask
+ *	v_flag	  	1 => print test failure info on stderr
+ *	code	  0 ==> generate FNV test vectors
+ *		  1 ==> validate against FNV test vectors
+ *
+ * returns:	0 ==> OK, else test vector failure number
  */
-static void
-print_fnv(Fnv32_t hval, Fnv32_t mask, int verbose, char *arg)
+static int
+test_fnv32(enum fnv_type hash_type, Fnv32_t init_hval,
+	   Fnv32_t mask, int v_flag, int code)
 {
-    if (verbose) {
-	printf("0x%08lx %s\n", hval & mask, arg);
-    } else {
-	printf("0x%08lx\n", hval & mask);
+    struct test_vector *t;	/* FNV test vestor */
+    Fnv32_t hval;		/* current hash value */
+    int tcode;			/* test vector that failed, starting at 1 */
+
+    /*
+     * print preamble if generating test vectors
+     */
+    if (code == 0) {
+	switch (hash_type) {
+	case FNV0_32:
+	    printf("struct fnv0_32_test_vector fnv0_32_vector[] = {\n");
+	    break;
+	case FNV1_32:
+	    printf("struct fnv1_32_test_vector fnv1_32_vector[] = {\n");
+	    break;
+	case FNV1a_32:
+	    printf("struct fnv1a_32_test_vector fnv1a_32_vector[] = {\n");
+	    break;
+	default:
+	    unknown_hash_type(program, hash_type, 12);	/* exit(12) */
+	    /*NOTREACHED*/
+    	}
     }
+
+    /*
+     * loop thru all test vectors
+     */
+    for (t = fnv_test_str, tcode = 1; t->buf != NULL; ++t, ++tcode) {
+
+        /*
+	 * compute the FNV hash
+	 */
+	hval = init_hval;
+	switch (hash_type) {
+	case FNV0_32:
+	case FNV1_32:
+	    hval = fnv_32_buf(t->buf, t->len, hval);
+	    break;
+	case FNV1a_32:
+	    hval = fnv_32a_buf(t->buf, t->len, hval);
+	    break;
+	default:
+	    unknown_hash_type(program, hash_type, 13);	/* exit(13) */
+	    /*NOTREACHED*/
+	}
+
+	/*
+	 * print the vector
+	 */
+	switch (code) {
+	case 0:		/* generate the test vector */
+	    printf("    { &fnv_test_str[%d], (Fnv32_t) 0x%08lxUL },\n",
+	    	    tcode-1, hval & mask);
+    	    break;
+	case 1:		/* validate against test vector */
+	    switch (hash_type) {
+	    case FNV0_32:
+		if ((hval&mask) != (fnv0_32_vector[code-1].fnv0_32 & mask)) {
+		    if (v_flag) {
+		    	fprintf(stderr, "%s: failed fnv0_32 test # %d\n",
+				program, code);
+		    	fprintf(stderr, "%s: test # 1 is 1st test\n", program);
+			fprintf(stderr,
+			    "%s: expected 0x%08lx != generated: 0x%08lx\n",
+			    program, (hval&mask),
+			    (fnv0_32_vector[code-1].fnv0_32 & mask));
+		    }
+		    return code;
+		}
+	    	break;
+	    case FNV1_32:
+		if (hval != fnv1_32_vector[code-1].fnv1_32) {
+		    if (v_flag) {
+		    	fprintf(stderr, "%s: failed fnv1_32 test # %d\n",
+				program, code);
+		    	fprintf(stderr, "%s: test # 1 is 1st test\n", program);
+			fprintf(stderr,
+			    "%s: expected 0x%08lx != generated: 0x%08lx\n",
+			    program, (hval&mask),
+			    (fnv1_32_vector[code-1].fnv1_32 & mask));
+		    }
+		    return code;
+		}
+	    	break;
+	    case FNV1a_32:
+		if (hval != fnv1a_32_vector[code-1].fnv1a_32) {
+		    if (v_flag) {
+		    	fprintf(stderr, "%s: failed fnv1a_32 test # %d\n",
+				program, code);
+		    	fprintf(stderr, "%s: test # 1 is 1st test\n", program);
+			fprintf(stderr,
+			    "%s: expected 0x%08lx != generated: 0x%08lx\n",
+			    program, (hval&mask),
+			    (fnv1a_32_vector[code-1].fnv1a_32 & mask));
+		    }
+		    return code;
+		}
+	    	break;
+	    }
+	    break;
+    	default:
+	    fprintf(stderr, "%s: -m %d not implemented yet\n", program, code);
+	    exit(14);
+    	}
+    }
+
+    /*
+     * print completion if generating test vectors
+     */
+    if (code == 0) {
+	printf("    { NULL, 0 }\n");
+	printf("};\n");
+    }
+
+    /*
+     * no failures, return code 0 ==> all OK
+     */
+    return 0;
 }
 
 
@@ -123,6 +235,8 @@ main(int argc, char *argv[])
     int m_flag = 0;		/* 1 => print multiple hashes, one per arg */
     int v_flag = 0;		/* 1 => verbose hash print */
     int b_flag = WIDTH;		/* -b flag value */
+    int t_flag = -1;		/* FNV test vector code (0=>print, 1=>test) */
+    enum fnv_type hash_type = FNV_NONE;	/* type of FNV hash to perform */
     Fnv32_t bmask;		/* mask to apply to output */
     extern char *optarg;	/* option argument */
     extern int optind;		/* argv index of the next arg */
@@ -134,7 +248,7 @@ main(int argc, char *argv[])
      * parse args
      */
     program = argv[0];
-    while ((i = getopt(argc, argv, "b:msv")) != -1) {
+    while ((i = getopt(argc, argv, "b:mst:v")) != -1) {
 	switch (i) {
 	case 'b':	/* bcnt bit mask count */
 	    b_flag = atoi(optarg);
@@ -145,6 +259,15 @@ main(int argc, char *argv[])
 	case 's':	/* hash args as strings */
 	    s_flag = 1;
 	    break;
+	case 't':	/* FNV test vector code */
+	    t_flag = atoi(optarg);
+	    if (t_flag < 0 || t_flag > 1) {
+		fprintf(stderr, "%s: -t code must be 0 or 1\n", program);
+		fprintf(stderr, usage, program);
+		exit(1);
+	    }
+	    m_flag = 1;
+	    break;
 	case 'v':	/* verbose hash print */
 	    m_flag = 1;
 	    v_flag = 1;
@@ -154,16 +277,31 @@ main(int argc, char *argv[])
 	    exit(1);
 	}
     }
+    /* -t code incompatible with -b, -m and args */
+    if (t_flag >= 0) {
+    	if (b_flag != WIDTH) {
+	    fprintf(stderr, "%s: -t code incompatible with -b\n", program);
+	    exit(2);
+	}
+    	if (s_flag != 0) {
+	    fprintf(stderr, "%s: -t code incompatible with -s\n", program);
+	    exit(3);
+	}
+	if (optind < argc) {
+	    fprintf(stderr, "%s: -t code incompatible args\n", program);
+	    exit(4);
+	}
+    }
     /* -s requires at least 1 arg */
     if (s_flag && optind >= argc) {
 	fprintf(stderr, usage, program);
-	exit(2);
+	exit(5);
     }
     /* limit -b values */
     if (b_flag < 0 || b_flag > WIDTH) {
 	fprintf(stderr, "%s: -b bcnt: %d must be >= 0 and < %d\n",
 		program, b_flag, WIDTH);
-	exit(3);
+	exit(6);
     }
     if (b_flag == WIDTH) {
 	bmask = (Fnv32_t)0xffffffff;
@@ -180,12 +318,47 @@ main(int argc, char *argv[])
     } else {
 	++p;
     }
-    if (strcmp(p, "fnv0_32") == 0 || strcmp(p, "fnv032") == 0) {
+    if (strcmp(p, "fnv032") == 0) {
 	/* using non-recommended FNV-0 and zero initial basis */
 	hval = FNV0_32_INIT;
-    } else {
-	/* using recommended FNV-1 and non-zero initial basis */
+	hash_type = FNV0_32;
+    } else if (strcmp(p, "fnv132") == 0) {
+	/* using FNV-1 and non-zero initial basis */
 	hval = FNV1_32_INIT;
+	hash_type = FNV1_32;
+    } else if (strcmp(p, "fnv1a32") == 0) {
+	 /* start with the FNV-1a initial basis */
+	hval = FNV1_32A_INIT;
+	hash_type = FNV1a_32;
+    } else {
+	fprintf(stderr, "%s: unknown program name, unknown hash type\n",
+		program);
+	exit(7);
+    }
+
+    /*
+     * FNV test vector processing, if needed
+     */
+    if (t_flag >= 0) {
+	int code;		/* test vector that failed, starting at 1 */
+
+	/*
+	 * perform all tests
+	 */
+	code = test_fnv32(hash_type, hval, bmask, v_flag, t_flag);
+
+	/*
+	 * evaluate the tests
+	 */
+	if (code == 0) {
+	    if (v_flag) {
+	    	printf("passed\n");
+	    }
+	    exit(0);
+	} else {
+	    printf("failed vector (1 is 1st test): %d\n", code);
+	    exit(8);
+	}
     }
 
     /*
@@ -195,9 +368,20 @@ main(int argc, char *argv[])
 
 	/* hash any other strings */
 	for (i=optind; i < argc; ++i) {
-	    hval = fnv_32_str(argv[i], hval);
+	    switch (hash_type) {
+	    case FNV0_32:
+	    case FNV1_32:
+		hval = fnv_32_str(argv[i], hval);
+	    	break;
+	    case FNV1a_32:
+		hval = fnv_32a_str(argv[i], hval);
+		break;
+	    default:
+		unknown_hash_type(program, hash_type, 9);	/* exit(9) */
+		/*NOTREACHED*/
+	    }
 	    if (m_flag) {
-		print_fnv(hval, bmask, v_flag, argv[i]);
+		print_fnv32(hval, bmask, v_flag, argv[i]);
 	    }
 	}
 
@@ -214,10 +398,20 @@ main(int argc, char *argv[])
 
 	    /* case: process only stdin */
 	    while ((readcnt = read(0, buf, BUF_SIZE)) > 0) {
-		hval = fnv_32_buf(buf, readcnt, hval);
+		switch (hash_type) {
+		case FNV0_32:
+		case FNV1_32:
+		    hval = fnv_32_buf(buf, readcnt, hval);
+		    break;
+		case FNV1a_32:
+		    hval = fnv_32a_buf(buf, readcnt, hval);
+		default:
+		    unknown_hash_type(program, hash_type, 10);	/* exit(10) */
+		    /*NOTREACHED*/
+		}
 	    }
 	    if (m_flag) {
-		print_fnv(hval, bmask, v_flag, "(stdin)");
+		print_fnv32(hval, bmask, v_flag, "(stdin)");
 	    }
 
 	} else {
@@ -237,12 +431,22 @@ main(int argc, char *argv[])
 
 		/*  hash the file */
 		while ((readcnt = read(fd, buf, BUF_SIZE)) > 0) {
-		    hval = fnv_32_buf(buf, readcnt, hval);
+		    switch (hash_type) {
+		    case FNV0_32:
+		    case FNV1_32:
+			hval = fnv_32_buf(buf, readcnt, hval);
+			break;
+		    case FNV1a_32:
+			hval = fnv_32a_buf(buf, readcnt, hval);
+		    default:
+			unknown_hash_type(program, hash_type, 11);/* exit(11) */
+			/*NOTREACHED*/
+		    }
 		}
 
 		/* finish processing the file */
 		if (m_flag) {
-		    print_fnv(hval, bmask, v_flag, argv[i]);
+		    print_fnv32(hval, bmask, v_flag, argv[i]);
 		}
 		close(fd);
 	    }
@@ -253,7 +457,7 @@ main(int argc, char *argv[])
      * report hash and exit
      */
     if (!m_flag) {
-	print_fnv(hval, bmask, v_flag, "");
+	print_fnv32(hval, bmask, v_flag, "");
     }
     return 0;	/* exit(0); */
 }
