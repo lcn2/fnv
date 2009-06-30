@@ -1,8 +1,8 @@
 /*
  * fnv - Fowler/Noll/Vo- hash code
  *
- * @(#) $Revision: 1.6 $
- * @(#) $Id: fnv.h,v 1.6 2009/06/30 01:31:39 chongo Exp chongo $
+ * @(#) $Revision: 5.1 $
+ * @(#) $Id: fnv.h,v 5.1 2009/06/30 09:01:38 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv.h,v $
  *
  ***
@@ -75,6 +75,9 @@
 
 #if !defined(__FNV_H__)
 #define __FNV_H__
+
+
+#define FNV_VERSION "5.0"	/* @(#) FNV Version */
 
 
 /*

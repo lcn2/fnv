@@ -1,8 +1,8 @@
 /*
  * fnv_64 - 64 bit Fowler/Noll/Vo hash of a buffer or string
  *
- * @(#) $Revision: 1.6 $
- * @(#) $Id: fnv64.c,v 1.6 2009/06/30 01:31:39 chongo Exp chongo $
+ * @(#) $Revision: 5.1 $
+ * @(#) $Id: fnv64.c,v 5.1 2009/06/30 09:01:38 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv64.c,v $
  *
  ***
@@ -78,7 +78,9 @@ static char *usage =
 "\tNOTE: Programs that begin with fnv0 implement the FNV-0 hash.\n"
 "\t      The FNV-0 hash is historic FNV algorithm that is now deprecated.\n"
 "\n"
-"\tSee http://www.isthe.com/chongo/tech/comp/fnv/index.html for more info.\n";
+"\tSee http://www.isthe.com/chongo/tech/comp/fnv/index.html for more info.\n"
+"\n"
+"\t@(#) FNV Version: %s\n";
 static char *program;	/* our name */
 
 
@@ -374,7 +376,7 @@ main(int argc, char *argv[])
 	    t_flag = atoi(optarg);
 	    if (t_flag < 0 || t_flag > 1) {
 		fprintf(stderr, "%s: -t code must be 0 or 1\n", program);
-		fprintf(stderr, usage, program);
+		fprintf(stderr, usage, program, FNV_VERSION);
 		exit(1);
 	    }
 	    m_flag = 1;
@@ -384,7 +386,7 @@ main(int argc, char *argv[])
 	    v_flag = 1;
 	    break;
 	default:
-	    fprintf(stderr, usage, program);
+	    fprintf(stderr, usage, program, FNV_VERSION);
 	    exit(1);
 	}
     }
@@ -405,7 +407,7 @@ main(int argc, char *argv[])
     }
     /* -s requires at least 1 arg */
     if (s_flag && optind >= argc) {
-	fprintf(stderr, usage, program);
+	fprintf(stderr, usage, program, FNV_VERSION);
 	exit(5);
     }
     /* limit -b values */
