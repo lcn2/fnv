@@ -1,8 +1,8 @@
 /*
  * test_fnv - FNV test suite
  *
- * @(#) $Revision: 5.1 $
- * @(#) $Id: test_fnv.c,v 5.1 2009/06/30 09:01:38 chongo Exp chongo $
+ * @(#) $Revision: 5.2 $
+ * @(#) $Id: test_fnv.c,v 5.2 2009/06/30 10:38:00 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/test_fnv.c,v $
  *
  ***
@@ -85,7 +85,7 @@
  *
  *	To rebuild, try:
  *
- *		make fnv_vector.c
+ *		make vector.c
  *
  *	and then fold the results into the source file.
  *	Of course, you better make sure that the vaules
