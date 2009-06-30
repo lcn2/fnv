@@ -1,8 +1,8 @@
 /*
  * fnv32 - 32 bit Fowler/Noll/Vo hash of a buffer or string
  *
- * @(#) $Revision: 5.1 $
- * @(#) $Id: fnv32.c,v 5.1 2009/06/30 09:01:38 chongo Exp chongo $
+ * @(#) $Revision: 5.2 $
+ * @(#) $Id: fnv32.c,v 5.2 2009/06/30 09:23:39 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv32.c,v $
  *
  ***
@@ -71,7 +71,7 @@ static char *usage =
 "\t-m\tmultiple hashes, one per line for each arg\n"
 "\t-s\thash arg as a string (ignoring terminating NUL bytes)\n"
 "\t-t code\t  test hash code: (0 ==> generate test vectors\n"
-"\t\t\t\t  1 ==> validate against FNV test vectors)\n"
+"\t\t\t\t   1 ==> validate against FNV test vectors)\n"
 "\t-v\tverbose mode, print arg after hash (implies -m)\n"
 "\targ\tstring (if -s was given) or filename (default stdin)\n"
 "\n"
