@@ -1,8 +1,8 @@
 /*
  * fnv_64 - 64 bit Fowler/Noll/Vo hash of a buffer or string
  *
- * @(#) $Revision: 1.5 $
- * @(#) $Id: fnv64.c,v 1.5 2001/05/30 15:34:30 chongo Exp chongo $
+ * @(#) $Revision: 1.6 $
+ * @(#) $Id: fnv64.c,v 1.6 2009/06/30 01:31:39 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv64.c,v $
  *
  ***
@@ -65,7 +65,7 @@
 #define BUF_SIZE (32*1024)	/* number of bytes to hash at a time */
 
 static char *usage =
-"usage: %s [-b bcnt] [-m [-v]] [-s arg] [-t code] [arg ...]\n"
+"usage: %s [-b bcnt] [-m] [-s arg] [-t code] [-v] [arg ...]\n"
 "\n"
 "\t-b bcnt\tmask off all but the lower bcnt bits (default 64)\n"
 "\t-m\tmultiple hashes, one per line for each arg\n"
@@ -101,7 +101,7 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
 {
     struct test_vector *t;	/* FNV test vestor */
     Fnv64_t hval;		/* current hash value */
-    int tcode;			/* test vector that failed, starting at 1 */
+    int tstnum;			/* test vector that failed, starting at 1 */
 
     /*
      * print preamble if generating test vectors
@@ -126,7 +126,7 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
     /*
      * loop thru all test vectors
      */
-    for (t = fnv_test_str, tcode = 1; t->buf != NULL; ++t, ++tcode) {
+    for (t = fnv_test_str, tstnum = 1; t->buf != NULL; ++t, ++tstnum) {
 
         /*
 	 * compute the FNV hash
@@ -148,73 +148,179 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
 	/*
 	 * print the vector
 	 */
+#if defined(HAVE_64BIT_LONG_LONG)
+	/*
+	 * HAVE_64BIT_LONG_LONG testing
+	 */
 	switch (code) {
 	case 0:		/* generate the test vector */
-	    printf("    { &fnv_test_str[%d], (Fnv64_t) 0x%08llxULL },\n",
-	    	    tcode-1, hval & mask);
-    	    break;
-	/*
-	 * XXX
-	 * need to deal with case where HAVE_64BIT_LONG_LONG is undefined
-	 * XXX
-	 */
+	    printf("    { &fnv_test_str[%d], (Fnv64_t) 0x%016llxULL },\n",
+	    	   tstnum-1, hval & mask);
+	    break;
+
 	case 1:		/* validate against test vector */
 	    switch (hash_type) {
 	    case FNV0_64:
-		if ((hval&mask) != (fnv0_64_vector[code-1].fnv0_64 & mask)) {
+		if ((hval&mask) != (fnv0_64_vector[tstnum-1].fnv0_64 & mask)) {
 		    if (v_flag) {
 		    	fprintf(stderr, "%s: failed fnv0_64 test # %d\n",
-				program, code);
+				program, tstnum);
 		    	fprintf(stderr, "%s: test # 1 is 1st test\n", program);
 			fprintf(stderr,
-			    "%s: expected 0x%08llx != generated: 0x%08llx\n",
-			    program, (hval&mask),
-			    (fnv0_64_vector[code-1].fnv0_64 & mask));
+			    "%s: expected 0x%016llx != generated: 0x%016llx\n",
+			    program,
+			    (hval&mask),
+			    (fnv0_64_vector[tstnum-1].fnv0_64 & mask));
 		    }
-		    return code;
+		    return tstnum;
 		}
 	    	break;
 	    case FNV1_64:
-		if (hval != fnv1_64_vector[code-1].fnv1_64) {
+		if (hval != fnv1_64_vector[tstnum-1].fnv1_64) {
 		    if (v_flag) {
 		    	fprintf(stderr, "%s: failed fnv1_64 test # %d\n",
-				program, code);
+				program, tstnum);
 		    	fprintf(stderr, "%s: test # 1 is 1st test\n", program);
 			fprintf(stderr,
-			    "%s: expected 0x%08llx != generated: 0x%08llx\n",
-			    program, (hval&mask),
-			    (fnv1_64_vector[code-1].fnv1_64 & mask));
+			    "%s: expected 0x%016llx != generated: 0x%016llx\n",
+			    program,
+			    (hval&mask),
+			    (fnv1_64_vector[tstnum-1].fnv1_64 & mask));
 		    }
-		    return code;
+		    return tstnum;
 		}
 	    	break;
 	    case FNV1a_64:
-		if (hval != fnv1a_64_vector[code-1].fnv1a_64) {
+		if (hval != fnv1a_64_vector[tstnum-1].fnv1a_64) {
 		    if (v_flag) {
 		    	fprintf(stderr, "%s: failed fnv1a_64 test # %d\n",
-				program, code);
+				program, tstnum);
 		    	fprintf(stderr, "%s: test # 1 is 1st test\n", program);
 			fprintf(stderr,
-			    "%s: expected 0x%08llx != generated: 0x%08llx\n",
-			    program, (hval&mask),
-			    (fnv1a_64_vector[code-1].fnv1a_64 & mask));
+			    "%s: expected 0x%016llx != generated: 0x%016llx\n",
+			    program,
+			    (hval&mask),
+			    (fnv1a_64_vector[tstnum-1].fnv1a_64 & mask));
 		    }
-		    return code;
+		    return tstnum;
 		}
 	    	break;
 	    }
 	    break;
+
     	default:
 	    fprintf(stderr, "%s: -m %d not implemented yet\n", program, code);
 	    exit(14);
     	}
+#else /* HAVE_64BIT_LONG_LONG */
+	/*
+	 * non HAVE_64BIT_LONG_LONG testing
+	 */
+	switch (code) {
+	case 0:		/* generate the test vector */
+	    printf("    { &fnv_test_str[%d], "
+	    	   "(Fnv64_t) {0x%08lxUL, 0x%08lxUL} },\n",
+	    	   tstnum-1,
+		   (hval.w32[0] & mask.w32[0]),
+		   (hval.w32[1] & mask.w32[1]));
+	    break;
+
+	case 1:		/* validate against test vector */
+	    switch (hash_type) {
+	    case FNV0_64:
+		if (((hval.w32[0] & mask.w32[0]) !=
+		     (fnv0_64_vector[tstnum-1].fnv0_64.w32[0] &
+		      mask.w32[0])) &&
+		    ((hval.w32[1] & mask.w32[1]) !=
+		     (fnv0_64_vector[tstnum-1].fnv0_64.w32[1] &
+		      mask.w32[1]))) {
+		    if (v_flag) {
+		    	fprintf(stderr, "%s: failed fnv0_64 test # %d\n",
+				program, tstnum);
+		    	fprintf(stderr, "%s: test # 1 is 1st test\n", program);
+			fprintf(stderr,
+			    "%s: expected 0x%08llx%08llx != "
+			    "generated: 0x%08llx%08llx\n",
+			    program,
+			    (hval.w32[0] & mask.w32[0]),
+			    (hval.w32[1] & mask.w32[1]),
+			    ((fnv0_64_vector[tstnum-1].fnv0_64.w32[0] &
+			     mask.w32[0])),
+			    ((fnv0_64_vector[tstnum-1].fnv0_64.w32[1] &
+			     mask.w32[1])));
+		    }
+		    return tstnum;
+		}
+	    	break;
+	    case FNV1_64:
+		if (((hval.w32[0] & mask.w32[0]) !=
+		     (fnv1_64_vector[tstnum-1].fnv1_64.w32[0] &
+		      mask.w32[0])) &&
+		    ((hval.w32[1] & mask.w32[1]) !=
+		     (fnv1_64_vector[tstnum-1].fnv1_64.w32[1] &
+		      mask.w32[1]))) {
+		    if (v_flag) {
+		    	fprintf(stderr, "%s: failed fnv1_64 test # %d\n",
+				program, tstnum);
+		    	fprintf(stderr, "%s: test # 1 is 1st test\n", program);
+			fprintf(stderr,
+			    "%s: expected 0x%08llx%08llx != "
+			    "generated: 0x%08llx%08llx\n",
+			    program,
+			    (hval.w32[0] & mask.w32[0]),
+			    (hval.w32[1] & mask.w32[1]),
+			    ((fnv1_64_vector[tstnum-1].fnv1_64.w32[0] &
+			     mask.w32[0])),
+			    ((fnv1_64_vector[tstnum-1].fnv1_64.w32[1] &
+			     mask.w32[1])));
+		    }
+		    return tstnum;
+		}
+	    	break;
+	    case FNV1a_64:
+		if (((hval.w32[0] & mask.w32[0]) !=
+		     (fnv1a_64_vector[tstnum-1].fnv1a_64.w32[0] &
+		      mask.w32[0])) &&
+		    ((hval.w32[1] & mask.w32[1]) !=
+		     (fnv1a_64_vector[tstnum-1].fnv1a_64.w32[1] &
+		      mask.w32[1]))) {
+		    if (v_flag) {
+		    	fprintf(stderr, "%s: failed fnv1a_64 test # %d\n",
+				program, tstnum);
+		    	fprintf(stderr, "%s: test # 1 is 1st test\n", program);
+			fprintf(stderr,
+			    "%s: expected 0x%08llx%08llx != "
+			    "generated: 0x%08llx%08llx\n",
+			    program,
+			    (hval.w32[0] & mask.w32[0]),
+			    (hval.w32[1] & mask.w32[1]),
+			    ((fnv1a_64_vector[tstnum-1].fnv1a_64.w32[0] &
+			     mask.w32[0])),
+			    ((fnv1a_64_vector[tstnum-1].fnv1a_64.w32[1] &
+			     mask.w32[1])));
+		    }
+		    return tstnum;
+		}
+	    	break;
+	    }
+	    break;
+
+    	default:
+	    fprintf(stderr, "%s: -m %d not implemented yet\n", program, code);
+	    exit(15);
+    	}
+#endif /* HAVE_64BIT_LONG_LONG */
     }
 
     /*
      * print completion if generating test vectors
      */
     if (code == 0) {
-	printf("    { NULL, 0 }\n");
+#if defined(HAVE_64BIT_LONG_LONG)
+	printf("    { NULL, (Fnv64_t) 0 }\n");
+#else /* HAVE_64BIT_LONG_LONG */
+	printf("    { NULL, (Fnv64_t) {0,0} }\n");
+#endif /* HAVE_64BIT_LONG_LONG */
 	printf("};\n");
     }
 
@@ -314,7 +420,7 @@ main(int argc, char *argv[])
     } else {
 	bmask = (Fnv64_t)((1ULL << b_flag) - 1ULL);
     }
-#else
+#else /* HAVE_64BIT_LONG_LONG */
     if (b_flag == WIDTH) {
 	bmask.w32[0] = 0xffffffffUL;
 	bmask.w32[1] = 0xffffffffUL;
@@ -325,7 +431,7 @@ main(int argc, char *argv[])
 	bmask.w32[0] = ((1UL << b_flag) - 1UL);
 	bmask.w32[1] = 0UL;
     }
-#endif
+#endif /* HAVE_64BIT_LONG_LONG */
 
     /*
      * start with the initial basis depending on the hash type
@@ -336,17 +442,17 @@ main(int argc, char *argv[])
     } else {
 	++p;
     }
-    if (strcmp(p, "fnv064") == 0) {
+    if (strcmp(p, "fnv064") == 0 || strcmp(p, "no64bit_fnv064") == 0) {
 	/* using non-recommended FNV-0 and zero initial basis */
 	hval = FNV0_64_INIT;
 	hash_type = FNV0_64;
-    } else if (strcmp(p, "fnv164") == 0) {
+    } else if (strcmp(p, "fnv164") == 0 || strcmp(p, "no64bit_fnv164") == 0) {
 	/* using FNV-1 and non-zero initial basis */
 	hval = FNV1_64_INIT;
 	hash_type = FNV1_64;
-    } else if (strcmp(p, "fnv1a64") == 0) {
+    } else if (strcmp(p, "fnv1a64") == 0 || strcmp(p, "no64bit_fnv1a64") == 0) {
 	 /* start with the FNV-1a initial basis */
-	hval = FNV1_64A_INIT;
+	hval = FNV1A_64_INIT;
 	hash_type = FNV1a_64;
     } else {
 	fprintf(stderr, "%s: unknown program name, unknown hash type\n",

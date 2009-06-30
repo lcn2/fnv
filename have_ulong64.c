@@ -35,19 +35,23 @@
 /*
  * have the compiler try its hand with unsigned and signed long longs
  */
+#if ! defined(NO64BIT_LONG_LONG)
 unsigned long long val = 1099511628211ULL;
+#endif /* NO64BIT_LONG_LONG */
 
 int
 main(void)
 {
-	int longlong_bits;	/* bits in a long long */
-
 	/*
 	 * ensure that the length of long long val is what we expect
 	 */
+#if defined(NO64BIT_LONG_LONG)
+	printf("#undef HAVE_64BIT_LONG_LONG\t/* no */\n");
+#else /* NO64BIT_LONG_LONG */
 	if (val == 1099511628211ULL && sizeof(val) == 8) {
 		printf("#define HAVE_64BIT_LONG_LONG\t/* yes */\n");
 	}
+#endif /* NO64BIT_LONG_LONG */
 
 	/* exit(0); */
 	return 0;

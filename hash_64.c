@@ -1,8 +1,8 @@
 /*
  * hash_64 - 64 bit Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 1.7 $
- * @(#) $Id: hash_64.c,v 1.7 2001/05/30 15:34:30 chongo Exp chongo $
+ * @(#) $Revision: 1.8 $
+ * @(#) $Id: hash_64.c,v 1.8 2003/10/03 20:37:04 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/hash_64.c,v $
  *
  ***
@@ -69,16 +69,16 @@
  * FNV-0 defines the initial basis to be zero
  */
 #if !defined(HAVE_64BIT_LONG_LONG)
-const Fnv64_t fnv0_64_init = { 0, 0 };
-#endif
+const Fnv64_t fnv0_64_init = { 0UL, 0UL };
+#endif /* ! HAVE_64BIT_LONG_LONG */
 
 
 /*
  * FNV-1 defines the initial basis to be non-zero
  */
 #if !defined(HAVE_64BIT_LONG_LONG)
-const Fnv64_t fnv1_64_init = { 0x84222325, 0xcbf29ce4 };
-#endif
+const Fnv64_t fnv1_64_init = { 0x84222325UL, 0xcbf29ce4UL };
+#endif /* ! HAVE_64BIT_LONG_LONG */
 
 
 /*
@@ -86,10 +86,10 @@ const Fnv64_t fnv1_64_init = { 0x84222325, 0xcbf29ce4 };
  */
 #if defined(HAVE_64BIT_LONG_LONG)
 #define FNV_64_PRIME ((Fnv64_t)0x100000001b3ULL)
-#else
+#else /* HAVE_64BIT_LONG_LONG */
 #define FNV_64_PRIME_LOW ((unsigned long)0x1b3)	/* lower bits of FNV prime */
 #define FNV_64_PRIME_SHIFT (8)		/* top FNV prime shift above 2^32 */
-#endif
+#endif /* HAVE_64BIT_LONG_LONG */
 
 
 /*
@@ -112,10 +112,10 @@ const Fnv64_t fnv1_64_init = { 0x84222325, 0xcbf29ce4 };
 Fnv64_t
 fnv_64_buf(void *buf, size_t len, Fnv64_t hval)
 {
-#if defined(HAVE_64BIT_LONG_LONG)
-
     unsigned char *bp = (unsigned char *)buf;	/* start of buffer */
     unsigned char *be = bp + len;		/* beyond end of buffer */
+
+#if defined(HAVE_64BIT_LONG_LONG)
 
     /*
      * FNV-1 hash each octet of the buffer
@@ -125,10 +125,10 @@ fnv_64_buf(void *buf, size_t len, Fnv64_t hval)
 	/* multiply by the 64 bit FNV magic prime mod 2^64 */
 #if defined(NO_FNV_GCC_OPTIMIZATION)
 	hval *= FNV_64_PRIME;
-#else
+#else /* NO_FNV_GCC_OPTIMIZATION */
 	hval += (hval << 1) + (hval << 4) + (hval << 5) +
 		(hval << 7) + (hval << 8) + (hval << 40);
-#endif
+#endif /* NO_FNV_GCC_OPTIMIZATION */
 
 	/* xor the bottom with the current octet */
 	hval ^= (Fnv64_t)*bp++;
@@ -142,10 +142,10 @@ fnv_64_buf(void *buf, size_t len, Fnv64_t hval)
     /*
      * Convert Fnv64_t hval into a base 2^16 array
      */
-    val[0] = hval->w32[0];
+    val[0] = hval.w32[0];
     val[1] = (val[0] >> 16);
     val[0] &= 0xffff;
-    val[2] = hval->w32[1];
+    val[2] = hval.w32[1];
     val[3] = (val[2] >> 16);
     val[2] &= 0xffff;
 
@@ -234,10 +234,10 @@ fnv_64_str(char *str, Fnv64_t hval)
 	/* multiply by the 64 bit FNV magic prime mod 2^64 */
 #if defined(NO_FNV_GCC_OPTIMIZATION)
 	hval *= FNV_64_PRIME;
-#else
+#else /* NO_FNV_GCC_OPTIMIZATION */
 	hval += (hval << 1) + (hval << 4) + (hval << 5) +
 		(hval << 7) + (hval << 8) + (hval << 40);
-#endif
+#endif /* NO_FNV_GCC_OPTIMIZATION */
 
 	/* xor the bottom with the current octet */
 	hval ^= (Fnv64_t)*s++;
@@ -251,10 +251,10 @@ fnv_64_str(char *str, Fnv64_t hval)
     /*
      * Convert Fnv64_t hval into a base 2^16 array
      */
-    val[0] = hval->w32[0];
+    val[0] = hval.w32[0];
     val[1] = (val[0] >> 16);
     val[0] &= 0xffff;
-    val[2] = hval->w32[1];
+    val[2] = hval.w32[1];
     val[3] = (val[2] >> 16);
     val[2] &= 0xffff;
 

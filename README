@@ -33,11 +33,13 @@ the address given in the above URL.
 
 Two hash utilities (32 bit and 64 bit) are provided:
 
-	fnv032 [-b bcnt] [-m [-v]] [-s arg] [-t code] [arg ...]
-	fnv064 [-b bcnt] [-m [-v]] [-s arg] [-t code] [arg ...]
+	fnv032 [-b bcnt] [-m] [-s arg] [-t code] [-v] [arg ...]
+	fnv132 [-b bcnt] [-m] [-s arg] [-t code] [-v] [arg ...]
+	fnv1a32 [-b bcnt] [-m] [-s arg] [-t code] [-v] [arg ...]
 
-	fnv132 [-b bcnt] [-m [-v]] [-s arg] [-t code] [arg ...]
-	fnv164 [-b bcnt] [-m [-v]] [-s arg] [-t code] [arg ...]
+	fnv064 [-b bcnt] [-m] [-s arg] [-t code] [-v] [arg ...]
+	fnv164 [-b bcnt] [-m] [-s arg] [-t code] [-v] [arg ...]
+	fnv1a64 [-b bcnt] [-m] [-s arg] [-t code] [-v] [arg ...]
 
 	-b bcnt	  mask off all but the lower bcnt bits (default: 32)
  	-m	  multiple hashes, one per line for each arg
@@ -48,9 +50,24 @@ Two hash utilities (32 bit and 64 bit) are provided:
 
 The fnv032, fnv064 implement the historic FNV-0 hash.
 The fnv132, fnv164 implement the recommended FNV-1 hash.
+The fnv1a32, fnv1a64 implement the recommended FNV-1a hash.
 
 This is the original historic FNV algorithm with a 0 offset basis.
 It is recommended that FNV-1, with a non-0 offset basis be used instead.
+
+To test FNV hashes, try:
+
+	fnv032 -t 1 -v
+	fnv132 -t 1 -v
+	fnv1a32 -t 1 -v
+
+	fnv064 -t 1 -v
+	fnv164 -t 1 -v
+	fnv1a64 -t 1 -v
+
+If you are compiling, try:
+
+	make check
 
 
 #==================#
@@ -61,15 +78,25 @@ The libfnv.a library implements both a 32 bit and a 64 bit FNV hash
 on collections of bytes, a NUL terminated strings or on an open file
 descriptor.
 
-Here is the 32 bit FNV hash:
+Here is the 32 bit FNV 1 hash:
 
 	Fnv32_t fnv_32_buf(void *buf, int len, Fnv32_t hval);	/* byte buf */
 	Fnv32_t fnv_32_str(char *string, Fnv32_t hval);		/* string */
 
-Here is the 64 bit FNV hash:
+Here is the 32 bit FNV 1a hash:
+
+	Fnv32_t fnv_32a_buf(void *buf, int len, Fnv32_t hval);	/* byte buf */
+	Fnv32_t fnv_32a_str(char *string, Fnv32_t hval);	/* string */
+
+Here is the 64 bit FNV 1 hash:
 
 	Fnv64_t fnv_64_buf(void *buf, int len, Fnv64_t hval);	/* byte buf */
 	Fnv64_t fnv_64_str(char *string, Fnv64_t hval);		/* string */
+
+Here is the 64 bit FNV 1a hash:
+
+	Fnv64_t fnv_64a_buf(void *buf, int len, Fnv64_t hval);	/* byte buf */
+	Fnv64_t fnv_64a_str(char *string, Fnv64_t hval);	/* string */
 
 On the first call to a hash function, one must supply the initial basis
 that is appropriate for the hash in question:
@@ -84,6 +111,11 @@ that is appropriate for the hash in question:
 	FNV1_32_INIT		/* 32 bit FNV-1 initial basis */
 	FNV1_64_INIT		/* 64 bit FNV-1 initial basis */
 
+    FNV-1a:
+
+	FNV1A_32_INIT		/* 32 bit FNV-1a initial basis */
+	FNV1A_64_INIT		/* 64 bit FNV-1a initial basis */
+
 For example to perform a 64 bit FNV-1 hash:
 
 	#include "fnv.h"
@@ -91,7 +123,7 @@ For example to perform a 64 bit FNV-1 hash:
 	Fnv64_t hash_val;
 
 	hash_val = fnv_64_str("a string", FNV1_64_INIT);
-	hash_val = fnv0_64_str("more string", hash_val);
+	hash_val = fnv_64_str("more string", hash_val);
 
 produces the same final hash value as:
 
@@ -107,7 +139,16 @@ To perform a 32 bit FNV-1 hash:
 	Fnv32_t hash_val;
 
 	hash_val = fnv_32_buf(buf, length_of_buf, FNV1_32_INIT);
-	hash_val = fnv324_str("more data", hash_val);
+	hash_val = fnv_32_str("more data", hash_val);
+
+To perform a 64 bit FNV-1a hash:
+
+	#include "fnv.h"
+
+	Fnv64_t hash_val;
+
+	hash_val = fnv_64a_buf(buf, length_of_buf, FNV1_64_INIT);
+	hash_val = fnv_64a_str("more data", hash_val);
 
 =-=
 

@@ -1,8 +1,8 @@
 /*
  * fnv - Fowler/Noll/Vo- hash code
  *
- * @(#) $Revision: 1.5 $
- * @(#) $Id: fnv.h,v 1.5 2003/10/03 20:35:52 chongo Exp chongo $
+ * @(#) $Revision: 1.6 $
+ * @(#) $Id: fnv.h,v 1.6 2009/06/30 01:31:39 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv.h,v $
  *
  ***
@@ -51,7 +51,7 @@
  * To use the recommended 32 bit FNV-1a hash, pass FNV1_32A_INIT as the
  * Fnv32_t hashval argument to fnv_32a_buf() or fnv_32a_str().
  *
- * To use the recommended 64 bit FNV-1a hash, pass FNV1_64A_INIT as the
+ * To use the recommended 64 bit FNV-1a hash, pass FNV1A_64_INIT as the
  * Fnv64_t hashval argument to fnv_64a_buf() or fnv_64a_str().
  *
  ***
@@ -119,11 +119,11 @@ typedef unsigned long Fnv32_t;
  */
 #if defined(HAVE_64BIT_LONG_LONG)
 typedef unsigned long long Fnv64_t;
-#else
+#else /* HAVE_64BIT_LONG_LONG */
 typedef struct {
-    unsigned long w32[2];
+    unsigned long w32[2]; /* w32[0] is low order, w32[1] is high order word */
 } Fnv64_t;
-#endif
+#endif /* HAVE_64BIT_LONG_LONG */
 
 
 /*
@@ -134,10 +134,10 @@ typedef struct {
  */
 #if defined(HAVE_64BIT_LONG_LONG)
 #define FNV0_64_INIT ((Fnv64_t)0)
-#else
-extern const Fnv64_t fnv1_64_init;
-#define FNV0_64_INIT (fnv1_64_init)
-#endif
+#else /* HAVE_64BIT_LONG_LONG */
+extern const Fnv64_t fnv0_64_init;
+#define FNV0_64_INIT (fnv0_64_init)
+#endif /* HAVE_64BIT_LONG_LONG */
 
 
 /*
@@ -154,13 +154,13 @@ extern const Fnv64_t fnv1_64_init;
  */
 #if defined(HAVE_64BIT_LONG_LONG)
 #define FNV1_64_INIT ((Fnv64_t)0xcbf29ce484222325ULL)
-#define FNV1_64A_INIT FNV1_64_INIT
-#else
+#define FNV1A_64_INIT FNV1_64_INIT
+#else /* HAVE_64BIT_LONG_LONG */
 extern const Fnv64_t fnv1_64_init;
-extern const Fnv64_t fnv1_64a_init;
+extern const Fnv64_t fnv1a_64_init;
 #define FNV1_64_INIT (fnv1_64_init)
-#define FNV1_64A_INIT FNV1_64_INIT
-#endif
+#define FNV1A_64_INIT (fnv1a_64_init)
+#endif /* HAVE_64BIT_LONG_LONG */
 
 
 /*

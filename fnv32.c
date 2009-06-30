@@ -1,8 +1,8 @@
 /*
  * fnv32 - 32 bit Fowler/Noll/Vo hash of a buffer or string
  *
- * @(#) $Revision: 1.5 $
- * @(#) $Id: fnv32.c,v 1.5 2001/05/30 15:34:30 chongo Exp chongo $
+ * @(#) $Revision: 1.6 $
+ * @(#) $Id: fnv32.c,v 1.6 2009/06/30 01:31:39 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv32.c,v $
  *
  ***
@@ -65,7 +65,7 @@
 #define BUF_SIZE (32*1024)	/* number of bytes to hash at a time */
 
 static char *usage =
-"usage: %s [-b bcnt] [-m [-v]] [-s arg] [-t code] [arg ...]\n"
+"usage: %s [-b bcnt] [-m] [-s arg] [-t code] [-v] [arg ...]\n"
 "\n"
 "\t-b bcnt\tmask off all but the lower bcnt bits (default 32)\n"
 "\t-m\tmultiple hashes, one per line for each arg\n"
@@ -101,7 +101,7 @@ test_fnv32(enum fnv_type hash_type, Fnv32_t init_hval,
 {
     struct test_vector *t;	/* FNV test vestor */
     Fnv32_t hval;		/* current hash value */
-    int tcode;			/* test vector that failed, starting at 1 */
+    int tstnum;			/* test vector that failed, starting at 1 */
 
     /*
      * print preamble if generating test vectors
@@ -126,7 +126,7 @@ test_fnv32(enum fnv_type hash_type, Fnv32_t init_hval,
     /*
      * loop thru all test vectors
      */
-    for (t = fnv_test_str, tcode = 1; t->buf != NULL; ++t, ++tcode) {
+    for (t = fnv_test_str, tstnum = 1; t->buf != NULL; ++t, ++tstnum) {
 
         /*
 	 * compute the FNV hash
@@ -151,50 +151,50 @@ test_fnv32(enum fnv_type hash_type, Fnv32_t init_hval,
 	switch (code) {
 	case 0:		/* generate the test vector */
 	    printf("    { &fnv_test_str[%d], (Fnv32_t) 0x%08lxUL },\n",
-	    	    tcode-1, hval & mask);
+	    	    tstnum-1, hval & mask);
     	    break;
 	case 1:		/* validate against test vector */
 	    switch (hash_type) {
 	    case FNV0_32:
-		if ((hval&mask) != (fnv0_32_vector[code-1].fnv0_32 & mask)) {
+		if ((hval&mask) != (fnv0_32_vector[tstnum-1].fnv0_32 & mask)) {
 		    if (v_flag) {
 		    	fprintf(stderr, "%s: failed fnv0_32 test # %d\n",
-				program, code);
+				program, tstnum);
 		    	fprintf(stderr, "%s: test # 1 is 1st test\n", program);
 			fprintf(stderr,
 			    "%s: expected 0x%08lx != generated: 0x%08lx\n",
 			    program, (hval&mask),
-			    (fnv0_32_vector[code-1].fnv0_32 & mask));
+			    (fnv0_32_vector[tstnum-1].fnv0_32 & mask));
 		    }
-		    return code;
+		    return tstnum;
 		}
 	    	break;
 	    case FNV1_32:
-		if (hval != fnv1_32_vector[code-1].fnv1_32) {
+		if (hval != fnv1_32_vector[tstnum-1].fnv1_32) {
 		    if (v_flag) {
 		    	fprintf(stderr, "%s: failed fnv1_32 test # %d\n",
-				program, code);
+				program, tstnum);
 		    	fprintf(stderr, "%s: test # 1 is 1st test\n", program);
 			fprintf(stderr,
 			    "%s: expected 0x%08lx != generated: 0x%08lx\n",
 			    program, (hval&mask),
-			    (fnv1_32_vector[code-1].fnv1_32 & mask));
+			    (fnv1_32_vector[tstnum-1].fnv1_32 & mask));
 		    }
-		    return code;
+		    return tstnum;
 		}
 	    	break;
 	    case FNV1a_32:
-		if (hval != fnv1a_32_vector[code-1].fnv1a_32) {
+		if (hval != fnv1a_32_vector[tstnum-1].fnv1a_32) {
 		    if (v_flag) {
 		    	fprintf(stderr, "%s: failed fnv1a_32 test # %d\n",
-				program, code);
+				program, tstnum);
 		    	fprintf(stderr, "%s: test # 1 is 1st test\n", program);
 			fprintf(stderr,
 			    "%s: expected 0x%08lx != generated: 0x%08lx\n",
 			    program, (hval&mask),
-			    (fnv1a_32_vector[code-1].fnv1a_32 & mask));
+			    (fnv1a_32_vector[tstnum-1].fnv1a_32 & mask));
 		    }
-		    return code;
+		    return tstnum;
 		}
 	    	break;
 	    }
