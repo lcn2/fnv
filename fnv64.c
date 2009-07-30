@@ -1,8 +1,8 @@
 /*
  * fnv_64 - 64 bit Fowler/Noll/Vo hash of a buffer or string
  *
- * @(#) $Revision: 5.2 $
- * @(#) $Id: fnv64.c,v 5.2 2009/06/30 09:23:39 chongo Exp chongo $
+ * @(#) $Revision: 5.3 $
+ * @(#) $Id: fnv64.c,v 5.3 2009/06/30 09:27:44 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv64.c,v $
  *
  ***
@@ -178,7 +178,7 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
 		}
 	    	break;
 	    case FNV1_64:
-		if (hval != fnv1_64_vector[tstnum-1].fnv1_64) {
+		if ((hval&mask) != (fnv1_64_vector[tstnum-1].fnv1_64 & mask)) {
 		    if (v_flag) {
 		    	fprintf(stderr, "%s: failed fnv1_64 test # %d\n",
 				program, tstnum);
@@ -193,7 +193,7 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
 		}
 	    	break;
 	    case FNV1a_64:
-		if (hval != fnv1a_64_vector[tstnum-1].fnv1a_64) {
+		if ((hval&mask) != (fnv1a_64_vector[tstnum-1].fnv1a_64 &mask)) {
 		    if (v_flag) {
 		    	fprintf(stderr, "%s: failed fnv1a_64 test # %d\n",
 				program, tstnum);
