@@ -1,8 +1,8 @@
 /*
  * fnv32 - 32 bit Fowler/Noll/Vo hash of a buffer or string
  *
- * @(#) $Revision: 5.3 $
- * @(#) $Id: fnv32.c,v 5.3 2009/06/30 09:27:44 chongo Exp chongo $
+ * @(#) $Revision: 5.4 $
+ * @(#) $Id: fnv32.c,v 5.4 2009/07/30 22:49:13 chongo Exp chongo $
  * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv32.c,v $
  *
  ***
@@ -407,6 +407,7 @@ main(int argc, char *argv[])
 		    break;
 		case FNV1a_32:
 		    hval = fnv_32a_buf(buf, readcnt, hval);
+		    break;
 		default:
 		    unknown_hash_type(program, hash_type, 10);	/* exit(10) */
 		    /*NOTREACHED*/
@@ -440,6 +441,7 @@ main(int argc, char *argv[])
 			break;
 		    case FNV1a_32:
 			hval = fnv_32a_buf(buf, readcnt, hval);
+			break;
 		    default:
 			unknown_hash_type(program, hash_type, 11);/* exit(11) */
 			/*NOTREACHED*/
