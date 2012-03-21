@@ -2,8 +2,8 @@
 #
 # hash - makefile for FNV hash tools
 #
-# @(#) $Revision: 3.22 $
-# @(#) $Id: Makefile,v 3.22 2009/06/30 01:31:39 chongo Exp chongo $
+# @(#) $Revision: 5.1 $
+# @(#) $Id: Makefile,v 5.1 2009/06/30 09:01:38 chongo Exp $
 # @(#) $Source: /usr/local/src/cmd/fnv/RCS/Makefile,v $
 #
 # See:
@@ -53,7 +53,7 @@ DESTBIN= /usr/local/bin
 DESTLIB= /usr/local/lib
 DESTINC= /usr/local/include
 # NOTE: Lines with WWW in them are removed from the shipped Makefile
-WWW= /web/isthe/chroot/html/chongo/src/fnv
+WWW= /usr/local/src/cmd/fnv/NOTES/www
 
 # what to build
 #
