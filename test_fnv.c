@@ -51,6 +51,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "longlong.h"
 #include "fnv.h"
 
