@@ -1,18 +1,18 @@
 /*
- * fnv0_64 - 64 bit Fowler/Noll/Vo-0 hash of a string or rile
+ * fnv2_32 - 32 bit Fowler/Noll/Vo-2 hash of a string or rile
  *
- * @(#) $Revision: 3.12 $
- * @(#) $Id: fnv0_64.c,v 3.12 1999/10/29 00:42:35 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv0_64.c,v $
+ * @(#) $Revision: 3.4 $
+ * @(#) $Id: fnv2_32.c,v 3.4 1999/10/29 07:39:03 chongo Exp $
+ * @(#) $Source: /usr/local/src/cmd/fnv/TWO/RCS/fnv2_32.c,v $
  *
  ***
  *
- * This is the original historic FNV algorithm with a 0 offset basis.
- * It is recommended that FNV-1 (with a non-0 offset basis) be used instead.
+ * This FNV-2 algorithm is under development and has not been fully
+ * tested.  Use of this algorithm is not recommended at this time.
  *
  * usage:
- *	fnv064 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
- *	fnv0_64 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
+ *	fnv232 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
+ *	fnv2_32 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
  *
  *	-b bcnt	  mask off all but the lower bcnt bits (default: 32)
  *	-m	  multiple hashes, one per line for each arg
@@ -22,7 +22,7 @@
  *
  ***
  *
- * Fowler/Noll/Vo-0 hash
+ * Fowler/Noll/Vo-2 hash
  *
  * The basis of this hash algorithm was taken from an idea sent
  * as reviewer comments to the IEEE POSIX P1003.2 committee by:
@@ -71,14 +71,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include "fnv0.h"
-#include "longlong.h"
+#include "fnv2.h"
 
-#define WIDTH 64	/* bit width of hash */
+#define WIDTH 32	/* bit width of hash */
 
-#define BUF_SIZE (32*1024)	/* number of bytes to hash at a time */
-
-static char *usage = "usage: %s [-b bcnt] [-s arg] [arg ...]\n";
+static char *usage = "usage: %s [-b bcnt] [-m [-v]] [-s arg] [arg ...]\n";
 static char *program;	/* our name */
 
 
@@ -92,41 +89,33 @@ static char *program;	/* our name */
  *	arg	  string or filename arg
  */
 static void
-print_fnv(Fnv64_t hval, Fnv64_t mask, int verbose, char *arg)
+print_fnv(fnv32 hval, fnv32 mask, int verbose, char *arg)
 {
-#if defined(HAVE_64BIT_LONG_LONG)
     if (verbose) {
-	printf("0x%016llx %s\n", hval & mask, arg);
+	printf("0x%08lx %s\n", hval & mask, arg);
     } else {
-	printf("0x%016llx\n", hval & mask);
+	printf("0x%08lx\n", hval & mask);
     }
-#else
-    if (verbose) {
-	printf("0x%08lx%08lx %s\n",
-	       hval.w32[1] & mask.w32[1],
-	       hval.w32[0] & mask.w32[0],
-	       arg);
-    } else {
-	printf("0x%08lx%08lx\n",
-	       hval.w32[1] & mask.w32[1],
-	       hval.w32[0] & mask.w32[0]);
-    }
-#endif
 }
 
 
+/*
+ * main - the main function
+ *
+ * see usage above for details.
+ */
 int
 main(int argc, char *argv[])
 {
-    char buf[BUF_SIZE+1];	/* read buffer */
-    int readcnt;		/* number of characters written */
-    Fnv64_t hval;		/* current hash value */
+    char buf[BUFSIZ+1];	/* read buffer */
+    fnv32 hval;		/* current hash value */
     int s_flag = 0;	/* 1 => -s was given, hash args as strings */
     int m_flag = 0;	/* 1 => print multiple hashes, one per arg */
     int v_flag = 0;	/* 1 => verbose hash print */
     int b_flag = WIDTH;	/* -b flag value */
-    Fnv64_t bmask;	/* mask to apply to output */
+    fnv32 bmask;	/* mask to apply to output */
     extern int optind;	/* argv index of the next argument to be processed */
+    extern char *optarg;/* option argument */
     int fd;		/* open file to process */
     int i;
 
@@ -165,40 +154,29 @@ main(int argc, char *argv[])
 		program, b_flag, WIDTH);
 	exit(3);
     }
-#if defined(HAVE_64BIT_LONG_LONG)
     if (b_flag == WIDTH) {
-	bmask = (Fnv64_t)0xffffffffffffffffULL;
+	bmask = (fnv32)0xffffffff;
     } else {
-	bmask = (Fnv64_t)((1ULL << b_flag) - 1ULL);
+	bmask = (fnv32)((1 << b_flag) - 1);
     }
-#else
-    if (b_flag == WIDTH) {
-	bmask.w32[0] = 0xffffffffUL;
-	bmask.w32[1] = 0xffffffffUL;
-    } else if (b_flag >= WIDTH/2) {
-	bmask.w32[0] = 0xffffffffUL;
-	bmask.w32[1] = ((1UL << (b_flag-(WIDTH/2))) - 1UL);
-    } else {
-	bmask.w32[0] = ((1UL << b_flag) - 1UL);
-	bmask.w32[1] = 0UL;
-    }
-#endif
-
-    /* 
-     * start with the FNV-0 initial basis
-     */
-    hval = FNV_64_INIT;
 
     /*
      * string hashing
      */
     if (s_flag) {
 
+	/* hash the 1st string */
+	hval = fnv2_32_str(argv[optind], NULL);
+	if (m_flag) {
+	    print_fnv(hval, bmask, v_flag, argv[optind]);
+	}
+
 	/* hash any other strings */
-	for (i=optind; i < argc; ++i) {
-	    hval = fnv0_64_str(argv[i], hval);
+	for (i=optind+1; i < argc; ++i) {
 	    if (m_flag) {
-		print_fnv(hval, bmask, v_flag, argv[i]);
+		print_fnv(fnv2_32_str(argv[i], NULL), bmask, v_flag, argv[i]);
+	    } else {
+		fnv2_32_str(argv[i], &hval);
 	    }
 	}
 
@@ -209,42 +187,51 @@ main(int argc, char *argv[])
     } else {
 
 	/*
-	 * case: process only stdin
+	 * process the first file
 	 */
 	if (optind >= argc) {
 
 	    /* case: process only stdin */
-	    hval = fnv0_64_fd(0, hval);
+	    hval = fnv2_32_fd(0, NULL);
 	    if (m_flag) {
 		print_fnv(hval, bmask, v_flag, "(stdin)");
 	    }
 
 	} else {
 
-	    /*
-	     * process any other files
-	     */
-	    for (i=optind; i < argc; ++i) {
-
-		/* open the file */
-		fd = open(argv[i], O_RDONLY);
-		if (fd < 0) {
-		    fprintf(stderr, "%s: unable to open file: %s\n",
-			    program, argv[i]);
-		    exit(4);
-		}
-
-		/*  hash the file */
-		while ((readcnt = read(fd, buf, BUF_SIZE)) > 0) {
-		    hval = fnv0_64_buf(buf, readcnt, hval);
-		}
-
-		/* finish processing the file */
-		if (m_flag) {
-		    print_fnv(hval, bmask, v_flag, argv[i]);
-		}
-		close(fd);
+	    /* case: open, hash and close the 1st file */
+	    fd = open(argv[optind], O_RDONLY);
+	    if (fd < 0) {
+		fprintf(stderr, "%s: unable to open file: %s\n",
+			program, argv[optind]);
+		exit(4);
 	    }
+	    if (m_flag) {
+		print_fnv(fnv2_32_fd(fd, NULL), bmask, v_flag, argv[optind]);
+	    } else {
+		hval = fnv2_32_fd(fd, NULL);
+	    }
+	    close(fd);
+	}
+
+	/*
+	 * process any other files
+	 */
+	for (i=optind+1; i < argc; ++i) {
+
+	    /* open, hash and close the next file */
+	    fd = open(argv[i], O_RDONLY);
+	    if (fd < 0) {
+		fprintf(stderr, "%s: unable to open file: %s\n",
+			program, argv[i]);
+		exit(4);
+	    }
+	    if (m_flag) {
+		print_fnv(fnv2_32_fd(fd, NULL), bmask, v_flag, argv[i]);
+	    } else {
+		(void) fnv2_32_fd(fd, &hval);
+	    }
+	    close(fd);
 	}
     }
 

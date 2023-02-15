@@ -1,0 +1,29 @@
+From rs@seastrom.com  Sun Dec  3 13:27:36 2000
+Delivered-To: chongo@isthe.com
+To: Landon Curt Noll <chongo@mellis.com>
+Cc: brian@reid.org, jpayne@sackheads.org, rs@valhalla.seastrom.com
+Subject: Re: inpaths.c
+From: rs@seastrom.com (Robert E. Seastrom)
+Date: 03 Dec 2000 16:27:32 -0500
+Lines: 22
+
+Landon Curt Noll <chongo@mellis.com> writes:
+
+> BTW: Mel Pleasant also had his hand in inpaths ... his current EMail
+>      address is pleasant@pobox.com or Mel.Pleasant@certive.com currently.
+
+I wasn't sure how much work Mel had done on inpaths from reading it,
+but I'll certainly be sure to give him credit as well as sending mail
+to make sure he has no objections.  Given that you guys don't, I'd say
+it's a fair bet that he doesn't, but we'll check just to make sure.
+He may even remember who I am...  :)
+
+By the way, since you asked to hear about such things, you may be
+interested to hear that Akamai (my corporate masters for the past year
+plus) at my suggestion is using the FNV hash algorithm inside certain
+Internet mapping software to hash numerical representations of IP
+addresses.  Works great.  Thanks!
+
+Anyways, thanks for the speedy response, I appreciate it.
+
+                                        ---Rob

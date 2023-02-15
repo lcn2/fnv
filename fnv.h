@@ -1,9 +1,9 @@
 /*
  * fnv - Fowler/Noll/Vo- hash code
  *
- * @(#) $Revision: 5.3 $
- * @(#) $Id: fnv.h,v 5.3 2009/06/30 10:48:45 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv.h,v $
+ * @(#) $Revision: 5.4 $
+ * @(#) $Id: fnv.h,v 5.4 2009/07/30 22:49:13 chongo Exp $
+ * @(#) $Source: /usr/local/src/bin/fnv/RCS/fnv.h,v $
  *
  ***
  *

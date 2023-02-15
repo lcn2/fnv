@@ -2,8 +2,8 @@
 #
 # hash - makefile for FNV hash tools
 #
-# @(#) $Revision: 5.2 $
-# @(#) $Id: Makefile,v 5.2 2012/03/21 01:42:15 chongo Exp root $
+# @(#) $Revision: 5.3 $
+# @(#) $Id: Makefile,v 5.3 2013/03/27 04:36:46 root Exp $
 # @(#) $Source: /usr/local/src/bin/fnv/RCS/Makefile,v $
 #
 # See:

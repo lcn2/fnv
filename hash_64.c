@@ -1,9 +1,9 @@
 /*
  * hash_64 - 64 bit Fowler/Noll/Vo-0 hash code
  *
- * @(#) $Revision: 1.8 $
- * @(#) $Id: hash_64.c,v 1.8 2003/10/03 20:37:04 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/cmd/fnv/RCS/hash_64.c,v $
+ * @(#) $Revision: 5.1 $
+ * @(#) $Id: hash_64.c,v 5.1 2009/06/30 09:01:38 chongo Exp $
+ * @(#) $Source: /usr/local/src/bin/fnv/RCS/hash_64.c,v $
  *
  ***
  *

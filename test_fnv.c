@@ -1,9 +1,9 @@
 /*
  * test_fnv - FNV test suite
  *
- * @(#) $Revision: 5.2 $
- * @(#) $Id: test_fnv.c,v 5.2 2009/06/30 10:38:00 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/cmd/fnv/RCS/test_fnv.c,v $
+ * @(#) $Revision: 5.3 $
+ * @(#) $Id: test_fnv.c,v 5.3 2009/06/30 11:50:41 chongo Exp $
+ * @(#) $Source: /usr/local/src/bin/fnv/RCS/test_fnv.c,v $
  *
  ***
  *

@@ -1,17 +1,20 @@
 /*
- * fnv64a - 64 bit Fowler/Noll/Vo FNV-1a hash of a buffer or string
+ * fnv2_64 - 64 bit Fowler/Noll/Vo-2 hash of a string or rile
  *
- * @(#) $Revision: 1.5 $
- * @(#) $Id: fnv64.c,v 1.5 2001/05/30 15:34:30 chongo Exp $
- * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv64.c,v $
+ * @(#) $Revision: 3.4 $
+ * @(#) $Id: fnv2_64.c,v 3.4 1999/10/29 07:39:03 chongo Exp $
+ * @(#) $Source: /usr/local/src/cmd/fnv/TWO/RCS/fnv2_64.c,v $
  *
  ***
  *
- * usage:
- *	fnv1a64 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
- *	fnv1a_64 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
+ * This FNV-2 algorithm is under development and has not been fully
+ * tested.  Use of this algorithm is not recommended at this time.
  *
- *	-b bcnt	  mask off all but the lower bcnt bits (default: 64)
+ * usage:
+ *	fnv264 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
+ *	fnv2_64 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
+ *
+ *	-b bcnt	  mask off all but the lower bcnt bits (default: 32)
  *	-m	  multiple hashes, one per line for each arg
  *	-s	  hash arg as a string (ignoring terminating NUL bytes)
  *	-v	  verbose mode, print arg after hash (implies -m)
@@ -19,27 +22,27 @@
  *
  ***
  *
- * Fowler/Noll/Vo hash
+ * Fowler/Noll/Vo-2 hash
  *
  * The basis of this hash algorithm was taken from an idea sent
  * as reviewer comments to the IEEE POSIX P1003.2 committee by:
  *
- *      Phong Vo (http://www.research.att.com/info/kpv/)
+ *      Phong Vo (http://www.research.att.com/info/kpv)
  *      Glenn Fowler (http://www.research.att.com/~gsf/)
  *
  * In a subsequent ballot round:
  *
- *      Landon Curt Noll (http://www.isthe.com/chongo/)
+ *      Landon Curt Noll (http://reality.sgi.com/chongo)
  *
  * improved on their algorithm.  Some people tried this hash
  * and found that it worked rather well.  In an EMail message
  * to Landon, they named it the ``Fowler/Noll/Vo'' or FNV hash.
  *
- * FNV hashes are designed to be fast while maintaining a low
+ * FNV hashes are architected to be fast while maintaining a low
  * collision rate. The FNV speed allows one to quickly hash lots
  * of data while maintaining a reasonable collision rate.  See:
  *
- *      http://www.isthe.com/chongo/tech/comp/fnv/index.html
+ *      http://reality.sgi.com/chongo/tech/comp/fnv/
  *
  * for more details as well as other forms of the FNV hash.
  *
@@ -57,26 +60,23 @@
  *
  * By:
  *	chongo <Landon Curt Noll> /\oo/\
- *      http://www.isthe.com/chongo/
+ *	http://reality.sgi.com/chongo
+ *	EMail: chongo_fnv at prime dot engr dot sgi dot com
  *
  * Share and Enjoy!	:-)
  */
 
 #include <stdio.h>
 #include <unistd.h>
-#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <string.h>
-#include "fnv.h"
+#include "fnv2.h"
 #include "longlong.h"
 
 #define WIDTH 64	/* bit width of hash */
 
-#define BUF_SIZE (32*1024)	/* number of bytes to hash at a time */
-
-static char *usage = "usage: %s [-b bcnt] [-m [-v]] [-s arg] [arg ...]\n";
+static char *usage = "usage: %s [-b bcnt] [-s arg] [arg ...]\n";
 static char *program;	/* our name */
 
 
@@ -90,7 +90,7 @@ static char *program;	/* our name */
  *	arg	  string or filename arg
  */
 static void
-print_fnv(Fnv64_t hval, Fnv64_t mask, int verbose, char *arg)
+print_fnv(fnv64 hval, fnv64 mask, int verbose, char *arg)
 {
 #if defined(HAVE_64BIT_LONG_LONG)
     if (verbose) {
@@ -113,25 +113,18 @@ print_fnv(Fnv64_t hval, Fnv64_t mask, int verbose, char *arg)
 }
 
 
-/*
- * main - the main function
- *
- * See the above usage for details.
- */
 int
 main(int argc, char *argv[])
 {
-    char buf[BUF_SIZE+1];	/* read buffer */
-    int readcnt;		/* number of characters written */
-    Fnv64_t hval;		/* current hash value */
-    int s_flag = 0;		/* 1 => -s was given, hash args as strings */
-    int m_flag = 0;		/* 1 => print multiple hashes, one per arg */
-    int v_flag = 0;		/* 1 => verbose hash print */
-    int b_flag = WIDTH;		/* -b flag value */
-    Fnv64_t bmask;		/* mask to apply to output */
-    extern char *optarg;	/* option argument */
-    extern int optind;		/* argv index of the next arg */
-    int fd;			/* open file to process */
+    char buf[BUFSIZ+1];	/* read buffer */
+    fnv64 hval;		/* current hash value */
+    int s_flag = 0;	/* 1 => -s was given, hash args as strings */
+    int m_flag = 0;	/* 1 => print multiple hashes, one per arg */
+    int v_flag = 0;	/* 1 => verbose hash print */
+    int b_flag = WIDTH;	/* -b flag value */
+    fnv64 bmask;	/* mask to apply to output */
+    extern int optind;	/* argv index of the next argument to be processed */
+    int fd;		/* open file to process */
     int i;
 
     /*
@@ -171,9 +164,9 @@ main(int argc, char *argv[])
     }
 #if defined(HAVE_64BIT_LONG_LONG)
     if (b_flag == WIDTH) {
-	bmask = (Fnv64_t)0xffffffffffffffffULL;
+	bmask = (fnv64)0xffffffffffffffffULL;
     } else {
-	bmask = (Fnv64_t)((1ULL << b_flag) - 1ULL);
+	bmask = (fnv64)((1ULL << b_flag) - 1ULL);
     }
 #else
     if (b_flag == WIDTH) {
@@ -189,20 +182,22 @@ main(int argc, char *argv[])
 #endif
 
     /*
-     * start with the FNV-1a initial basis
-     */
-    hval = FNV1_64A_INIT;
-
-    /*
      * string hashing
      */
     if (s_flag) {
 
+	/* hash the 1st string */
+	hval = fnv2_64_str(argv[optind], NULL);
+	if (m_flag) {
+	    print_fnv(hval, bmask, v_flag, argv[optind]);
+	}
+
 	/* hash any other strings */
-	for (i=optind; i < argc; ++i) {
-	    hval = fnv_64a_str(argv[i], hval);
+	for (i=optind+1; i < argc; ++i) {
 	    if (m_flag) {
-		print_fnv(hval, bmask, v_flag, argv[i]);
+		print_fnv(fnv2_64_str(argv[i], NULL), bmask, v_flag, argv[i]);
+	    } else {
+		fnv2_64_str(argv[i], &hval);
 	    }
 	}
 
@@ -213,44 +208,51 @@ main(int argc, char *argv[])
     } else {
 
 	/*
-	 * case: process only stdin
+	 * process the first file
 	 */
 	if (optind >= argc) {
 
 	    /* case: process only stdin */
-	    while ((readcnt = read(0, buf, BUF_SIZE)) > 0) {
-		hval = fnv_64a_buf(buf, readcnt, hval);
-	    }
+	    hval = fnv2_64_fd(0, NULL);
 	    if (m_flag) {
 		print_fnv(hval, bmask, v_flag, "(stdin)");
 	    }
 
 	} else {
 
-	    /*
-	     * process any other files
-	     */
-	    for (i=optind; i < argc; ++i) {
-
-		/* open the file */
-		fd = open(argv[i], O_RDONLY);
-		if (fd < 0) {
-		    fprintf(stderr, "%s: unable to open file: %s\n",
-			    program, argv[i]);
-		    exit(4);
-		}
-
-		/*  hash the file */
-		while ((readcnt = read(fd, buf, BUF_SIZE)) > 0) {
-		    hval = fnv_64a_buf(buf, readcnt, hval);
-		}
-
-		/* finish processing the file */
-		if (m_flag) {
-		    print_fnv(hval, bmask, v_flag, argv[i]);
-		}
-		close(fd);
+	    /* case: open, hash and close the 1st file */
+	    fd = open(argv[optind], O_RDONLY);
+	    if (fd < 0) {
+		fprintf(stderr, "%s: unable to open file: %s\n",
+			program, argv[optind]);
+		exit(4);
 	    }
+	    if (m_flag) {
+		print_fnv(fnv2_64_fd(fd, NULL), bmask, v_flag, argv[optind]);
+	    } else {
+		hval = fnv2_64_fd(fd, NULL);
+	    }
+	    close(fd);
+	}
+
+	/*
+	 * process any other files
+	 */
+	for (i=optind+1; i < argc; ++i) {
+
+	    /* open, hash and close the next file */
+	    fd = open(argv[i], O_RDONLY);
+	    if (fd < 0) {
+		fprintf(stderr, "%s: unable to open file: %s\n",
+			program, argv[i]);
+		exit(4);
+	    }
+	    if (m_flag) {
+		print_fnv(fnv2_64_fd(fd, NULL), bmask, v_flag, argv[i]);
+	    } else {
+		(void) fnv2_64_fd(fd, &hval);
+	    }
+	    close(fd);
 	}
     }
 

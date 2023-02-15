@@ -1,9 +1,9 @@
 /*
  * fnv32 - 32 bit Fowler/Noll/Vo hash of a buffer or string
  *
- * @(#) $Revision: 5.4 $
- * @(#) $Id: fnv32.c,v 5.4 2009/07/30 22:49:13 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv32.c,v $
+ * @(#) $Revision: 5.5 $
+ * @(#) $Id: fnv32.c,v 5.5 2012/03/21 01:38:12 chongo Exp $
+ * @(#) $Source: /usr/local/src/bin/fnv/RCS/fnv32.c,v $
  *
  ***
  *

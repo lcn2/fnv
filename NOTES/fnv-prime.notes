@@ -1,0 +1,69 @@
+Here is some snips out of an EMail message that was discussing
+number theoretic hash function where FNV was concerned.  The overall
+context of the original message is not that important ... but you
+should be able to pick up some of the more useful part of the thread:
+
+> ...
+>
+> The FNV hash function is more closely related to linear feedback
+> shift registers and irreducible polynomials over GF(2).
+>
+> ...
+
+FYI: Someone was asking why FNV uses XOR instead of add in the inner loop.
+
+> > 1) I use addition rather than XOR.  I believe this has no
+> > significant difference on the properties of the hash.
+>
+> The choice of XOR over addition was made so that the bit change as
+> a result of processing the next octet was minimized.  An octet XOR
+> impacts, on the average, 4 bits. The addition will impact slightly
+> more than 4 bits due to carry propagation.
+>
+> It was surprising at first to want to minimize bit impact during
+> this step until it was understood that the multiplication with
+> an FNV-prime did a somewhat better job when carry propagation
+> beyond the low order octet (which happened 50% of the time)
+> was eliminated.
+>
+> Last, on some hardware the XOR/boolean-op unit is independent
+> of the add/subtract unit.  Since frequently the loop control
+> requires an increment (i.e., ++), using an XOR (instead of
+> 8-bit addition) allowed the XOR to be performed in parallel
+> with the loop control increment.
+>
+> In summary, octet XOR vs full integer add made a detectable difference
+> because the carry propagation reduced the effectiveness of the
+> multiplication.  And on some architectures, using XOR allowed
+> that step to be performed in parallel with the loop increment.
+>
+> ...
+>
+> Like linear shift feedback registers, the quantity feedback points
+> (the number of 1 bits) and the degree of each feedback point
+> (the bit positions of each 1 bit) have great influence over the
+> property of the function.
+
+FYI: Here are some of the key properties to look for in an FNV prime:
+
+> For dispersion, your multiplier should have these properties
+> (in priority order from low to high priority):
+>
+>    1) 50% of the bits in the lowest octet are 1's
+>    2) The highest order bit is about 2/3 the way up the word
+>    3) The 8th bit (256 position, low order bits count from 0) is 1
+>    4) No 3 (or more) consecutive bits are 1's
+>    5) all other bits are 0
+>    6) the value is a prime > 2
+>
+> You cannot always get all 6 properties.  In the 64 bit case,
+> 1099511628227 would have been nice, but for the fact that
+> the lower 9 bits are 111000011 [violation of #4].  So
+> 1099511628211 was selected even though the lower 9 bits
+> are 110110011 [violation of #1].
+
+The 6 properties listed above are keys to improving the feedback
+polynomial that the multiplication effectively represents.  The prime
+relative to your word size is not as important as the 1 bit locations
+within the binary representation of prime number itself (of relative to
+your word size).

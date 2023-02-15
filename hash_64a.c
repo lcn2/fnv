@@ -1,9 +1,9 @@
 /*
  * hash_64 - 64 bit Fowler/Noll/Vo-0 FNV-1a hash code
  *
- * @(#) $Revision: 1.1 $
- * @(#) $Id: hash_64a.c,v 1.1 2003/10/03 20:38:53 chongo Exp chongo $
- * @(#) $Source: /usr/local/src/cmd/fnv/RCS/hash_64a.c,v $
+ * @(#) $Revision: 5.1 $
+ * @(#) $Id: hash_64a.c,v 5.1 2009/06/30 09:01:38 chongo Exp $
+ * @(#) $Source: /usr/local/src/bin/fnv/RCS/hash_64a.c,v $
  *
  ***
  *

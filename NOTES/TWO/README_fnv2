@@ -1,5 +1,5 @@
 #=======================#
-# Fowler/Noll/Vo-1 hash #
+# Fowler/Noll/Vo-2 hash #
 #=======================#
 
 The basis of this hash algorithm was taken from an idea sent
@@ -30,19 +30,19 @@ Comments, questions, bug fixes and suggestions welcome at:
 
 
 #====================#
-# FNV-1 hash utility #
+# FNV-2 hash utility #
 #====================#
 
-This is the FNV-1 algorithm with a non-0 offset basis which is very
-similar to the historic FNV-0 algorithm and identical in speed.
+This FNV-2 algorithm is under development and has not been fully
+tested.  Use of this algorithm is not recommended.
 
 Two hash utilities (32 bit and 64 bit) are provided:
 
-	fnv1_32 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
-	fnv1_64 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
+	fnv2_32 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
+	fnv2_64 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
 or:
-	fnv132 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
-	fnv164 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
+	fnv232 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
+	fnv264 [-b bcnt] [-m [-v]] [-s arg] [arg ...]
 
 	-b bcnt	  mask off all but the lower bcnt bits (default: 32)
  	-m	  multiple hashes, one per line for each arg
@@ -55,34 +55,34 @@ not like _'s, the same tools exist without the _ are provided.  :-)
 
 
 #====================#
-# FNV-1 hash library #
+# FNV-2 hash library #
 #====================#
 
-The libfnv.a library implements both a 32 bit and a 64 bit FNV-1 hash
+The libfnv.a library implements both a 32 bit and a 64 bit FNV-2 hash
 on collections of bytes, a NUL terminated strings or on an open file
-descriptor.  The FNV-1 hash, while slightly slower will not fix on a
+descriptor.  The FNV-2 hash, while slightly slower will not fix on a
 zero hash value and remain there while it processes additional 0 bytes.
 
-The interface to FNV-1 is the same as FNV except that the function
-names start with fnv1 instead of just fnv:
+The interface to FNV-2 is the same as FNV except that the function
+names start with fnv2 instead of just fnv:
 
-	fnv32 fnv1_32_buf(char *buf, int len, fnv32 *hval);	/* byte buf */
-	fnv32 fnv1_32_str(char *string, fnv32 *hval);		/* string */
-	fnv32 fnv1_32_fd(int fd, fnv32 *hval);			/* open file */
+	fnv32 fnv2_32_buf(char *buf, int len, fnv32 *hval);	/* byte buf */
+	fnv32 fnv2_32_str(char *string, fnv32 *hval);		/* string */
+	fnv32 fnv2_32_fd(int fd, fnv32 *hval);			/* open file */
 or:
-	fnv32 fnv1_32_buf(char *buf, int len, NULL);		/* byte buf */
-	fnv32 fnv1_32_str(char *string, NULL);			/* string */
-	fnv32 fnv1_32_fd(int fd, NULL);				/* open file */
+	fnv32 fnv2_32_buf(char *buf, int len, NULL);		/* byte buf */
+	fnv32 fnv2_32_str(char *string, NULL);			/* string */
+	fnv32 fnv2_32_fd(int fd, NULL);				/* open file */
 
 Here is the 64 bit FNV hash:
 
-	fnv64 fnv1_64_buf(char *buf, int len, fnv64 *hval);	/* byte buf */
-	fnv64 fnv1_64_str(char *string, fnv64 *hval);		/* string */
-	fnv64 fnv1_64_fd(int fd, fnv64 *hval);			/* open file */
+	fnv64 fnv2_64_buf(char *buf, int len, fnv64 *hval);	/* byte buf */
+	fnv64 fnv2_64_str(char *string, fnv64 *hval);		/* string */
+	fnv64 fnv2_64_fd(int fd, fnv64 *hval);			/* open file */
 or:
-	fnv64 fnv1_64_buf(char *buf, int len, NULL);		/* byte buf */
-	fnv64 fnv1_64_str(char *string, NULL);			/* string */
-	fnv64 fnv1_64_fd(int fd, NULL);				/* open file */
+	fnv64 fnv2_64_buf(char *buf, int len, NULL);		/* byte buf */
+	fnv64 fnv2_64_str(char *string, NULL);			/* string */
+	fnv64 fnv2_64_fd(int fd, NULL);				/* open file */
 
 =-=
 
