@@ -1,10 +1,6 @@
-#!/bin/make
+#!/usr/bin/env make
 #
 # hash - makefile for FNV hash tools
-#
-# @(#) $Revision: 5.3 $
-# @(#) $Id: Makefile,v 5.3 2013/03/27 04:36:46 root Exp $
-# @(#) $Source: /usr/local/src/bin/fnv/RCS/Makefile,v $
 #
 # See:
 #	http://www.isthe.com/chongo/tech/comp/fnv/index.html
@@ -29,7 +25,7 @@
 
 # make tools
 #
-SHELL= /bin/sh
+SHELL= bash
 CFLAGS= -O3 -g3
 #CFLAGS= -O2 -g3
 #CC= cc
