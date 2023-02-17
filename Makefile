@@ -1,6 +1,6 @@
 #!/usr/bin/env make
 #
-# hash - makefile for FNV hash tools
+# fnv - FNV hash tools
 #
 # See:
 #	http://www.isthe.com/chongo/tech/comp/fnv/index.html
