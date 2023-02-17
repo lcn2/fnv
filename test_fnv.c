@@ -3,7 +3,7 @@
  *
  * @(#) $Revision: 5.3 $
  * @(#) $Id: test_fnv.c,v 5.3 2009/06/30 11:50:41 chongo Exp $
- * @(#) $Source: /usr/local/src/bin/fnv/RCS/test_fnv.c,v $
+ * @(#) $Source: /usr/local/src/cmd/fnv/RCS/test_fnv.c,v $
  *
  ***
  *
@@ -51,9 +51,9 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include "longlong.h"
 #include "fnv.h"
+#include <stdlib.h>
 
 #define LEN(x) (sizeof(x)-1)
 /* TEST macro does not include trailing NUL byte in the test vector */
@@ -2198,9 +2198,9 @@ void
 print_fnv32(Fnv32_t hval, Fnv32_t mask, int verbose, char *arg)
 {
     if (verbose) {
-	printf("0x%08lx %s\n", hval & mask, arg);
+	printf("0x%08x %s\n", hval & mask, arg);
     } else {
-	printf("0x%08lx\n", hval & mask);
+	printf("0x%08x\n", hval & mask);
     }
 }
 
@@ -2225,12 +2225,12 @@ print_fnv64(Fnv64_t hval, Fnv64_t mask, int verbose, char *arg)
     }
 #else
     if (verbose) {
-	printf("0x%08lx%08lx %s\n",
+	printf("0x%08x%08x %s\n",
 	       hval.w32[1] & mask.w32[1],
 	       hval.w32[0] & mask.w32[0],
 	       arg);
     } else {
-	printf("0x%08lx%08lx\n",
+	printf("0x%08x%08x\n",
 	       hval.w32[1] & mask.w32[1],
 	       hval.w32[0] & mask.w32[0]);
     }

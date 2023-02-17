@@ -3,7 +3,7 @@
  *
  * @(#) $Revision: 5.4 $
  * @(#) $Id: fnv.h,v 5.4 2009/07/30 22:49:13 chongo Exp $
- * @(#) $Source: /usr/local/src/bin/fnv/RCS/fnv.h,v $
+ * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv.h,v $
  *
  ***
  *
@@ -160,7 +160,7 @@ extern const Fnv64_t fnv0_64_init;
 #define FNV1_64_INIT ((Fnv64_t)0xcbf29ce484222325ULL)
 #define FNV1A_64_INIT FNV1_64_INIT
 #else /* HAVE_64BIT_LONG_LONG */
-extern const fnv1_64_init;
+extern const Fnv64_t fnv1_64_init;
 extern const Fnv64_t fnv1a_64_init;
 #define FNV1_64_INIT (fnv1_64_init)
 #define FNV1A_64_INIT (fnv1a_64_init)

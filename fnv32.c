@@ -1,9 +1,9 @@
 /*
  * fnv32 - 32 bit Fowler/Noll/Vo hash of a buffer or string
  *
- * @(#) $Revision: 5.5 $
- * @(#) $Id: fnv32.c,v 5.5 2012/03/21 01:38:12 chongo Exp $
- * @(#) $Source: /usr/local/src/bin/fnv/RCS/fnv32.c,v $
+ * @(#) $Revision: 5.4 $
+ * @(#) $Id: fnv32.c,v 5.4 2009/07/30 22:49:13 chongo Exp $
+ * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv32.c,v $
  *
  ***
  *
@@ -152,7 +152,7 @@ test_fnv32(enum fnv_type hash_type, Fnv32_t init_hval,
 	 */
 	switch (code) {
 	case 0:		/* generate the test vector */
-	    printf("    { &fnv_test_str[%d], (Fnv32_t) 0x%08lxUL },\n",
+	    printf("    { &fnv_test_str[%d], (Fnv32_t) 0x%08xUL },\n",
 	    	    tstnum-1, hval & mask);
     	    break;
 	case 1:		/* validate against test vector */
@@ -164,7 +164,7 @@ test_fnv32(enum fnv_type hash_type, Fnv32_t init_hval,
 				program, tstnum);
 		    	fprintf(stderr, "%s: test # 1 is 1st test\n", program);
 			fprintf(stderr,
-			    "%s: expected 0x%08lx != generated: 0x%08lx\n",
+			    "%s: expected 0x%08x != generated: 0x%08x\n",
 			    program, (hval&mask),
 			    (fnv0_32_vector[tstnum-1].fnv0_32 & mask));
 		    }
@@ -178,7 +178,7 @@ test_fnv32(enum fnv_type hash_type, Fnv32_t init_hval,
 				program, tstnum);
 		    	fprintf(stderr, "%s: test # 1 is 1st test\n", program);
 			fprintf(stderr,
-			    "%s: expected 0x%08lx != generated: 0x%08lx\n",
+			    "%s: expected 0x%08x != generated: 0x%08x\n",
 			    program, (hval&mask),
 			    (fnv1_32_vector[tstnum-1].fnv1_32 & mask));
 		    }
@@ -192,18 +192,21 @@ test_fnv32(enum fnv_type hash_type, Fnv32_t init_hval,
 				program, tstnum);
 		    	fprintf(stderr, "%s: test # 1 is 1st test\n", program);
 			fprintf(stderr,
-			    "%s: expected 0x%08lx != generated: 0x%08lx\n",
+			    "%s: expected 0x%08x != generated: 0x%08x\n",
 			    program, (hval&mask),
 			    (fnv1a_32_vector[tstnum-1].fnv1a_32 & mask));
 		    }
 		    return tstnum;
 		}
 	    	break;
+	    default:
+		fprintf(stderr, "%s: -m %d not implemented by this program\n", program, code);
+		exit(14);
 	    }
 	    break;
     	default:
 	    fprintf(stderr, "%s: -m %d not implemented yet\n", program, code);
-	    exit(14);
+	    exit(15);
     	}
     }
 
@@ -407,7 +410,6 @@ main(int argc, char *argv[])
 		    break;
 		case FNV1a_32:
 		    hval = fnv_32a_buf(buf, readcnt, hval);
-		    break;
 		default:
 		    unknown_hash_type(program, hash_type, 10);	/* exit(10) */
 		    /*NOTREACHED*/
@@ -441,7 +443,6 @@ main(int argc, char *argv[])
 			break;
 		    case FNV1a_32:
 			hval = fnv_32a_buf(buf, readcnt, hval);
-			break;
 		    default:
 			unknown_hash_type(program, hash_type, 11);/* exit(11) */
 			/*NOTREACHED*/
