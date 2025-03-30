@@ -256,16 +256,16 @@ no64bit_test_fnv.c: test_fnv.c
 	-cp -f $? $@
 
 no64bit_fnv64.o: no64bit_fnv64.c longlong.h fnv.h
-	${CC} ${CFLAGS} -DNO64BIT_LONG_LONG no64bit_fnv64.c -c
+	${CC} ${CFLAGS} -DNO64BIT_LONG_LONG -Wno-missing-braces -Wno-pedantic no64bit_fnv64.c -c
 
 no64bit_hash_64.o: no64bit_hash_64.c longlong.h fnv.h
-	${CC} ${CFLAGS} -DNO64BIT_LONG_LONG no64bit_hash_64.c -c
+	${CC} ${CFLAGS} -DNO64BIT_LONG_LONG -Wno-missing-braces -Wno-pedantic no64bit_hash_64.c -c
 
 no64bit_hash_64a.o: no64bit_hash_64a.c longlong.h fnv.h
-	${CC} ${CFLAGS} -DNO64BIT_LONG_LONG no64bit_hash_64a.c -c
+	${CC} ${CFLAGS} -DNO64BIT_LONG_LONG -Wno-missing-braces -Wno-pedantic no64bit_hash_64a.c -c
 
 no64bit_test_fnv.o: no64bit_test_fnv.c longlong.h fnv.h
-	${CC} ${CFLAGS} -DNO64BIT_LONG_LONG no64bit_test_fnv.c -c
+	${CC} ${CFLAGS} -DNO64BIT_LONG_LONG -Wno-missing-braces -Wno-pedantic no64bit_test_fnv.c -c
 
 no64bit_fnv064: no64bit_fnv64.o no64bit_hash_64.o \
 		no64bit_hash_64a.o no64bit_test_fnv.o
