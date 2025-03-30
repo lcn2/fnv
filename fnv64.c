@@ -1,9 +1,15 @@
 /*
  * fnv_64 - 64 bit Fowler/Noll/Vo hash of a buffer or string
  *
- * @(#) $Revision: 5.4 $
- * @(#) $Id: fnv64.c,v 5.4 2009/07/30 22:49:13 chongo Exp $
- * @(#) $Source: /usr/local/src/cmd/fnv/RCS/fnv64.c,v $
+ ***
+ *
+ * For the most up to date copy of this code, see:
+ *
+ *	https://github.com/lcn2/fnv
+ *
+ * For more information on the FNV hash, see:
+ *
+ *	http://www.isthe.com/chongo/tech/comp/fnv/index.html
  *
  ***
  *
@@ -25,30 +31,47 @@
  *
  * FNV hashes are designed to be fast while maintaining a low
  * collision rate. The FNV speed allows one to quickly hash lots
- * of data while maintaining a reasonable collision rate.  See:
- *
- *      http://www.isthe.com/chongo/tech/comp/fnv/index.html
- *
- * for more details as well as other forms of the FNV hash.
+ * of data while maintaining a reasonable collision rate.
  *
  ***
  *
- * Please do not copyright this code.  This code is in the public domain.
+ * This is free and unencumbered software released into the public domain.
  *
- * LANDON CURT NOLL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
- * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO
- * EVENT SHALL LANDON CURT NOLL BE LIABLE FOR ANY SPECIAL, INDIRECT OR
- * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
- * USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
- * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * Anyone is free to copy, modify, publish, use, compile, sell, or
+ * distribute this software, either in source code form or as a compiled
+ * binary, for any purpose, commercial or non-commercial, and by any
+ * means.
  *
- * By:
- *	chongo <Landon Curt Noll> /\oo/\
- *      http://www.isthe.com/chongo/
+ * In jurisdictions that recognize copyright laws, the author or authors
+ * of this software dedicate any and all copyright interest in the
+ * software to the public domain. We make this dedication for the benefit
+ * of the public at large and to the detriment of our heirs and
+ * successors. We intend this dedication to be an overt act of
+ * relinquishment in perpetuity of all present and future rights to this
+ * software under copyright law.
  *
- * Share and Enjoy!	:-)
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * For more information, please refer to <https://unlicense.org>
+ *
+ ***
+ *
+ * Author:
+ *
+ * chongo (Landon Curt Noll) /\oo/\
+ *
+ * http://www.isthe.com/chongo/index.html
+ * https://github.com/lcn2
+ *
+ * Share and Enjoy!     :-)
  */
+
 
 #include <stdio.h>
 #include <unistd.h>
@@ -57,31 +80,48 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
+#include <strings.h>
 #include "longlong.h"
 #include "fnv.h"
 
-#define WIDTH 64	/* bit width of hash */
+#define WIDTH 64		/* bit width of hash */
 
 #define BUF_SIZE (32*1024)	/* number of bytes to hash at a time */
 
-static char *usage =
-"usage: %s [-b bcnt] [-m] [-s arg] [-t code] [-v] [arg ...]\n"
+static const char * const usage =
+"usage: %s [-h] [-v] [-V] [-b bcnt] [-m] [-s arg] [-t code] [arg ...]\n"
 "\n"
-"\t-b bcnt\tmask off all but the lower bcnt bits (default 64)\n"
-"\t-m\tmultiple hashes, one per line for each arg\n"
-"\t-s\thash arg as a string (ignoring terminating NUL bytes)\n"
-"\t-t code\t  test hash code: (0 ==> generate test vectors\n"
-"\t\t\t\t   1 ==> validate against FNV test vectors)\n"
-"\t-v\tverbose mode, print arg after hash (implies -m)\n"
-"\targ\tstring (if -s was given) or filename (default stdin)\n"
+"    -h         print help and exit\n"
+"    -v         verbose mode, print arg after hash (implies -m)\n"
+"    -V         print version and exit\n"
 "\n"
-"\tNOTE: Programs that begin with fnv0 implement the FNV-0 hash.\n"
-"\t      The FNV-0 hash is historic FNV algorithm that is now deprecated.\n"
+"    -b bcnt    mask off all but the lower bcnt bits (default 64)\n"
+"    -m         multiple hashes, one per line for each arg\n"
+"    -s arg     hash arg as a string (ignoring terminating NUL bytes)\n"
+"    -t code    test hash code: (0 ==> generate test vectors\n"
+"                                1 ==> validate against FNV test vectors)\n"
 "\n"
-"\tSee http://www.isthe.com/chongo/tech/comp/fnv/index.html for more info.\n"
+"    arg        string (if -s was given) or filename (default stdin)\n"
 "\n"
-"\t@(#) FNV Version: %s\n";
-static char *program;	/* our name */
+"Exit codes:\n"
+"    0         all OK\n"
+"    2         -h and help string printed or -V and version string printed\n"
+"    3         command line error\n"
+"    4         error on opening or reading file\n"
+" >= 10        test suite error\n"
+" >= 20        internal error\n"
+"\n"
+"NOTE: Programs that begin with fnv0 implement the FNV-0 hash.\n"
+"      The FNV-0 hash is historic FNV algorithm that is now deprecated.\n"
+"\n"
+"For more info, see:\n"
+"\n"
+"    http://www.isthe.com/chongo/tech/comp/fnv/index.html\n"
+"    https://github.com/lcn2/fnv\n"
+"\n"
+"%s version: %s\n";
+static char *program = NULL;	/* our name */
+static char *prog = NULL;	/* basename of our name */
 
 
 /*
@@ -120,7 +160,8 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
 	    printf("struct fnv1a_64_test_vector fnv1a_64_vector[] = {\n");
 	    break;
 	default:
-	    unknown_hash_type(program, hash_type, 12);	/* exit(12) */
+	    unknown_hash_type(prog, hash_type);
+	    exit(10); /*coo*/
 	    /*NOTREACHED*/
 	}
     }
@@ -143,7 +184,8 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
 	    hval = fnv_64a_buf(t->buf, t->len, hval);
 	    break;
 	default:
-	    unknown_hash_type(program, hash_type, 13);	/* exit(13) */
+	    unknown_hash_type(prog, hash_type);
+	    exit(11);
 	    /*NOTREACHED*/
 	}
 
@@ -166,11 +208,11 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
 		if ((hval&mask) != (fnv0_64_vector[tstnum-1].fnv0_64 & mask)) {
 		    if (v_flag) {
 			fprintf(stderr, "%s: failed fnv0_64 test # %d\n",
-				program, tstnum);
-			fprintf(stderr, "%s: test # 1 is 1st test\n", program);
+				prog, tstnum);
+			fprintf(stderr, "%s: test # 1 is 1st test\n", prog);
 			fprintf(stderr,
 			    "%s: expected 0x%016llx != generated: 0x%016llx\n",
-			    program,
+			    prog,
 			    (hval&mask),
 			    (fnv0_64_vector[tstnum-1].fnv0_64 & mask));
 		    }
@@ -181,11 +223,11 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
 		if ((hval&mask) != (fnv1_64_vector[tstnum-1].fnv1_64 & mask)) {
 		    if (v_flag) {
 			fprintf(stderr, "%s: failed fnv1_64 test # %d\n",
-				program, tstnum);
-			fprintf(stderr, "%s: test # 1 is 1st test\n", program);
+				prog, tstnum);
+			fprintf(stderr, "%s: test # 1 is 1st test\n", prog);
 			fprintf(stderr,
 			    "%s: expected 0x%016llx != generated: 0x%016llx\n",
-			    program,
+			    prog,
 			    (hval&mask),
 			    (fnv1_64_vector[tstnum-1].fnv1_64 & mask));
 		    }
@@ -196,11 +238,11 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
 		if ((hval&mask) != (fnv1a_64_vector[tstnum-1].fnv1a_64 &mask)) {
 		    if (v_flag) {
 			fprintf(stderr, "%s: failed fnv1a_64 test # %d\n",
-				program, tstnum);
-			fprintf(stderr, "%s: test # 1 is 1st test\n", program);
+				prog, tstnum);
+			fprintf(stderr, "%s: test # 1 is 1st test\n", prog);
 			fprintf(stderr,
 			    "%s: expected 0x%016llx != generated: 0x%016llx\n",
-			    program,
+			    prog,
 			    (hval&mask),
 			    (fnv1a_64_vector[tstnum-1].fnv1a_64 & mask));
 		    }
@@ -211,8 +253,8 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
 	    break;
 
 	default:
-	    fprintf(stderr, "%s: -m %d not implemented yet\n", program, code);
-	    exit(14);
+	    fprintf(stderr, "%s: -m %d not implemented yet\n", prog, code);
+	    exit(12);
 	}
 #else /* HAVE_64BIT_LONG_LONG */
 	/*
@@ -238,12 +280,12 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
 		      mask.w32[1]))) {
 		    if (v_flag) {
 			fprintf(stderr, "%s: failed fnv0_64 test # %d\n",
-				program, tstnum);
-			fprintf(stderr, "%s: test # 1 is 1st test\n", program);
+				prog, tstnum);
+			fprintf(stderr, "%s: test # 1 is 1st test\n", prog);
 			fprintf(stderr,
 			    "%s: expected 0x%08x%08x != "
 			    "generated: 0x%08x%08x\n",
-			    program,
+			    prog,
 			    (hval.w32[0] & mask.w32[0]),
 			    (hval.w32[1] & mask.w32[1]),
 			    ((fnv0_64_vector[tstnum-1].fnv0_64.w32[0] &
@@ -263,12 +305,12 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
 		      mask.w32[1]))) {
 		    if (v_flag) {
 			fprintf(stderr, "%s: failed fnv1_64 test # %d\n",
-				program, tstnum);
-			fprintf(stderr, "%s: test # 1 is 1st test\n", program);
+				prog, tstnum);
+			fprintf(stderr, "%s: test # 1 is 1st test\n", prog);
 			fprintf(stderr,
 			    "%s: expected 0x%08x%08x != "
 			    "generated: 0x%08x%08x\n",
-			    program,
+			    prog,
 			    (hval.w32[0] & mask.w32[0]),
 			    (hval.w32[1] & mask.w32[1]),
 			    ((fnv1_64_vector[tstnum-1].fnv1_64.w32[0] &
@@ -288,12 +330,12 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
 		      mask.w32[1]))) {
 		    if (v_flag) {
 			fprintf(stderr, "%s: failed fnv1a_64 test # %d\n",
-				program, tstnum);
-			fprintf(stderr, "%s: test # 1 is 1st test\n", program);
+				prog, tstnum);
+			fprintf(stderr, "%s: test # 1 is 1st test\n", prog);
 			fprintf(stderr,
 			    "%s: expected 0x%08x%08x != "
 			    "generated: 0x%08x%08x\n",
-			    program,
+			    prog,
 			    (hval.w32[0] & mask.w32[0]),
 			    (hval.w32[1] & mask.w32[1]),
 			    ((fnv1a_64_vector[tstnum-1].fnv1a_64.w32[0] &
@@ -305,14 +347,14 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
 		}
 		break;
 	    default:
-		fprintf(stderr, "%s: -m %d not implemented by this program\n", program, code);
-		exit(14);
+		fprintf(stderr, "%s: -m %d not implemented by this program\n", prog, code);
+		exit(13);
 	    }
 	    break;
 
 	default:
-	    fprintf(stderr, "%s: -m %d not implemented yet\n", program, code);
-	    exit(15);
+	    fprintf(stderr, "%s: -m %d not implemented yet\n", prog, code);
+	    exit(14);
 	}
 #endif /* HAVE_64BIT_LONG_LONG */
     }
@@ -357,67 +399,96 @@ main(int argc, char *argv[])
     extern char *optarg;	/* option argument */
     extern int optind;		/* argv index of the next arg */
     int fd;			/* open file to process */
-    char *p;
     int i;
 
     /*
      * parse args
      */
     program = argv[0];
-    while ((i = getopt(argc, argv, "b:mst:v")) != -1) {
+    prog = rindex(program, '/');
+    prog = (prog == NULL) ? program : prog+1;
+    while ((i = getopt(argc, argv, "hvVb:mst:")) != -1) {
 	switch (i) {
-	case 'b':	/* bcnt bit mask count */
-	    b_flag = atoi(optarg);
-	    break;
-	case 'm':	/* print multiple hashes, one per arg */
-	    m_flag = 1;
-	    break;
-	case 's':	/* hash args as strings */
-	    s_flag = 1;
-	    break;
-	case 't':	/* FNV test vector code */
-	    t_flag = atoi(optarg);
-	    if (t_flag < 0 || t_flag > 1) {
-		fprintf(stderr, "%s: -t code must be 0 or 1\n", program);
-		fprintf(stderr, usage, program, FNV_VERSION);
-		exit(1);
-	    }
-	    m_flag = 1;
-	    break;
-	case 'v':	/* verbose hash print */
+
+	case 'h':	/* -h - print help and exit */
+	    fprintf(stderr, usage, prog, prog, FNV_VERSION);
+	    exit(2); /*ooo*/
+	    /*NOTREACHED*/
+
+	case 'v':	/* -v - verbose hash print */
 	    m_flag = 1;
 	    v_flag = 1;
 	    break;
+
+	case 'V':	/* -V - print version and exit */
+	    fprintf(stderr, "%s\n", FNV_VERSION);
+	    exit(2); /*ooo*/
+	    /*NOTREACHED*/
+
+	case 'b':	/* -b bcnt - bit mask count */
+	    b_flag = atoi(optarg);
+	    break;
+
+	case 'm':	/* -m - print multiple hashes, one per arg */
+	    m_flag = 1;
+	    break;
+
+	case 's':	/* -s - hash args as strings */
+	    s_flag = 1;
+	    break;
+
+	case 't':	/* -t code - FNV test vector code */
+	    t_flag = atoi(optarg);
+	    if (t_flag < 0 || t_flag > 1) {
+		fprintf(stderr, "%s: -t code must be 0 or 1\n", prog);
+		fprintf(stderr, usage, prog, prog, FNV_VERSION);
+		exit(3); /*ooo*/
+	    }
+	    m_flag = 1;
+	    break;
+
+	case ':':
+            (void) fprintf(stderr, "%s: ERROR: requires an argument -- %c\n", prog, optopt);
+	    fprintf(stderr, usage, prog, prog, FNV_VERSION);
+            exit(3); /*ooo*/
+            /*NOTREACHED*/
+
+        case '?':
+            (void) fprintf(stderr, "%s: ERROR: illegal option -- %c\n", prog, optopt);
+	    fprintf(stderr, usage, prog, prog, FNV_VERSION);
+            exit(3); /*ooo*/
+            /*NOTREACHED*/
+
 	default:
-	    fprintf(stderr, usage, program, FNV_VERSION);
-	    exit(1);
+	    fprintf(stderr, usage, prog, prog, FNV_VERSION);
+	    exit(3); /*ooo*/
 	}
     }
     /* -t code incompatible with -b, -m and args */
     if (t_flag >= 0) {
 	if (b_flag != WIDTH) {
-	    fprintf(stderr, "%s: -t code incompatible with -b\n", program);
-	    exit(2);
+	    fprintf(stderr, "%s: -t code incompatible with -b\n", prog);
+	    exit(3); /*ooo*/
 	}
 	if (s_flag != 0) {
-	    fprintf(stderr, "%s: -t code incompatible with -s\n", program);
-	    exit(3);
+	    fprintf(stderr, "%s: -t code incompatible with -s\n", prog);
+	    exit(3); /*ooo*/
 	}
 	if (optind < argc) {
-	    fprintf(stderr, "%s: -t code incompatible args\n", program);
-	    exit(4);
+	    fprintf(stderr, "%s: -t code incompatible args\n", prog);
+	    exit(3); /*ooo*/
 	}
     }
     /* -s requires at least 1 arg */
     if (s_flag && optind >= argc) {
-	fprintf(stderr, usage, program, FNV_VERSION);
-	exit(5);
+	fprintf(stderr, usage, prog, prog, FNV_VERSION);
+	exit(3); /*ooo*/
     }
     /* limit -b values */
     if (b_flag < 0 || b_flag > WIDTH) {
 	fprintf(stderr, "%s: -b bcnt: %d must be >= 0 and < %d\n",
-		program, b_flag, WIDTH);
-	exit(6);
+		prog, b_flag, WIDTH);
+	exit(3); /*ooo*/
     }
 #if defined(HAVE_64BIT_LONG_LONG)
     if (b_flag == WIDTH) {
@@ -441,28 +512,22 @@ main(int argc, char *argv[])
     /*
      * start with the initial basis depending on the hash type
      */
-    p = strrchr(program, '/');
-    if (p == NULL) {
-	p = program;
-    } else {
-	++p;
-    }
-    if (strcmp(p, "fnv064") == 0 || strcmp(p, "no64bit_fnv064") == 0) {
+    if (strcmp(prog, "fnv064") == 0 || strcmp(prog, "no64bit_fnv064") == 0) {
 	/* using non-recommended FNV-0 and zero initial basis */
 	hval = FNV0_64_INIT;
 	hash_type = FNV0_64;
-    } else if (strcmp(p, "fnv164") == 0 || strcmp(p, "no64bit_fnv164") == 0) {
+    } else if (strcmp(prog, "fnv164") == 0 || strcmp(prog, "no64bit_fnv164") == 0) {
 	/* using FNV-1 and non-zero initial basis */
 	hval = FNV1_64_INIT;
 	hash_type = FNV1_64;
-    } else if (strcmp(p, "fnv1a64") == 0 || strcmp(p, "no64bit_fnv1a64") == 0) {
+    } else if (strcmp(prog, "fnv1a64") == 0 || strcmp(prog, "no64bit_fnv1a64") == 0) {
 	 /* start with the FNV-1a initial basis */
 	hval = FNV1A_64_INIT;
 	hash_type = FNV1a_64;
     } else {
 	fprintf(stderr, "%s: unknown program name, unknown hash type\n",
-		program);
-	exit(7);
+		prog);
+	exit(3); /*ooo*/
     }
 
     /*
@@ -483,10 +548,10 @@ main(int argc, char *argv[])
 	    if (v_flag) {
 		printf("passed\n");
 	    }
-	    exit(0);
+	    exit(0); /*ooo*/
 	} else {
 	    printf("failed vector (1 is 1st test): %d\n", code);
-	    exit(8);
+	    exit(15);
 	}
     }
 
@@ -506,7 +571,8 @@ main(int argc, char *argv[])
 		hval = fnv_64a_str(argv[i], hval);
 		break;
 	    default:
-		unknown_hash_type(program, hash_type, 9);	/* exit(9) */
+		unknown_hash_type(prog, hash_type);
+		exit(20); /*coo*/
 		/*NOTREACHED*/
 	    }
 	    if (m_flag) {
@@ -535,7 +601,8 @@ main(int argc, char *argv[])
 		case FNV1a_64:
 		    hval = fnv_64a_buf(buf, readcnt, hval);
 		default:
-		    unknown_hash_type(program, hash_type, 10);	/* exit(10) */
+		    unknown_hash_type(prog, hash_type);
+		    exit(21);
 		    /*NOTREACHED*/
 		}
 	    }
@@ -554,8 +621,8 @@ main(int argc, char *argv[])
 		fd = open(argv[i], O_RDONLY);
 		if (fd < 0) {
 		    fprintf(stderr, "%s: unable to open file: %s\n",
-			    program, argv[i]);
-		    exit(4);
+			    prog, argv[i]);
+		    exit(4); /*ooo*/
 		}
 
 		/*  hash the file */
@@ -568,7 +635,8 @@ main(int argc, char *argv[])
 		    case FNV1a_64:
 			hval = fnv_64a_buf(buf, readcnt, hval);
 		    default:
-			unknown_hash_type(program, hash_type, 11);/* exit(11) */
+			unknown_hash_type(prog, hash_type);
+			exit(22);
 			/*NOTREACHED*/
 		    }
 		}
@@ -588,5 +656,5 @@ main(int argc, char *argv[])
     if (!m_flag) {
 	print_fnv64(hval, bmask, v_flag, "");
     }
-    return 0;	/* exit(0); */
+    exit(0); /*ooo*/
 }

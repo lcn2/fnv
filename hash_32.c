@@ -1,9 +1,15 @@
 /*
  * hash_32 - 32 bit Fowler/Noll/Vo hash code
  *
- * @(#) $Revision: 5.1 $
- * @(#) $Id: hash_32.c,v 5.1 2009/06/30 09:13:32 chongo Exp $
- * @(#) $Source: /usr/local/src/bin/fnv/RCS/hash_32.c,v $
+ ***
+ *
+ * For the most up to date copy of this code, see:
+ *
+ *	https://github.com/lcn2/fnv
+ *
+ * For more information on the FNV hash, see:
+ *
+ *	http://www.isthe.com/chongo/tech/comp/fnv/index.html
  *
  ***
  *
@@ -25,40 +31,47 @@
  *
  * FNV hashes are designed to be fast while maintaining a low
  * collision rate. The FNV speed allows one to quickly hash lots
- * of data while maintaining a reasonable collision rate.  See:
- *
- *      http://www.isthe.com/chongo/tech/comp/fnv/index.html
- *
- * for more details as well as other forms of the FNV hash.
- ***
- *
- * NOTE: The FNV-0 historic hash is not recommended.  One should use
- *	 the FNV-1 hash instead.
- *
- * To use the 32 bit FNV-0 historic hash, pass FNV0_32_INIT as the
- * Fnv32_t hashval argument to fnv_32_buf() or fnv_32_str().
- *
- * To use the recommended 32 bit FNV-1 hash, pass FNV1_32_INIT as the
- * Fnv32_t hashval argument to fnv_32_buf() or fnv_32_str().
+ * of data while maintaining a reasonable collision rate.
  *
  ***
  *
- * Please do not copyright this code.  This code is in the public domain.
+ * This is free and unencumbered software released into the public domain.
  *
- * LANDON CURT NOLL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
- * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO
- * EVENT SHALL LANDON CURT NOLL BE LIABLE FOR ANY SPECIAL, INDIRECT OR
- * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
- * USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
- * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * Anyone is free to copy, modify, publish, use, compile, sell, or
+ * distribute this software, either in source code form or as a compiled
+ * binary, for any purpose, commercial or non-commercial, and by any
+ * means.
  *
- * By:
- *	chongo <Landon Curt Noll> /\oo/\
- *      http://www.isthe.com/chongo/
+ * In jurisdictions that recognize copyright laws, the author or authors
+ * of this software dedicate any and all copyright interest in the
+ * software to the public domain. We make this dedication for the benefit
+ * of the public at large and to the detriment of our heirs and
+ * successors. We intend this dedication to be an overt act of
+ * relinquishment in perpetuity of all present and future rights to this
+ * software under copyright law.
  *
- * Share and Enjoy!	:-)
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * For more information, please refer to <https://unlicense.org>
+ *
+ ***
+ *
+ * Author:
+ *
+ * chongo (Landon Curt Noll) /\oo/\
+ *
+ * http://www.isthe.com/chongo/index.html
+ * https://github.com/lcn2
+ *
+ * Share and Enjoy!     :-)
  */
+
 
 #include <stdlib.h>
 #include "fnv.h"
