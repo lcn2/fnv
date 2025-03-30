@@ -59,6 +59,8 @@ EGREP= egrep
 GZIP_BIN= gzip
 ID= id
 INSTALL= install
+LN= ln
+MV= mv
 RM= rm
 SHELL= bash
 TAR= tar
@@ -350,25 +352,27 @@ install: all
 	${INSTALL} -m 0644 ${HSRC} ${DESTINC}
 	@# NOTE: Lines with WWW in them are removed from the shipped Makefile
 	-@if [ -d ${WWW} ]; then \
-            echo "rm -f Makefile.ship";                 : WWW; \
-            rm -f Makefile.ship;                        : WWW; \
-            echo "${EGREP} -v WWW Makefile > Makefile.ship";    : WWW; \
-            ${EGREP} -v WWW Makefile > Makefile.ship;   : WWW; \
-            echo "rm -f Makefile.save";                 : WWW; \
-            rm -f Makefile.save;                        : WWW; \
-            echo "ln Makefile Makefile.save";           : WWW; \
-            ln Makefile Makefile.save;                  : WWW; \
-            echo "cp -f Makefile.ship Makefile";        : WWW; \
-            cp -f Makefile.ship Makefile;               : WWW; \
-            echo "${TAR} -cf - ${ALL} | ${GZIP_BIN} --best > fnv_hash.tar.gz";: WWW; \
-            ${TAR} -cf - ${ALL} | ${GZIP_BIN} --best > fnv_hash.tar.gz;: WWW; \
-            echo "${INSTALL} -m 0644 fnv_hash.tar.gz README ${ALL} ${WWW}"; \
-            ${INSTALL} -m 0644 fnv_hash.tar.gz README ${ALL} ${WWW}; \
-            echo "mv -f Makefile.save Makefile";        : WWW; \
-            mv -f Makefile.save Makefile;               : WWW; \
-            echo "rm -f fnv_hash.tar.gz Makefile.ship"; : WWW; \
-            rm -f fnv_hash.tar.gz Makefile.ship;        : WWW; \
-        fi; # WWW
+		echo "${RM} -f fnv_hash.tar.gz Makefile.ship";      		: WWW; \
+		${RM} -f fnv_hash.tar.gz Makefile.ship;             		: WWW; \
+		echo "${EGREP} -v WWW Makefile > Makefile.ship";    		: WWW; \
+		${EGREP} -v WWW Makefile > Makefile.ship;           		: WWW; \
+		echo "${RM} -f Makefile.save";                      		: WWW; \
+		${RM} -f Makefile.save;                             		: WWW; \
+		echo "${LN} -f Makefile Makefile.save";                		: WWW; \
+		${LN} -f Makefile Makefile.save;                       		: WWW; \
+		echo "${MV} -f Makefile.ship Makefile";                		: WWW; \
+		${MV} -f Makefile.ship Makefile;                       		: WWW; \
+		echo "${TAR} -zcf fnv_hash.tar.gz ${ALL}";			: WWW; \
+		${TAR} -zcf fnv_hash.tar.gz ${ALL};				: WWW; \
+		echo "${INSTALL} -m 0644 fnv_hash.tar.gz README ${ALL} ${WWW}"; \
+		${INSTALL} -m 0644 fnv_hash.tar.gz README ${ALL} ${WWW}; \
+		echo "${RM} -f Makefile";                      			: WWW; \
+		${RM} -f Makefile;                             			: WWW; \
+		echo "${MV} -f Makefile.save Makefile";        			: WWW; \
+		${MV} -f Makefile.save Makefile;               			: WWW; \
+		echo "${RM} -f fnv_hash.tar.gz Makefile.ship"; 			: WWW; \
+		${RM} -f fnv_hash.tar.gz Makefile.ship;        			: WWW; \
+		fi;								: WWW
 	@# remove obsolete programs
 	for i in ${OBSOLETE_PROGS}; do \
 	    if [ -f "${DESTBIN}/$$i" ]; then \
