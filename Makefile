@@ -56,6 +56,7 @@ CC= cc
 CHMOD= chmod
 CP= cp
 EGREP= egrep
+GZIP_BIN= gzip
 ID= id
 INSTALL= install
 RM= rm
@@ -367,7 +368,7 @@ install: all
             mv -f Makefile.save Makefile;               : WWW; \
             echo "rm -f fnv_hash.tar.gz Makefile.ship"; : WWW; \
             rm -f fnv_hash.tar.gz Makefile.ship;        : WWW; \
-        fi;
+        fi; # WWW
 	@# remove obsolete programs
 	for i in ${OBSOLETE_PROGS}; do \
 	    if [ -f "${DESTBIN}/$$i" ]; then \
