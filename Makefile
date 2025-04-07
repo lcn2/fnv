@@ -91,9 +91,6 @@ DESTBIN= /usr/local/bin
 DESTLIB= /usr/local/lib
 DESTINC= /usr/local/include
 
-# NOTE: Lines with WWW in them are removed from the shipped Makefile
-WWW= /www/isthe.com/html/chongo/src/fnv
-
 # what to build
 #
 SRC=	hash_32.c hash_32a.c hash_64.c hash_64a.c \
@@ -350,29 +347,6 @@ install: all
 	${INSTALL} -m 0644 ${LIBS} ${DESTLIB}
 	${RANLIB} ${DESTLIB}/libfnv.a
 	${INSTALL} -m 0644 ${HSRC} ${DESTINC}
-	@# NOTE: Lines with WWW in them are removed from the shipped Makefile
-	-@if [ -d ${WWW} ]; then \
-		echo "${RM} -f fnv_hash.tar.gz Makefile.ship";      		: WWW; \
-		${RM} -f fnv_hash.tar.gz Makefile.ship;             		: WWW; \
-		echo "${EGREP} -v WWW Makefile > Makefile.ship";    		: WWW; \
-		${EGREP} -v WWW Makefile > Makefile.ship;           		: WWW; \
-		echo "${RM} -f Makefile.save";                      		: WWW; \
-		${RM} -f Makefile.save;                             		: WWW; \
-		echo "${LN} -f Makefile Makefile.save";                		: WWW; \
-		${LN} -f Makefile Makefile.save;                       		: WWW; \
-		echo "${MV} -f Makefile.ship Makefile";                		: WWW; \
-		${MV} -f Makefile.ship Makefile;                       		: WWW; \
-		echo "${TAR} -zcf fnv_hash.tar.gz ${ALL}";			: WWW; \
-		${TAR} -zcf fnv_hash.tar.gz ${ALL};				: WWW; \
-		echo "${INSTALL} -m 0644 fnv_hash.tar.gz README ${ALL} ${WWW}"; \
-		${INSTALL} -m 0644 fnv_hash.tar.gz README ${ALL} ${WWW}; \
-		echo "${RM} -f Makefile";                      			: WWW; \
-		${RM} -f Makefile;                             			: WWW; \
-		echo "${MV} -f Makefile.save Makefile";        			: WWW; \
-		${MV} -f Makefile.save Makefile;               			: WWW; \
-		echo "${RM} -f fnv_hash.tar.gz Makefile.ship"; 			: WWW; \
-		${RM} -f fnv_hash.tar.gz Makefile.ship;        			: WWW; \
-		fi;								: WWW
 	@# remove obsolete programs
 	for i in ${OBSOLETE_PROGS}; do \
 	    if [ -f "${DESTBIN}/$$i" ]; then \
@@ -385,7 +359,6 @@ clean:
 	-rm -f have_ulong64 have_ulong64.o ll_tmp ll_tmp2 longlong.h
 	-rm -f ${LIBOBJ}
 	-rm -f ${OTHEROBJ}
-	-rm -f fnv_hash.tar.gz Makefile.ship	        # WWW
 
 clobber: clean
 	-rm -f ${TARGETS}
