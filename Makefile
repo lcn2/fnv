@@ -87,9 +87,10 @@ RANLIB= :
 V=@:
 #V=@
 
-DESTBIN= /usr/local/bin
-DESTLIB= /usr/local/lib
-DESTINC= /usr/local/include
+PREFIX= /usr/local
+DESTBIN= ${PREFIX}/bin
+DESTLIB= ${PREFIX}/lib
+DESTINC= ${PREFIX}/include
 
 # what to build
 #
