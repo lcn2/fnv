@@ -69,7 +69,7 @@
  * http://www.isthe.com/chongo/index.html
  * https://github.com/lcn2
  *
- * Share and Enjoy!     :-)
+ * Share and enjoy!  :-)
  */
 
 
@@ -102,7 +102,7 @@
 
 #include <sys/types.h>
 
-#define FNV_VERSION "5.0.5 2025-04-13"	     /* format: major.minor YYYY-MM-DD */
+#define FNV_VERSION "5.0.6 2025-04-19"	     /* format: major.minor YYYY-MM-DD */
 
 
 /*

@@ -12,7 +12,7 @@ Fowler/Noll/Vo hash
 # To install
 
 ```sh
-make clobber all
+make clobber all test
 sudo make install clobber
 ```
 
