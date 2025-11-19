@@ -73,6 +73,10 @@
  */
 
 
+#include <stdio.h>
+#include <stdint.h>
+
+
 /*
  * have the compiler try its hand with unsigned and signed long longs
  */

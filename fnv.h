@@ -100,9 +100,10 @@
 #if !defined(__FNV_H__)
 #define __FNV_H__
 
+#include <stdint.h>
 #include <sys/types.h>
 
-#define FNV_VERSION "5.0.6 2025-04-19"	     /* format: major.minor YYYY-MM-DD */
+#define FNV_VERSION "5.0.7 2025-11-19"	     /* format: major.minor YYYY-MM-DD */
 
 
 /*

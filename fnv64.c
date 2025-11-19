@@ -81,6 +81,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <strings.h>
+#include <stdint.h>
 #include "longlong.h"
 #include "fnv.h"
 
@@ -198,8 +199,8 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
 	 */
 	switch (code) {
 	case 0:		/* generate the test vector */
-	    printf("    { &fnv_test_str[%d], (Fnv64_t) 0x%016lxUL },\n",
-		   tstnum-1, hval & mask);
+	    printf("    { &fnv_test_str[%d], (Fnv64_t) 0x%016llxUL },\n",
+		   tstnum-1, (unsigned long long)(hval & mask));
 	    break;
 
 	case 1:		/* validate against test vector */
@@ -211,10 +212,10 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
 				prog, tstnum);
 			fprintf(stderr, "%s: test # 1 is 1st test\n", prog);
 			fprintf(stderr,
-			    "%s: expected 0x%016lx != generated: 0x%016lx\n",
+			    "%s: expected 0x%016llx != generated: 0x%016llx\n",
 			    prog,
-			    (hval&mask),
-			    (fnv0_64_vector[tstnum-1].fnv0_64 & mask));
+			    (unsigned long long)(hval&mask),
+			    (unsigned long long)(fnv0_64_vector[tstnum-1].fnv0_64 & mask));
 		    }
 		    return tstnum;
 		}
@@ -226,10 +227,10 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
 				prog, tstnum);
 			fprintf(stderr, "%s: test # 1 is 1st test\n", prog);
 			fprintf(stderr,
-			    "%s: expected 0x%016lx != generated: 0x%016lx\n",
+			    "%s: expected 0x%016llx != generated: 0x%016llx\n",
 			    prog,
-			    (hval&mask),
-			    (fnv1_64_vector[tstnum-1].fnv1_64 & mask));
+			    (unsigned long long)(hval&mask),
+			    (unsigned long long)(fnv1_64_vector[tstnum-1].fnv1_64 & mask));
 		    }
 		    return tstnum;
 		}
@@ -241,10 +242,10 @@ test_fnv64(enum fnv_type hash_type, Fnv64_t init_hval,
 				prog, tstnum);
 			fprintf(stderr, "%s: test # 1 is 1st test\n", prog);
 			fprintf(stderr,
-			    "%s: expected 0x%016lx != generated: 0x%016lx\n",
+			    "%s: expected 0x%016llx != generated: 0x%016llx\n",
 			    prog,
-			    (hval&mask),
-			    (fnv1a_64_vector[tstnum-1].fnv1a_64 & mask));
+			    (unsigned long long)(hval&mask),
+			    (unsigned long long)(fnv1a_64_vector[tstnum-1].fnv1a_64 & mask));
 		    }
 		    return tstnum;
 		}

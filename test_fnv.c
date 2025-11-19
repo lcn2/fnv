@@ -74,9 +74,10 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
 #include "longlong.h"
 #include "fnv.h"
-#include <stdlib.h>
 
 #define LEN(x) (sizeof(x)-1)
 /* TEST macro does not include trailing NUL byte in the test vector */
@@ -2239,9 +2240,9 @@ print_fnv64(Fnv64_t hval, Fnv64_t mask, int verbose, char *arg)
 {
 #if defined(HAVE_64BIT_LONG_LONG)
     if (verbose) {
-	printf("0x%016lx %s\n", hval & mask, arg);
+	printf("0x%016llx %s\n", (unsigned long long)(hval & mask), arg);
     } else {
-	printf("0x%016lx\n", hval & mask);
+	printf("0x%016llx\n", (unsigned long long)(hval & mask));
     }
 #else
     if (verbose) {
