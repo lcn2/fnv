@@ -119,8 +119,9 @@ TARGETS= ${LIBOBJ} ${LIBS} ${PROGS} README
 ######################################
 
 all: ${TARGETS}
-        ${V} echo DEBUG =-= $@ start =-=
-        ${V} echo DEBUG =-= $@ end =-=
+	@:
+	${V} echo DEBUG =-= $@ start =-=
+	${V} echo DEBUG =-= $@ end =-=
 
 
 ###################
