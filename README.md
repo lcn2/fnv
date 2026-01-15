@@ -1,6 +1,6 @@
-# fnv
+# fnv - Fowler/Noll/Vo hash
 
-Fowler/Noll/Vo hash
+* The FNV Non-Cryptographic Hash Algorithm is now an Official [IETF RFC 9923](https://www.rfc-editor.org/rfc/rfc9923).
 
 * The fnv1a32, fnv1a64 implement the recommended FNV-1a hash.
 
@@ -222,7 +222,7 @@ Exit codes:
  >= 10        test suite error
  >= 20        internal error
 
-fnv1a64 version: 5.0.5 2025-04-13
+fnv1a64 version: 5.0.8 2026-01-14
 ```
 
 
@@ -253,7 +253,7 @@ Exit codes:
  >= 10        test suite error
  >= 20        internal error
 
-fnv1a32 version: 5.0.5 2025-04-13
+fnv1a32 version: 5.0.8 2026-01-14
 ```
 
 
@@ -284,7 +284,7 @@ Exit codes:
  >= 10        test suite error
  >= 20        internal error
 
-fnv164 version: 5.0.5 2025-04-13
+fnv164 version: 5.0.8 2026-01-14
 ```
 
 
@@ -315,7 +315,7 @@ Exit codes:
  >= 10        test suite error
  >= 20        internal error
 
-fnv132 version: 5.0.5 2025-04-13
+fnv132 version: 5.0.8 2026-01-14
 ```
 
 
@@ -350,7 +350,7 @@ Exit codes:
 NOTE: Programs that begin with fnv0 implement the FNV-0 hash.
       The FNV-0 hash is historic FNV algorithm that is now deprecated.
 
-fnv064 version: 5.0.5 2025-04-13
+fnv064 version: 5.0.8 2026-01-14
 ```
 
 
@@ -385,7 +385,7 @@ Exit codes:
 NOTE: Programs that begin with fnv0 implement the FNV-0 hash.
       The FNV-0 hash is historic FNV algorithm that is now deprecated.
 
-fnv032 version: 5.0.5 2025-04-13
+fnv032 version: 5.0.8 2026-01-14
 ```
 
 

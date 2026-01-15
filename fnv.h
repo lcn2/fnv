@@ -103,7 +103,7 @@
 #include <stdint.h>
 #include <sys/types.h>
 
-#define FNV_VERSION "5.0.7 2025-11-19"	     /* format: major.minor YYYY-MM-DD */
+#define FNV_VERSION "5.0.8 2026-01-14"	     /* format: major.minor YYYY-MM-DD */
 
 
 /*
