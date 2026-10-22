@@ -603,6 +603,7 @@ main(int argc, char *argv[])
 		    break;
 		case FNV1a_64:
 		    hval = fnv_64a_buf(buf, readcnt, hval);
+		    break;
 		default:
 		    unknown_hash_type(prog, hash_type);
 		    exit(21);
@@ -637,6 +638,7 @@ main(int argc, char *argv[])
 			break;
 		    case FNV1a_64:
 			hval = fnv_64a_buf(buf, readcnt, hval);
+			break;
 		    default:
 			unknown_hash_type(prog, hash_type);
 			exit(22);
